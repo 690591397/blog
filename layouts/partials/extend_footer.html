@@ -1,0 +1,66 @@
+<!-- TOC Sidebar JavaScript -->
+<script>
+(function() {
+  // Mobile TOC toggle
+  const tocSidebar = document.querySelector('.toc-sidebar');
+  const tocTitle = document.querySelector('.toc-sidebar-title');
+  
+  if (tocTitle && tocSidebar) {
+    tocTitle.addEventListener('click', function() {
+      // Only toggle on mobile
+      if (window.innerWidth < 1280) {
+        tocSidebar.classList.toggle('expanded');
+      }
+    });
+  }
+
+  // Scroll spy: highlight current section in TOC
+  const tocLinks = document.querySelectorAll('.toc-sidebar-nav a');
+  const headings = [];
+  
+  tocLinks.forEach(link => {
+    const id = link.getAttribute('href').slice(1);
+    const heading = document.getElementById(id);
+    if (heading) {
+      headings.push({ id, element: heading, link });
+    }
+  });
+
+  if (headings.length > 0) {
+    let ticking = false;
+    
+    function updateActiveLink() {
+      const scrollTop = window.scrollY;
+      const offset = 100; // Offset from top
+      
+      let currentHeading = headings[0];
+      
+      for (const heading of headings) {
+        if (heading.element.offsetTop - offset <= scrollTop) {
+          currentHeading = heading;
+        } else {
+          break;
+        }
+      }
+      
+      tocLinks.forEach(link => link.classList.remove('active'));
+      if (currentHeading) {
+        currentHeading.link.classList.add('active');
+      }
+      
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function() {
+      if (!ticking) {
+        requestAnimationFrame(updateActiveLink);
+        ticking = true;
+      }
+    });
+
+    // Initial highlight
+    updateActiveLink();
+  }
+})();
+</script>
+

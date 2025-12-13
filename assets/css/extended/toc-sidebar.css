@@ -1,0 +1,204 @@
+/* 
+   Immersive Reader Mode TOC
+   "Ghost" Sidebar - Low profile when reading, clear when needed
+*/
+
+/* 1. Main Content - Always Centered */
+.post-single {
+  position: relative;
+  max-width: var(--main-width);
+  margin: 0 auto;
+}
+
+/* 2. Sidebar Container */
+.toc-sidebar {
+  display: none;
+}
+
+/* Desktop Styles */
+@media (min-width: 1280px) {
+  .post-body.has-toc {
+    /* 不影响正文布局 */
+    position: static;
+  }
+
+  .toc-sidebar {
+    display: block;
+    position: fixed;
+    /* 贴在屏幕左侧，留出舒适的边距 */
+    left: 40px; 
+    top: 100px;
+    width: 260px; /* 较宽的交互区域 */
+    max-height: calc(100vh - 140px);
+    z-index: 100;
+    
+    /* 核心交互：过渡效果 */
+    opacity: 0.35; /* 默认极低透明度，几乎隐形 */
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateX(-10px); /* 默认稍微靠左一点 */
+    filter: blur(0.5px); /* 稍微模糊，进一步降低干扰 */
+  }
+
+  /* 鼠标悬停时的激活状态 */
+  .toc-sidebar:hover {
+    opacity: 1;
+    transform: translateX(0);
+    filter: blur(0);
+  }
+
+  .toc-sidebar-inner {
+    overflow-y: auto;
+    max-height: 100%;
+    /* 隐藏滚动条 */
+    scrollbar-width: none;
+    padding-left: 10px; /* 内容左边距 */
+    
+    /* 增加左侧边框装饰，像书签一样 */
+    border-left: 2px solid var(--border);
+  }
+
+  .toc-sidebar-inner::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 标题 */
+  .toc-sidebar-title {
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+    padding-left: 10px;
+  }
+
+  /* 导航列表 */
+  .toc-sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .toc-sidebar-nav li {
+    margin: 6px 0;
+  }
+
+  .toc-sidebar-nav a {
+    display: block;
+    color: var(--secondary);
+    text-decoration: none;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+  }
+
+  /* 层级视觉差 */
+  .toc-sidebar-nav ul ul a {
+    padding-left: 24px;
+    font-size: 0.85rem;
+    opacity: 0.8;
+  }
+  
+  .toc-sidebar-nav ul ul ul a {
+    padding-left: 36px;
+  }
+
+  /* 链接悬停 */
+  .toc-sidebar-nav a:hover {
+    color: var(--primary);
+    background: var(--entry);
+  }
+
+  /* 激活状态 */
+  .toc-sidebar-nav a.active {
+    color: var(--primary);
+    font-weight: 600;
+    /* 激活项有个小圆点或者色块 */
+    background: linear-gradient(90deg, rgba(var(--primary-rgb), 0.1) 0%, transparent 100%);
+    border-left: 3px solid var(--primary);
+    margin-left: -12px; /* 让边框贴到左边容器边缘 */
+    padding-left: 19px; /* 补回内边距 */
+  }
+}
+
+/* Ultra-wide adjustment */
+@media (min-width: 1600px) {
+  .toc-sidebar {
+    left: 60px; /* 大屏稍微往里一点 */
+  }
+}
+
+/* Mobile Fallback */
+@media (max-width: 1279px) {
+  .post-body.has-toc {
+    display: block;
+  }
+
+  .toc-sidebar {
+    display: block;
+    margin-bottom: 2rem;
+    position: relative;
+    opacity: 1; /* 移动端完全显示 */
+    transform: none;
+    filter: none;
+    left: auto;
+    top: auto;
+    width: 100%;
+    
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1rem;
+  }
+  
+  .toc-sidebar-inner {
+    border: none;
+    padding: 0;
+  }
+
+  .toc-sidebar-title {
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+  }
+  
+  .toc-sidebar-title::after {
+    content: "▼";
+    font-size: 0.8em;
+  }
+
+  .toc-sidebar-nav {
+    display: none;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border);
+    padding-top: 1rem;
+  }
+
+  .toc-sidebar.expanded .toc-sidebar-nav {
+    display: block;
+  }
+  
+  .toc-sidebar.expanded .toc-sidebar-title::after {
+    transform: rotate(180deg);
+  }
+  
+  .toc-sidebar-nav ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .toc-sidebar-nav a {
+    display: block;
+    padding: 6px 0;
+  }
+}
+
+.post-single > .toc {
+  display: none !important;
+}
