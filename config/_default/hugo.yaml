@@ -18,11 +18,90 @@ taxonomies:
 defaultContentLanguage: zh
 defaultContentLanguageInSubdir: true
 
+paginate: 5
+
+permalinks:
+  post: /p/:slug/
+  page: /:slug/
+
 params:
   mainSections:
     - posts
+  featuredImageField: image
+  rssFullContent: true
+  
+  dateFormat:
+    published: 2006-01-02
+    lastUpdated: 2006-01-02 15:04
+
+  sidebar:
+    emoji: 🖤
+    subtitle: 技术博客
+    avatar:
+      enabled: true
+      local: true
+      src: images/avatar.png
+
+  article:
+    math: false
+    toc: true
+    readingTime: true
+    license:
+      enabled: false
+
+  comments:
+    enabled: false
+
   colorScheme:
     toggle: true
     default: light
-  comments:
-    enabled: false
+    label: 主题
+
+  imageProcessing:
+    cover:
+      enabled: true
+    content:
+      enabled: true
+
+  widgets:
+    homepage:
+      - type: search
+      - type: archives
+        params:
+          limit: 5
+      - type: categories
+        params:
+          limit: 10
+      - type: tag-cloud
+        params:
+          limit: 10
+    page:
+      - type: toc
+
+  footer:
+    since: 2024
+
+languages:
+  zh:
+    languageName: 简体中文
+    weight: 1
+    title: Hawkeye-xb 技术博客
+    params:
+      description: 技术博客
+  en:
+    languageName: English
+    weight: 2
+    title: Hawkeye-xb Blog
+    params:
+      description: Tech Blog
+
+markup:
+  goldmark:
+    renderer:
+      unsafe: true
+  tableOfContents:
+    endLevel: 4
+    ordered: false
+    startLevel: 2
+  highlight:
+    noClasses: false
