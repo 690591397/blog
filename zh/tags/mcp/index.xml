@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Mcp on Hawkeye-xb 技术博客</title>
+        <link>https://690591397.github.io/blog/zh/tags/mcp/</link>
+        <description>Recent content in Mcp on Hawkeye-xb 技术博客</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh</language>
+        <lastBuildDate>Sat, 21 Dec 2024 10:00:00 +0800</lastBuildDate><atom:link href="https://690591397.github.io/blog/zh/tags/mcp/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Figma MCP 工具数据类型详解</title>
+        <link>https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/</link>
+        <pubDate>Sat, 21 Dec 2024 10:00:00 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/</guid>
+        <description>&lt;p&gt;（Created by AI）&lt;/p&gt;
+&lt;h1 id=&#34;figma-mcp-工具数据类型详解&#34;&gt;Figma MCP 工具数据类型详解&lt;/h1&gt;
+&lt;p&gt;本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。&lt;/p&gt;
+&lt;h2 id=&#34;工具概览&#34;&gt;工具概览&lt;/h2&gt;
+&lt;p&gt;Figma MCP 提供以下核心工具：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;get_metadata&lt;/strong&gt; - 获取节点元数据信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code&lt;/strong&gt; - 生成 UI 代码实现&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_variable_defs&lt;/strong&gt; - 获取设计变量定义&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code_connect_map&lt;/strong&gt; - 获取代码连接映射（企业版功能）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_image&lt;/strong&gt; - 生成节点图像&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;create_design_system_rules&lt;/strong&gt; - 创建设计系统规则&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;示例分析&#34;&gt;示例分析&lt;/h2&gt;
+&lt;p&gt;使用 Figma 设计稿：&lt;code&gt;https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;amp;m=dev&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;从 URL 中提取的 node-id: &lt;code&gt;12849-12248&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1-元数据信息-get_metadata&#34;&gt;1. 元数据信息 (get_metadata)&lt;/h2&gt;
+&lt;p&gt;元数据提供了节点的基本结构信息，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;节点类型（frame、instance、symbol 等）&lt;/li&gt;
+&lt;li&gt;节点名称&lt;/li&gt;
+&lt;li&gt;位置坐标 (x, y)&lt;/li&gt;
+&lt;li&gt;尺寸信息 (width, height)&lt;/li&gt;
+&lt;li&gt;子节点层级结构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;示例输出&#34;&gt;示例输出：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;frame&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12248&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Frame 1739333131&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;60&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;676&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12249&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Filter Bar&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;symbol&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;13088:67609&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Frame 1739333044&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;52&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;572&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;frame&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12627&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;per page&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;644&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;244&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12628&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Pagination&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;30&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;30&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12629&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Pagination&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;34&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;c&#34;&gt;&amp;lt;!-- 更多子节点... --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/frame&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;/frame&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;用途：&lt;/strong&gt; 快速了解设计稿的整体结构，适合在实现前进行架构规划。&lt;/p&gt;
+&lt;h2 id=&#34;2-代码实现-get_code&#34;&gt;2. 代码实现 (get_code)&lt;/h2&gt;
+&lt;p&gt;这是最核心的功能，将 Figma 设计直接转换为可运行的代码：&lt;/p&gt;
+&lt;h3 id=&#34;主要特性&#34;&gt;主要特性：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;React + TypeScript&lt;/strong&gt; 组件代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tailwind CSS&lt;/strong&gt; 样式系统&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;完整的 Props 接口定义&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图片资源处理&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;响应式设计支持&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;代码结构示例&#34;&gt;代码结构示例：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOptionProps&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nx&#34;&gt;state&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;?:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Default&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Selected&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Active&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOption&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;({&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;state&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Default&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOptionProps&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;bg-white relative rounded-[5px] size-full&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;         &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;State=Default&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;         &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;node&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12555:10420&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;box-border content-stretch flex items-center justify-between min-w-inherit overflow-clip px-2 py-1 relative size-full&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;font-[&amp;#39;Inter:Regular&amp;#39;,_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#3d3d3d] text-[12px] text-nowrap&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;             &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;node&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12555:10397&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;          &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;leading-[18px] whitespace-pre&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Last&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;hours&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;/* 更多组件内容... */&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;重要特性&#34;&gt;重要特性：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;data-node-id 属性&lt;/strong&gt;：每个元素都包含对应的 Figma 节点 ID&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;精确的样式还原&lt;/strong&gt;：包括字体、颜色、间距、圆角等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;组件化设计&lt;/strong&gt;：自动识别重复元素并生成可复用组件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图片资源管理&lt;/strong&gt;：自动处理 SVG 和位图资源&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;3-设计变量定义-get_variable_defs&#34;&gt;3. 设计变量定义 (get_variable_defs)&lt;/h2&gt;
+&lt;p&gt;获取设计系统中定义的所有变量，包括：&lt;/p&gt;
+&lt;h3 id=&#34;变量类型&#34;&gt;变量类型：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;颜色变量&lt;/strong&gt;：主色、辅助色、状态色等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;字体变量&lt;/strong&gt;：字体族、字重、字号、行高&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;间距变量&lt;/strong&gt;：padding、margin、gap 等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;圆角变量&lt;/strong&gt;：border-radius 值&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;其他样式变量&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;示例输出-1&#34;&gt;示例输出：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Primary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#000000&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Secondary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#3d3d3d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Tertiary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#858c9b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Quaternary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#a3a3a3&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/White&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#ffffff&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Family/Font&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Inter&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Size/Body&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;14&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Size/Footnote&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;14&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Line Height/Body&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;22&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Line Height/Footnote&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_4&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_24&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;24&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Radius_5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Status/Destructive&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#ff503f&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Template Community/Icon/Moss&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#4cbf69&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Template Community/Icon/Ember&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#cc7447&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;用途：&lt;/strong&gt; 建立统一的设计系统，确保代码实现与设计保持一致。&lt;/p&gt;
+&lt;h2 id=&#34;4-代码连接映射-get_code_connect_map&#34;&gt;4. 代码连接映射 (get_code_connect_map)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt; 此功能仅在 Figma Organization 和 Enterprise 计划中可用&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;用于建立 Figma 组件与代码库中实际组件的映射关系：&lt;/p&gt;
+&lt;h3 id=&#34;功能&#34;&gt;功能：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;将 Figma 组件链接到代码库中的具体文件&lt;/li&gt;
+&lt;li&gt;提供组件名称映射&lt;/li&gt;
+&lt;li&gt;支持版本管理和同步&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;预期输出格式&#34;&gt;预期输出格式：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;1:2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;codeConnectSrc&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://github.com/foo/components/Button.tsx&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;codeConnectName&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Button&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;5-图像生成-get_image&#34;&gt;5. 图像生成 (get_image)&lt;/h2&gt;
+&lt;p&gt;为指定节点生成图像文件，用于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设计稿预览&lt;/li&gt;
+&lt;li&gt;文档展示&lt;/li&gt;
+&lt;li&gt;设计评审&lt;/li&gt;
+&lt;li&gt;开发参考&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;6-设计系统规则-create_design_system_rules&#34;&gt;6. 设计系统规则 (create_design_system_rules)&lt;/h2&gt;
+&lt;p&gt;生成适用于当前项目的设计系统规则和约束。&lt;/p&gt;
+&lt;h2 id=&#34;使用流程&#34;&gt;使用流程&lt;/h2&gt;
+&lt;h3 id=&#34;1-建立连接&#34;&gt;1. 建立连接&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;确保 Figma 桌面应用已打开&lt;/li&gt;
+&lt;li&gt;选择要处理的节点或提供 node-id&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;2-数据获取顺序建议&#34;&gt;2. 数据获取顺序建议&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;get_metadata&lt;/strong&gt; - 了解整体结构&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_variable_defs&lt;/strong&gt; - 获取设计变量&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code&lt;/strong&gt; - 生成具体实现&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_image&lt;/strong&gt; - 获取视觉参考（可选）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;3-从-url-提取-node-id&#34;&gt;3. 从 URL 提取 node-id&lt;/h3&gt;
+&lt;p&gt;URL 格式：&lt;code&gt;https://figma.com/design/:fileKey/:fileName?node-id=1-2&lt;/code&gt;
+提取的 node-id：&lt;code&gt;1:2&lt;/code&gt;（将 &lt;code&gt;-&lt;/code&gt; 替换为 &lt;code&gt;:&lt;/code&gt;）&lt;/p&gt;
+&lt;h2 id=&#34;实际应用场景&#34;&gt;实际应用场景&lt;/h2&gt;
+&lt;h3 id=&#34;设计到代码的完整流程&#34;&gt;设计到代码的完整流程：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;设计师&lt;/strong&gt; 在 Figma 中完成设计&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开发者&lt;/strong&gt; 使用 MCP 工具获取元数据了解结构&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动生成&lt;/strong&gt; 基础组件代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开发者&lt;/strong&gt; 基于生成的代码进行业务逻辑开发&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计变量&lt;/strong&gt; 确保样式一致性&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;优势&#34;&gt;优势：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高效率&lt;/strong&gt;：大幅减少手动编写 UI 代码的时间&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高精度&lt;/strong&gt;：像素级别的设计还原&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可维护&lt;/strong&gt;：生成的代码结构清晰，易于维护&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一致性&lt;/strong&gt;：通过设计变量确保整个项目的视觉一致性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;注意事项&#34;&gt;注意事项&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;图片资源&lt;/strong&gt;：生成的代码中图片资源指向 localhost 服务器，实际使用时需要替换为项目中的资源路径&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;样式系统&lt;/strong&gt;：工具会自动检测项目的样式方案（Tailwind CSS、CSS-in-JS 等）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;组件复用&lt;/strong&gt;：工具会自动识别重复设计模式并生成可复用组件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TypeScript 支持&lt;/strong&gt;：生成的代码包含完整的类型定义&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;Figma MCP 工具提供了从设计到代码的完整解决方案，通过多种数据类型的获取，可以实现高效、精确的设计实现流程。合理使用这些工具，可以显著提升前端开发效率，并确保设计与实现的一致性。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

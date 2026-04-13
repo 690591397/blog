@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' 在探索互联网产品的全生命周期中，从设计到原型再到研发，Figma作为一款设计工具，其影响力不容小觑。Figma采用Electron框架构建，而Electron最新版本30.0.0中，废弃了browserView，转而提供WebContentsView。这一变化可能对Figma等使用Electron框架的产品产生影响。尽管现在解包Figma的asar文件会遇到内存越界的问题，但这并不妨碍我们学习和研究Figma的基础功能。通过深入了解Electron的功能特性，我们可以从产品视角和研发思维两个角度出发，更好地理解设计和研发之间的相互作用，从而在互联网产品的开发过程中实现更高效的协作。'>
+<title>学习和研究Figma：背景</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/studyfigma/background/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='学习和研究Figma：背景'>
+<meta property='og:description' content=' 在探索互联网产品的全生命周期中，从设计到原型再到研发，Figma作为一款设计工具，其影响力不容小觑。Figma采用Electron框架构建，而Electron最新版本30.0.0中，废弃了browserView，转而提供WebContentsView。这一变化可能对Figma等使用Electron框架的产品产生影响。尽管现在解包Figma的asar文件会遇到内存越界的问题，但这并不妨碍我们学习和研究Figma的基础功能。通过深入了解Electron的功能特性，我们可以从产品视角和研发思维两个角度出发，更好地理解设计和研发之间的相互作用，从而在互联网产品的开发过程中实现更高效的协作。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/studyfigma/background/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Electron' /><meta property='article:tag' content='Figma' /><meta property='article:published_time' content='2024-04-28T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2024-04-28T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="学习和研究Figma：背景">
+<meta name="twitter:description" content=" 在探索互联网产品的全生命周期中，从设计到原型再到研发，Figma作为一款设计工具，其影响力不容小觑。Figma采用Electron框架构建，而Electron最新版本30.0.0中，废弃了browserView，转而提供WebContentsView。这一变化可能对Figma等使用Electron框架的产品产生影响。尽管现在解包Figma的asar文件会遇到内存越界的问题，但这并不妨碍我们学习和研究Figma的基础功能。通过深入了解Electron的功能特性，我们可以从产品视角和研发思维两个角度出发，更好地理解设计和研发之间的相互作用，从而在互联网产品的开发过程中实现更高效的协作。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/%E5%AD%A6%E4%B9%A0/" >
+                学习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/studyfigma/background/">学习和研究Figma：背景</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             在探索互联网产品的全生命周期中，从设计到原型再到研发，Figma作为一款设计工具，其影响力不容小觑。Figma采用Electron框架构建，而Electron最新版本30.0.0中，废弃了browserView，转而提供WebContentsView。这一变化可能对Figma等使用Electron框架的产品产生影响。尽管现在解包Figma的asar文件会遇到内存越界的问题，但这并不妨碍我们学习和研究Figma的基础功能。通过深入了解Electron的功能特性，我们可以从产品视角和研发思维两个角度出发，更好地理解设计和研发之间的相互作用，从而在互联网产品的开发过程中实现更高效的协作。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-28</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好。</p>
+<p>前些时候看Electron更新的<a class="link" href="https://www.electronjs.org/blog/electron-30-0"  target="_blank" rel="noopener"
+    >blog</a>，已经迭代30.0.0版本了，提供WebContentsView将browserView废弃了。</p>
+<p><img src="https://s2.loli.net/2024/04/28/JDay3nrHqkWusBd.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="electron blog 30v remove bv 2024-04-28 18.04.06.png"
+	
+	
+></p>
+<p>想起当时接触客户端开发还是NW，了解Electron的时候才11.0.0的版本。那这和<a class="link" href="https://www.figma.com/"  target="_blank" rel="noopener"
+    >Figma</a>有什么关系呢？在探索互联网产品的整个流程中，不管是设计、原型还是研发，多多少少都接触过Figma这款产品，或者听过Adobe计划两百亿美金收购Figma的事件，结果暂且不论，可以见得Figma这款产品的影响力。打开这款产品的安装包，我们可以看到，它使用的正是Electron框架，browserView都是Figma团队提供的。</p>
+<p>一开始，还能直接解包看到Figma的源码，现在直接解包asar会出现内存越界，<del>目前还不知道怎么处理。不过这也不影响我们学习和研究Figma基础的功能。</del>（已经更新<a class="link" href="/posts/studyFigma/ExtractFigmaAsar.md" >处理方式</a>）。有些时间没有碰Electron，借此机会，也算是对之前做过的内容，进行了一个总结沉淀吧。</p>
+<p>不管是产品视角看待功能，还是研发思维看待实现，说不定能够有不同的角度，设计和研发能够相互理解哈哈哈/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/electron/">Electron</a>
+        
+            <a href="/blog/zh/tags/figma/">Figma</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

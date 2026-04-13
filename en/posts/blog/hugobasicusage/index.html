@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' Description: Learn how to enhance your Hugo blog with multi-language support, welcome messages, social icons, and menu options. Discover the importance of content organization, search functionality, and taxonomy for a more user-friendly experience. Follow this guide to transform your blog from a simple article page to a fully-featured, engaging website.'>
+<title>Build a personal blog in five minutes: i18n, categories, search settings</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/en/posts/blog/hugobasicusage/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Build a personal blog in five minutes: i18n, categories, search settings'>
+<meta property='og:description' content=' Description: Learn how to enhance your Hugo blog with multi-language support, welcome messages, social icons, and menu options. Discover the importance of content organization, search functionality, and taxonomy for a more user-friendly experience. Follow this guide to transform your blog from a simple article page to a fully-featured, engaging website.'>
+<meta property='og:url' content='https://690591397.github.io/blog/en/posts/blog/hugobasicusage/'>
+<meta property='og:site_name' content='Hawkeye-xb Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='hugo' /><meta property='article:published_time' content='2024-04-24T06:47:40&#43;00:00'/><meta property='article:modified_time' content='2024-04-24T06:47:40&#43;00:00'/>
+<meta name="twitter:title" content="Build a personal blog in five minutes: i18n, categories, search settings">
+<meta name="twitter:description" content=" Description: Learn how to enhance your Hugo blog with multi-language support, welcome messages, social icons, and menu options. Discover the importance of content organization, search functionality, and taxonomy for a more user-friendly experience. Follow this guide to transform your blog from a simple article page to a fully-featured, engaging website.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/en/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/en">Hawkeye-xb Blog</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/archives/' >
+                
+                
+                
+                <span>archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>series</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/about/' >
+                
+                
+                
+                <span>about</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" >简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" selected>English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#hugo-basic-usage">hugo basic usage</a>
+      <ul>
+        <li><a href="#content-organizationhttpsgohugoiocontent-managementorganization"><a href="https://gohugo.io/content-management/organization/">Content organization</a></a></li>
+        <li><a href="#i18n">i18n</a></li>
+        <li><a href="#welcome-message">welcome message</a></li>
+        <li><a href="#social-icongithub-icon">social icon（Github icon）</a></li>
+        <li><a href="#configuration-file-splitting">configuration file splitting</a></li>
+        <li><a href="#menu">menu</a></li>
+        <li><a href="#search">search</a></li>
+        <li><a href="#category-tag-series">category, tag, series</a></li>
+        <li><a href="#finally">finally</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/en/categories/blog/" >
+                Blog
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/en/posts/blog/hugobasicusage/">Build a personal blog in five minutes: i18n, categories, search settings</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             Description: Learn how to enhance your Hugo blog with multi-language support, welcome messages, social icons, and menu options. Discover the importance of content organization, search functionality, and taxonomy for a more user-friendly experience. Follow this guide to transform your blog from a simple article page to a fully-featured, engaging website.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-24</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    3 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+        <footer class="article-translations">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+            <div>
+                
+                    <a href="https://690591397.github.io/blog/zh/posts/blog/hugobasicusage/" class="link">简体中文(chinese)</a>
+                
+            </div>
+        </footer>
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Hello everyone.</p>
+<p>Today we will continue to study the blog construction of personal webmaster exploration.</p>
+<p>After we builded the blog, the page was all alone with only the article content. No support for classification arrangement, and mult-language switching, and there is not even a blog introduction or welcome message. This is a little too shabby. Let&rsquo;s decorate it.</p>
+<p>Of course, you can alse directly refer to the configuration of the <a class="link" href="https://adityatelange.github.io/hugo-PaperMod/"  target="_blank" rel="noopener"
+    >Demo</a> project.</p>
+<h2 id="hugo-basic-usage">hugo basic usage</h2>
+<h3 id="content-organizationhttpsgohugoiocontent-managementorganization"><a class="link" href="https://gohugo.io/content-management/organization/"  target="_blank" rel="noopener"
+    >Content organization</a></h3>
+<p>Hugo assumes that the same structure that works to organize your source content is used to organize the rendered site.</p>
+<h3 id="i18n">i18n</h3>
+<p>The Demo project is missing information about the default language and language directory.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">defaultContentLanguage</span><span class="p">:</span><span class="w"> </span><span class="l">zh</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">defaultContentLanguageInSubdir</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">languages</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">en</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">languageName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;English&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">contentDir</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;content/en&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">zh</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">languageName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;简体中文(chinese)&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">contentDir</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;content/zh&#34;</span><span class="w">
+</span></span></span></code></pre></div><h3 id="welcome-message">welcome message</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">en</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">languageName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;EN&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">contentDir</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;content/en&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">homeInfoParams</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">Content</span><span class="p">:</span><span class="w"> </span><span class="p">&gt;</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">        👋 Welcome to Hawkeye-xb blog!</span><span class="w">        
+</span></span></span></code></pre></div><h3 id="social-icongithub-icon">social icon（Github icon）</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">socialIcons</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">github</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">title</span><span class="p">:</span><span class="w"> </span><span class="l">View Source on Github</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;https://github.com/hawkeye-xb/blog&#34;</span><span class="w">
+</span></span></span></code></pre></div><h3 id="configuration-file-splitting">configuration file splitting</h3>
+<p>If there are many languages to be supported, the configuration file will become very long. <a class="link" href="https://gohugo.io/getting-started/configuration/#configuration-directory"  target="_blank" rel="noopener"
+    >Configuration-directory</a> can handle this problem. It can alse be split according to env.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">my-project/
+</span></span><span class="line"><span class="cl">└── config/
+</span></span><span class="line"><span class="cl">    ├── _default/
+</span></span><span class="line"><span class="cl">    │   ├── hugo.toml
+</span></span><span class="line"><span class="cl">    │   ├── menus.en.toml
+</span></span><span class="line"><span class="cl">    │   ├── menus.de.toml
+</span></span><span class="line"><span class="cl">    │   └── params.toml
+</span></span><span class="line"><span class="cl">    └── production/
+</span></span><span class="line"><span class="cl">        └── params.toml
+</span></span></code></pre></div><h3 id="menu">menu</h3>
+<p>No method has been found for the dropdown submenu.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">menu</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">main</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Archive</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">archives</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Search</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">search/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">weight</span><span class="p">:</span><span class="w"> </span><span class="m">10</span><span class="w">
+</span></span></span></code></pre></div><p>Weight is sorting.</p>
+<h3 id="search">search</h3>
+<p>It just so happens that the menu here is the URL of archive and search respectively.</p>
+<p>The search function requires creating files and setting layout.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl"><span class="c">&lt;!-- --- --&gt;</span>
+</span></span><span class="line"><span class="cl">title: &#34;Search&#34;
+</span></span><span class="line"><span class="cl">placeholder: Search demo site with full text fuzzy search ...
+</span></span><span class="line"><span class="cl">layout: &#34;search&#34;
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- --- --&gt;</span>
+</span></span></code></pre></div><p>It was verified that entering any content in the search box did not display any matching items. You also need <a class="link" href="https://github.com/adityatelange/hugo-PaperMod/wiki/Variables"  target="_blank" rel="noopener"
+    >paperMod fuseOpts</a> to implement the search.</p>
+<pre tabindex="0"><code>fuseOpts:
+  isCaseSensitive: false
+  shouldSort: true
+  location: 0
+  distance: 1000
+  threshold: 0.4
+  minMatchCharLength: 0
+  limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
+  keys: [&#34;title&#34;, &#34;permalink&#34;, &#34;summary&#34;, &#34;content&#34;] ##  can be less but not more than shown in list
+</code></pre><p>And <a class="link" href="https://gohugo.io/templates/output-formats/"  target="_blank" rel="noopener"
+    >hugo output settings</a>, to provide content for the search function.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">outputs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">home</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">HTML</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">RSS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="l">JSON</span><span class="w">
+</span></span></span></code></pre></div><h3 id="category-tag-series">category, tag, series</h3>
+<p>category, tag, series alse need to define the category in front matter.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">taxonomies</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">category</span><span class="p">:</span><span class="w"> </span><span class="l">categories</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">tag</span><span class="p">:</span><span class="w"> </span><span class="l">tags</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">series</span><span class="p">:</span><span class="w"> </span><span class="l">series</span><span class="w">
+</span></span></span></code></pre></div><p>front matter</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-markdown" data-lang="markdown"><span class="line"><span class="cl">+++
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">categories = [&#39;blog&#39;]
+</span></span><span class="line"><span class="cl">tags = [&#39;hugo&#39;]
+</span></span><span class="line"><span class="cl">...
+</span></span><span class="line"><span class="cl">+++
+</span></span></code></pre></div><h3 id="finally">finally</h3>
+<p>To summarize here, we have set up the <strong>multi-language</strong> of Hugo blog.
+On this basis, set the <strong>welcome message, social icons</strong> and <strong>menu</strong>.
+Added <strong>archive, search, category and tag</strong> to the menu.</p>
+<p>I hope these five minutes today will be helpful to you/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/en/tags/hugo/">Hugo</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">Related content</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/en/posts/blog/buildyourblog/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Build a personal blog in five minutes: build it zero cost</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

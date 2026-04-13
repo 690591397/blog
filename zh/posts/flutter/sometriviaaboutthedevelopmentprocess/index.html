@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='写完这整个项目，Flutter算是会了吧，但感觉啥也没学会，基本所有的问题和内容，都是通过GPT的帮助完成的，用不着脑子，根本用不着🐶。 Flutter的组件特性、如何使用就不做过多说明了，简单展示下通过直接询问GPT，得到几个例如路由、本地数据存储等关键点的代码，AI使用好了可以快速的让人在某些没接触过的内容上到达一定的水准，但不一定对，得思考和质疑。
+路由： 鉴于功能简单，仅有一个页面跳转场景，也就是首页跳转编辑页。回到列表页面时候更新展示数据
+Navigator.push(context, MaterialPageRoute(builder: (context) { return DetailsPage(defaultCardInfo: value,); })).then((_) =&amp;gt; { // 在这里获取新的数据并更新状态 }); 再增加路由返回之前拦截，做原始数据的改动检测；
+WillPopScope(onWillPop: _onWillPop, child:） 本地持久化： GPT给出了SharedPreferences、SQLite、文件存储等不少方案。
+虽然功能简单，需要的数据结构也不复杂，键 - 值对的本地存储结构也能满足，出于如果要转成多平台、设备数据同步，就少不了使用服务器了（当然印象中IOS可以使用iCloud的api做到数据同步，后续探索），出于这个考虑选择了SQLite。
+DB的操作GPT给出代码基本可用。
+这里节选部分代码，在DB版本升级，需要新增字段的时候给得不太清晰，但自己稍微试试也能得到结果。
+class DatabaseHelper { static final DatabaseHelper _instance = DatabaseHelper.internal(); factory DatabaseHelper() =&amp;gt; _instance; DatabaseHelper.internal(); static Database? _db; Future&amp;lt;Database&amp;gt; get db async { _db ??= await initDb(); return _db!; } initDb() async { var databasesPath = await getDatabasesPath(); String path = join(databasesPath, &amp;#39;card_type_db.db&amp;#39;); var db = await openDatabase(path, version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade); return db; } void _onCreate(Database db, int newVersion) async { await db.'>
+<title>零基础实战Flutter：一些开发过程</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/flutter/sometriviaaboutthedevelopmentprocess/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='零基础实战Flutter：一些开发过程'>
+<meta property='og:description' content='写完这整个项目，Flutter算是会了吧，但感觉啥也没学会，基本所有的问题和内容，都是通过GPT的帮助完成的，用不着脑子，根本用不着🐶。 Flutter的组件特性、如何使用就不做过多说明了，简单展示下通过直接询问GPT，得到几个例如路由、本地数据存储等关键点的代码，AI使用好了可以快速的让人在某些没接触过的内容上到达一定的水准，但不一定对，得思考和质疑。
+路由： 鉴于功能简单，仅有一个页面跳转场景，也就是首页跳转编辑页。回到列表页面时候更新展示数据
+Navigator.push(context, MaterialPageRoute(builder: (context) { return DetailsPage(defaultCardInfo: value,); })).then((_) =&amp;gt; { // 在这里获取新的数据并更新状态 }); 再增加路由返回之前拦截，做原始数据的改动检测；
+WillPopScope(onWillPop: _onWillPop, child:） 本地持久化： GPT给出了SharedPreferences、SQLite、文件存储等不少方案。
+虽然功能简单，需要的数据结构也不复杂，键 - 值对的本地存储结构也能满足，出于如果要转成多平台、设备数据同步，就少不了使用服务器了（当然印象中IOS可以使用iCloud的api做到数据同步，后续探索），出于这个考虑选择了SQLite。
+DB的操作GPT给出代码基本可用。
+这里节选部分代码，在DB版本升级，需要新增字段的时候给得不太清晰，但自己稍微试试也能得到结果。
+class DatabaseHelper { static final DatabaseHelper _instance = DatabaseHelper.internal(); factory DatabaseHelper() =&amp;gt; _instance; DatabaseHelper.internal(); static Database? _db; Future&amp;lt;Database&amp;gt; get db async { _db ??= await initDb(); return _db!; } initDb() async { var databasesPath = await getDatabasesPath(); String path = join(databasesPath, &amp;#39;card_type_db.db&amp;#39;); var db = await openDatabase(path, version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade); return db; } void _onCreate(Database db, int newVersion) async { await db.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/flutter/sometriviaaboutthedevelopmentprocess/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-04-03T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-04-03T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="零基础实战Flutter：一些开发过程">
+<meta name="twitter:description" content="写完这整个项目，Flutter算是会了吧，但感觉啥也没学会，基本所有的问题和内容，都是通过GPT的帮助完成的，用不着脑子，根本用不着🐶。 Flutter的组件特性、如何使用就不做过多说明了，简单展示下通过直接询问GPT，得到几个例如路由、本地数据存储等关键点的代码，AI使用好了可以快速的让人在某些没接触过的内容上到达一定的水准，但不一定对，得思考和质疑。
+路由： 鉴于功能简单，仅有一个页面跳转场景，也就是首页跳转编辑页。回到列表页面时候更新展示数据
+Navigator.push(context, MaterialPageRoute(builder: (context) { return DetailsPage(defaultCardInfo: value,); })).then((_) =&amp;gt; { // 在这里获取新的数据并更新状态 }); 再增加路由返回之前拦截，做原始数据的改动检测；
+WillPopScope(onWillPop: _onWillPop, child:） 本地持久化： GPT给出了SharedPreferences、SQLite、文件存储等不少方案。
+虽然功能简单，需要的数据结构也不复杂，键 - 值对的本地存储结构也能满足，出于如果要转成多平台、设备数据同步，就少不了使用服务器了（当然印象中IOS可以使用iCloud的api做到数据同步，后续探索），出于这个考虑选择了SQLite。
+DB的操作GPT给出代码基本可用。
+这里节选部分代码，在DB版本升级，需要新增字段的时候给得不太清晰，但自己稍微试试也能得到结果。
+class DatabaseHelper { static final DatabaseHelper _instance = DatabaseHelper.internal(); factory DatabaseHelper() =&amp;gt; _instance; DatabaseHelper.internal(); static Database? _db; Future&amp;lt;Database&amp;gt; get db async { _db ??= await initDb(); return _db!; } initDb() async { var databasesPath = await getDatabasesPath(); String path = join(databasesPath, &amp;#39;card_type_db.db&amp;#39;); var db = await openDatabase(path, version: 2, onCreate: _onCreate, onUpgrade: _onUpgrade); return db; } void _onCreate(Database db, int newVersion) async { await db.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#路由"><strong>路由：</strong></a></li>
+        <li><a href="#本地持久化"><strong>本地持久化：</strong></a></li>
+        <li><a href="#颜色">颜色：</a></li>
+        <li><a href="#无障碍功能">无障碍功能：</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/flutter/" >
+                Flutter
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/flutter/sometriviaaboutthedevelopmentprocess/">零基础实战Flutter：一些开发过程</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-03</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>写完这整个项目，Flutter算是会了吧，但感觉啥也没学会，基本所有的问题和内容，都是通过GPT的帮助完成的，用不着脑子，根本用不着🐶。 <br>
+Flutter的组件特性、如何使用就不做过多说明了，简单展示下通过直接询问GPT，得到几个例如路由、本地数据存储等关键点的代码，AI使用好了可以快速的让人在某些没接触过的内容上到达一定的水准，但不一定对，得思考和质疑。</p>
+<h3 id="路由"><strong>路由：</strong></h3>
+<p>鉴于功能简单，仅有一个页面跳转场景，也就是首页跳转编辑页。回到列表页面时候更新展示数据</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"><span class="n">Navigator</span><span class="p">.</span><span class="n">push</span><span class="p">(</span><span class="n">context</span><span class="p">,</span> <span class="n">MaterialPageRoute</span><span class="p">(</span><span class="nl">builder:</span> <span class="p">(</span><span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="n">DetailsPage</span><span class="p">(</span><span class="nl">defaultCardInfo:</span> <span class="n">value</span><span class="p">,);</span>
+</span></span><span class="line"><span class="cl"><span class="p">})).</span><span class="n">then</span><span class="p">((</span><span class="n">_</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 在这里获取新的数据并更新状态
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">});</span>
+</span></span></code></pre></div><p>再增加路由返回之前拦截，做原始数据的改动检测；</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"><span class="n">WillPopScope</span><span class="p">(</span><span class="nl">onWillPop:</span> <span class="n">_onWillPop</span><span class="p">,</span> <span class="nl">child:</span><span class="err">）</span>
+</span></span></code></pre></div><h3 id="本地持久化"><strong>本地持久化：</strong></h3>
+<p>GPT给出了SharedPreferences、SQLite、文件存储等不少方案。</p>
+<p>虽然功能简单，需要的数据结构也不复杂，键 - 值对的本地存储结构也能满足，出于如果要转成多平台、设备数据同步，就少不了使用服务器了（当然印象中IOS可以使用iCloud的api做到数据同步，后续探索），出于这个考虑选择了SQLite。</p>
+<p>DB的操作GPT给出代码基本可用。</p>
+<p>这里节选部分代码，在DB版本升级，需要新增字段的时候给得不太清晰，但自己稍微试试也能得到结果。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"><span class="kd">class</span> <span class="nc">DatabaseHelper</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">static</span> <span class="kd">final</span> <span class="n">DatabaseHelper</span> <span class="n">_instance</span> <span class="o">=</span> <span class="n">DatabaseHelper</span><span class="p">.</span><span class="n">internal</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">factory</span> <span class="n">DatabaseHelper</span><span class="p">()</span> <span class="o">=&gt;</span> <span class="n">_instance</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">DatabaseHelper</span><span class="p">.</span><span class="n">internal</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">static</span> <span class="n">Database</span><span class="o">?</span> <span class="n">_db</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Future</span><span class="o">&lt;</span><span class="n">Database</span><span class="o">&gt;</span> <span class="kd">get</span> <span class="n">db</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">_db</span> <span class="o">??=</span> <span class="kd">await</span> <span class="n">initDb</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">_db</span><span class="o">!</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="n">initDb</span><span class="p">()</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="n">databasesPath</span> <span class="o">=</span> <span class="kd">await</span> <span class="n">getDatabasesPath</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="kt">String</span> <span class="n">path</span> <span class="o">=</span> <span class="n">join</span><span class="p">(</span><span class="n">databasesPath</span><span class="p">,</span> <span class="s1">&#39;card_type_db.db&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">var</span> <span class="n">db</span> <span class="o">=</span> <span class="kd">await</span> <span class="n">openDatabase</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="nl">version:</span> <span class="m">2</span><span class="p">,</span> <span class="nl">onCreate:</span> <span class="n">_onCreate</span><span class="p">,</span> <span class="nl">onUpgrade:</span> <span class="n">_onUpgrade</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">db</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">_onCreate</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;&#39;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s1">      CREATE TABLE CardType (
+</span></span></span><span class="line"><span class="cl"><span class="s1">        id INTEGER PRIMARY KEY AUTOINCREMENT,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        title TEXT,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        contentList TEXT,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        created_at INTEGER,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        updated_at INTEGER,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        favorite INTEGER DEFAULT 0
+</span></span></span><span class="line"><span class="cl"><span class="s1">      )
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#39;&#39;&#39;</span><span class="p">);</span> <span class="c1">// 结尾逗号不能要
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="n">_onUpgrade</span><span class="p">(</span><span class="n">Database</span> <span class="n">db</span><span class="p">,</span> <span class="kt">int</span> <span class="n">oldVersion</span><span class="p">,</span> <span class="kt">int</span> <span class="n">newVersion</span><span class="p">)</span> <span class="kd">async</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 如果旧版本小于2，那么添加favorite字段
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="n">oldVersion</span> <span class="o">&lt;</span> <span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">await</span> <span class="n">db</span><span class="p">.</span><span class="n">execute</span><span class="p">(</span><span class="s1">&#39;ALTER TABLE CardType ADD COLUMN favorite INTEGER DEFAULT 0&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">}</span>
+</span></span></code></pre></div><h3 id="颜色">颜色：</h3>
+<p>Flutter的颜色管理方式很系统（印象中使用antd做web后台管理系统时候处理过，但是有没有这么系统不太确认），所以单独作为一个功能项来讲述，后续可以调研在web开发中可以怎么参照。</p>
+<p>Flutter中可以非常简单的只设定一个主题色，直接影响整个系统的各种颜色，代码如下。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"> <span class="err">@</span><span class="n">override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">Widget</span> <span class="n">build</span><span class="p">(</span><span class="n">BuildContext</span> <span class="n">context</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">final</span> <span class="n">ColorScheme</span> <span class="n">colorScheme</span> <span class="o">=</span> <span class="n">ColorScheme</span><span class="p">.</span><span class="n">fromSeed</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">seedColor:</span> <span class="n">Colors</span><span class="p">.</span><span class="n">deepPurple</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// background: backgroundColor,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">MaterialApp</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">theme:</span> <span class="n">ThemeData</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">        <span class="nl">colorScheme:</span> <span class="n">colorScheme</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nl">useMaterial3:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// scaffoldBackgroundColor: backgroundColor,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="nl">home:</span> <span class="kd">const</span> <span class="n">MyHomePage</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"><span class="nl">color:</span> <span class="n">Theme</span><span class="p">.</span><span class="n">of</span><span class="p">(</span><span class="n">context</span><span class="p">).</span><span class="n">colorScheme</span><span class="p">.</span><span class="n">surfaceVariant</span><span class="p">,</span>
+</span></span></code></pre></div><p>理论上Web也有类似的。</p>
+<p>大部分公司有设计师的情况下，颜色体系（使用Material3或者其它）都由设计师标定，再通过全局统一的css文件给出名称。但是在个人开发或者企业定制化的后台管理系统开发等场景下，这个颜色方案无比的适合。</p>
+<h3 id="无障碍功能">无障碍功能：</h3>
+<p>不知道有多少APP会主动考虑这些无障碍功能，我也是在Google Play发布前测试报告提示的时候才想起，可能发布很多平台，都不会有这样的提示。不管发布什么平台，虽然可能这部分群体较少，但是我还是希望更多人在做APP的时候，能兼顾到常规之外的群体。</p>
+<p>AI提示Flutter 里面使用Semantics 组件包裹，可以为内容提供标签。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Dart" data-lang="Dart"><span class="line"><span class="cl"><span class="n">Semantics</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">  <span class="nl">button:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nl">label:</span> <span class="s1">&#39;保存修改&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nl">child:</span> <span class="kd">const</span> <span class="n">Icon</span><span class="p">(</span><span class="n">Icons</span><span class="p">.</span><span class="n">check</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl"><span class="p">),</span>
+</span></span></code></pre></div><p>（但是尝试给Scaffold 的 Appbar添加title，包裹到Semantics 组件，页面也依旧没有内容标签，有待后续研究。或者有大佬能给解答下，先行谢过）</p>
+<p>更多Flutter相关内容，会尝试整理出来，但是可能目前项目上用到的Flutter知识并没有这么需要由我来再讲述。针对语料较多的代码，直接询问AI，都能得到挺好的结果的，甚至都不需要对AI进行PUA，调各种各样的提示词，如果非得这样，还不如直接自己去查找答案更来得省心。
+后续也将会斗胆谈谈这些时间做AI应用，和对AI的理解。</p>
+<!-- 
+----
+[上一篇：环境搭建](https://juejin.cn/post/7352763168902889526)    
+[下一篇：打包构建](https://juejin.cn/post/7355525978595868724) -->
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

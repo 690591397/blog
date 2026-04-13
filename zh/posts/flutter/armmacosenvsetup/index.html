@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' 在MacOS M1芯片机器上搭建Flutter开发环境，首先需要安装Rosetta以兼容x86_64指令集。接着，下载并解压Flutter SDK到指定目录，并配置环境变量。建议安装Xcode和Android Studio以完善开发工具链。使用`flutter doctor`命令检查工具链的完整性。对于CocoaPods的安装，可参考相关指南。安装开发工具的Flutter插件后，即可创建并运行Flutter项目。在开发过程中，`r`命令用于热更新，`R`用于热重启，而终端输出的DevTools地址可用于调试。'>
+<title>零基础实战Flutter：环境搭建(macOS M芯片)</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/flutter/armmacosenvsetup/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='零基础实战Flutter：环境搭建(macOS M芯片)'>
+<meta property='og:description' content=' 在MacOS M1芯片机器上搭建Flutter开发环境，首先需要安装Rosetta以兼容x86_64指令集。接着，下载并解压Flutter SDK到指定目录，并配置环境变量。建议安装Xcode和Android Studio以完善开发工具链。使用`flutter doctor`命令检查工具链的完整性。对于CocoaPods的安装，可参考相关指南。安装开发工具的Flutter插件后，即可创建并运行Flutter项目。在开发过程中，`r`命令用于热更新，`R`用于热重启，而终端输出的DevTools地址可用于调试。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/flutter/armmacosenvsetup/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-04-02T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-04-02T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="零基础实战Flutter：环境搭建(macOS M芯片)">
+<meta name="twitter:description" content=" 在MacOS M1芯片机器上搭建Flutter开发环境，首先需要安装Rosetta以兼容x86_64指令集。接着，下载并解压Flutter SDK到指定目录，并配置环境变量。建议安装Xcode和Android Studio以完善开发工具链。使用`flutter doctor`命令检查工具链的完整性。对于CocoaPods的安装，可参考相关指南。安装开发工具的Flutter插件后，即可创建并运行Flutter项目。在开发过程中，`r`命令用于热更新，`R`用于热重启，而终端输出的DevTools地址可用于调试。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#rosetta">Rosetta</a></li>
+        <li><a href="#初始化-flutter-sdk"><strong>初始化 Flutter SDK</strong></a></li>
+        <li><a href="#开发环境">开发环境</a></li>
+        <li><a href="#开发工具">开发工具</a></li>
+        <li><a href="#cmd">CMD</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/flutter/armmacosenvsetup/">零基础实战Flutter：环境搭建(macOS M芯片)</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             在MacOS M1芯片机器上搭建Flutter开发环境，首先需要安装Rosetta以兼容x86_64指令集。接着，下载并解压Flutter SDK到指定目录，并配置环境变量。建议安装Xcode和Android Studio以完善开发工具链。使用`flutter doctor`命令检查工具链的完整性。对于CocoaPods的安装，可参考相关指南。安装开发工具的Flutter插件后，即可创建并运行Flutter项目。在开发过程中，`r`命令用于热更新，`R`用于热重启，而终端输出的DevTools地址可用于调试。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-02</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>MacOS M1芯片机器。</p>
+<p><a class="link" href="https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=download"  target="_blank" rel="noopener"
+    >Start building Flutter iOS apps on macOS</a></p>
+<p>直接按照文档操作也都能完成，M系列芯片在一些依赖上安装略微麻烦。</p>
+<h3 id="rosetta">Rosetta</h3>
+<p>M芯片执行x86_64指令集的兼容层，使用softwareupdate 安装Rosetta并且接受协议。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-jsx" data-lang="jsx"><span class="line"><span class="cl"><span class="nx">sudo</span> <span class="nx">softwareupdate</span> <span class="o">--</span><span class="nx">install</span><span class="o">-</span><span class="nx">rosetta</span> <span class="o">--</span><span class="nx">agree</span><span class="o">-</span><span class="nx">to</span><span class="o">-</span><span class="nx">license</span>
+</span></span></code></pre></div><h3 id="初始化-flutter-sdk"><strong>初始化 Flutter SDK</strong></h3>
+<p>下载对应的SDK包，创建并且解压到 <code>~/development/</code>.目录，将bin文件PATH 导出（如果想换目录，修改导出的路径即可）。下面这些步骤官网都挺齐全。</p>
+<ol>
+<li>下载地址：https://docs.flutter.dev/release/archive?tab=macos</li>
+<li>创建目录 ~/development/</li>
+<li>解压SDK（注意替换包名）</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-jsx" data-lang="jsx"><span class="line"><span class="cl"><span class="nx">unzip</span> <span class="o">~</span><span class="err">/development/flutter_sdk_v1.0.0.zip -d ~/development/</span>
+</span></span></code></pre></div><ol>
+<li>创建或修改 ~/.zshenv 文件</li>
+<li>最后添加bin导出</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-jsx" data-lang="jsx"><span class="line"><span class="cl"><span class="kr">export</span> <span class="nx">PATH</span><span class="o">=</span><span class="nx">$HOME</span><span class="o">/</span><span class="nx">development</span><span class="o">/</span><span class="nx">flutter</span><span class="o">/</span><span class="nx">bin</span><span class="o">:</span><span class="nx">$PATH</span>
+</span></span></code></pre></div><ol>
+<li>重新打开新的终端</li>
+</ol>
+<h3 id="开发环境">开发环境</h3>
+<p>建议直接下载xcode、Android studio，使用工具链方便。过程可以多次<code>flutter doctor</code> 检查缺失的工具。如果不做IOS或者Android开发，可以无视flutter doctor的相关报错。</p>
+<p>M系列下下载 CocoaPod参考：</p>
+<p><a class="link" href="https://stackoverflow.com/questions/64901180/how-to-run-cocoapods-on-apple-silicon-m1"  target="_blank" rel="noopener"
+    >How to run CocoaPods on Apple Silicon (M1)</a></p>
+<h3 id="开发工具">开发工具</h3>
+<p>安装对应开发工具的Flutter开发插件，使用对应方法创建并且启动项目。</p>
+<h3 id="cmd">CMD</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-jsx" data-lang="jsx"><span class="line"><span class="cl"><span class="nx">flutter</span> <span class="nx">create</span> <span class="nx">my_app</span>
+</span></span><span class="line"><span class="cl"><span class="nx">cd</span> <span class="nx">my_app</span>
+</span></span><span class="line"><span class="cl"><span class="nx">flutter</span> <span class="nx">pub</span> <span class="nx">get</span>
+</span></span><span class="line"><span class="cl"><span class="nx">flutter</span> <span class="nx">run</span>
+</span></span></code></pre></div><p>终端每次启动之后会输出以下内容：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-jsx" data-lang="jsx"><span class="line"><span class="cl"><span class="nx">Installing</span> <span class="nx">build</span><span class="o">/</span><span class="nx">app</span><span class="o">/</span><span class="nx">outputs</span><span class="o">/</span><span class="nx">flutter</span><span class="o">-</span><span class="nx">apk</span><span class="o">/</span><span class="nx">app</span><span class="o">-</span><span class="nx">debug</span><span class="p">.</span><span class="nx">apk</span><span class="p">...</span>           <span class="mf">9.3</span><span class="nx">s</span>
+</span></span><span class="line"><span class="cl"><span class="nx">Syncing</span> <span class="nx">files</span> <span class="nx">to</span> <span class="nx">device</span> <span class="nx">sdk</span> <span class="nx">gphone64</span> <span class="nx">arm64</span><span class="p">...</span>                      <span class="mi">147</span><span class="nx">ms</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Flutter</span> <span class="nx">run</span> <span class="nx">key</span> <span class="nx">commands</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="nx">r</span> <span class="nx">Hot</span> <span class="nx">reload</span><span class="p">.</span> <span class="err">🔥🔥🔥</span>
+</span></span><span class="line"><span class="cl"><span class="nx">R</span> <span class="nx">Hot</span> <span class="nx">restart</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="nx">h</span> <span class="nx">List</span> <span class="nx">all</span> <span class="nx">available</span> <span class="nx">interactive</span> <span class="nx">commands</span><span class="p">.</span>
+</span></span><span class="line"><span class="cl"><span class="nx">d</span> <span class="nx">Detach</span> <span class="p">(</span><span class="nx">terminate</span> <span class="s2">&#34;flutter run&#34;</span> <span class="nx">but</span> <span class="nx">leave</span> <span class="nx">application</span> <span class="nx">running</span><span class="p">).</span>
+</span></span><span class="line"><span class="cl"><span class="nx">c</span> <span class="nx">Clear</span> <span class="nx">the</span> <span class="nx">screen</span>
+</span></span><span class="line"><span class="cl"><span class="nx">q</span> <span class="nx">Quit</span> <span class="p">(</span><span class="nx">terminate</span> <span class="nx">the</span> <span class="nx">application</span> <span class="nx">on</span> <span class="nx">the</span> <span class="nx">device</span><span class="p">).</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">A</span> <span class="nx">Dart</span> <span class="nx">VM</span> <span class="nx">Service</span> <span class="nx">on</span> <span class="nx">sdk</span> <span class="nx">gphone64</span> <span class="nx">arm64</span> <span class="nx">is</span> <span class="nx">available</span> <span class="nx">at</span><span class="o">:</span> <span class="nx">http</span><span class="o">:</span><span class="c1">//127.0.0.1:56456/1Aldd0I28OM=/
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">The</span> <span class="nx">Flutter</span> <span class="nx">DevTools</span> <span class="kr">debugger</span> <span class="nx">and</span> <span class="nx">profiler</span> <span class="nx">on</span> <span class="nx">sdk</span> <span class="nx">gphone64</span> <span class="nx">arm64</span> <span class="nx">is</span> <span class="nx">available</span> <span class="nx">at</span><span class="o">:</span> <span class="nx">http</span><span class="o">:</span><span class="c1">//127.0.0.1:9100?uri=http://127.0.0.1:56456/1Aldd0I28OM=/
+</span></span></span></code></pre></div><p>至此，就可以进行项目的开发，想法的实现了~</p>
+<p>稍微需要注意的是：</p>
+<p>r热更新，vscode启动的save代码会自动执行 r热更新；部分需要重启项目，R，在终端输入就可以。</p>
+<p>还有可以看到最后一行输出的地址，在浏览器输入，能看到devTool，调试使用。</p>
+<hr>
+<!-- [下一篇：项目开发的一些过程](https://juejin.cn/post/7355389990531416116) -->
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

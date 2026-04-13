@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='初始化 Electron Vite &#43; TypeScript
+npm init electron-app@latest my-new-app -- --template=vite-typescript 安装 Vue3 npm install vue@latest 安装 Vue3 插件 npm install @vitejs/plugin-vue 修改 renderer 配置 vite.renderer.config.ts
+import { defineConfig } from &amp;#39;vite&amp;#39;; import vue from &amp;#39;@vitejs/plugin-vue&amp;#39;; // https://vitejs.dev/config export default defineConfig({ plugins: [vue()], }); 调整目录(按需) ├── main.ts ├── preload.ts ├── renderer │ ├── App.vue │ └── index.ts └── types 调整 index.html 入口文件 src=&amp;quot;/src/renderer/index.ts&amp;quot;
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;title&amp;gt;Hello World!'>
+<title>Electron-forge &#43; Vite &#43; Typescript &#43; Vue3 初始化项目</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/mynetworkdisk/init/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Electron-forge &#43; Vite &#43; Typescript &#43; Vue3 初始化项目'>
+<meta property='og:description' content='初始化 Electron Vite &#43; TypeScript
+npm init electron-app@latest my-new-app -- --template=vite-typescript 安装 Vue3 npm install vue@latest 安装 Vue3 插件 npm install @vitejs/plugin-vue 修改 renderer 配置 vite.renderer.config.ts
+import { defineConfig } from &amp;#39;vite&amp;#39;; import vue from &amp;#39;@vitejs/plugin-vue&amp;#39;; // https://vitejs.dev/config export default defineConfig({ plugins: [vue()], }); 调整目录(按需) ├── main.ts ├── preload.ts ├── renderer │ ├── App.vue │ └── index.ts └── types 调整 index.html 入口文件 src=&amp;quot;/src/renderer/index.ts&amp;quot;
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;title&amp;gt;Hello World!'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/mynetworkdisk/init/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Electron-forge' /><meta property='article:tag' content='Vite' /><meta property='article:tag' content='Typescript' /><meta property='article:tag' content='Vue3' /><meta property='article:published_time' content='2024-11-07T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-11-07T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Electron-forge &#43; Vite &#43; Typescript &#43; Vue3 初始化项目">
+<meta name="twitter:description" content="初始化 Electron Vite &#43; TypeScript
+npm init electron-app@latest my-new-app -- --template=vite-typescript 安装 Vue3 npm install vue@latest 安装 Vue3 插件 npm install @vitejs/plugin-vue 修改 renderer 配置 vite.renderer.config.ts
+import { defineConfig } from &amp;#39;vite&amp;#39;; import vue from &amp;#39;@vitejs/plugin-vue&amp;#39;; // https://vitejs.dev/config export default defineConfig({ plugins: [vue()], }); 调整目录(按需) ├── main.ts ├── preload.ts ├── renderer │ ├── App.vue │ └── index.ts └── types 调整 index.html 入口文件 src=&amp;quot;/src/renderer/index.ts&amp;quot;
+&amp;lt;!DOCTYPE html&amp;gt; &amp;lt;html&amp;gt; &amp;lt;head&amp;gt; &amp;lt;meta charset=&amp;#34;UTF-8&amp;#34; /&amp;gt; &amp;lt;title&amp;gt;Hello World!">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#初始化-electron">初始化 Electron</a></li>
+        <li><a href="#安装-vue3">安装 Vue3</a></li>
+        <li><a href="#安装-vue3-插件">安装 Vue3 插件</a></li>
+        <li><a href="#修改-renderer-配置">修改 renderer 配置</a></li>
+        <li><a href="#调整目录按需">调整目录(按需)</a></li>
+        <li><a href="#调整-indexhtml-入口文件">调整 index.html 入口文件</a></li>
+        <li><a href="#调整脚本入口文件">调整脚本入口文件</a></li>
+        <li><a href="#运行代码">运行代码</a></li>
+        <li><a href="#vue-文件不被-ts-识别">Vue 文件不被 TS 识别</a></li>
+        <li><a href="#eslint-代码报错">ESLint 代码报错</a></li>
+        <li><a href="#vue3-支持">Vue3 支持</a>
+          <ul>
+            <li><a href="#问题">问题</a></li>
+            <li><a href="#解决">解决</a></li>
+          </ul>
+        </li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/electron/" >
+                Electron
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/mynetworkdisk/init/">Electron-forge &#43; Vite &#43; Typescript &#43; Vue3 初始化项目</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-07</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="初始化-electron">初始化 Electron</h3>
+<p><a class="link" href="https://www.electronforge.io/templates/vite-&#43;-typescript"  target="_blank" rel="noopener"
+    >Vite + TypeScript</a></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm init electron-app@latest my-new-app -- --template<span class="o">=</span>vite-typescript
+</span></span></code></pre></div><h3 id="安装-vue3">安装 Vue3</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm install vue@latest
+</span></span></code></pre></div><h3 id="安装-vue3-插件">安装 Vue3 插件</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm install @vitejs/plugin-vue
+</span></span></code></pre></div><h3 id="修改-renderer-配置">修改 renderer 配置</h3>
+<p><code>vite.renderer.config.ts</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">defineConfig</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;vite&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="nx">vue</span> <span class="kr">from</span> <span class="s1">&#39;@vitejs/plugin-vue&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// https://vitejs.dev/config
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">export</span> <span class="k">default</span> <span class="nx">defineConfig</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">plugins</span><span class="o">:</span> <span class="p">[</span><span class="nx">vue</span><span class="p">()],</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><h3 id="调整目录按需">调整目录(按需)</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">├── main.ts
+</span></span><span class="line"><span class="cl">├── preload.ts
+</span></span><span class="line"><span class="cl">├── renderer
+</span></span><span class="line"><span class="cl">│   ├── App.vue
+</span></span><span class="line"><span class="cl">│   └── index.ts
+</span></span><span class="line"><span class="cl">└── types
+</span></span></code></pre></div><h3 id="调整-indexhtml-入口文件">调整 index.html 入口文件</h3>
+<p><code>src=&quot;/src/renderer/index.ts&quot;</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span> <span class="p">/&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Hello World!<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;app&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;module&#34;</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;/src/renderer/index.ts&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><h3 id="调整脚本入口文件">调整脚本入口文件</h3>
+<p>/src/renderer/index.ts</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1">// import &#39;./index.css&#39;;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">createApp</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;vue&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="nx">App</span> <span class="kr">from</span> <span class="s2">&#34;./App.vue&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">createApp</span><span class="p">(</span><span class="nx">App</span><span class="p">).</span><span class="nx">mount</span><span class="p">(</span><span class="s2">&#34;#app&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;👋 This message is being logged by &#34;renderer.ts&#34;, included via Vite&#39;</span><span class="p">);</span>
+</span></span></code></pre></div><p>App.vue 随便写些内容。</p>
+<h3 id="运行代码">运行代码</h3>
+<p>就能看到效果了</p>
+<h3 id="vue-文件不被-ts-识别">Vue 文件不被 TS 识别</h3>
+<p>如：找不到模块“./App.vue”或其相应的类型声明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm install vue-tsc @vue/cli-plugin-typescript
+</span></span></code></pre></div><p>配置tsconfig</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;compilerOptions&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="err">...</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;types&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;vite/client&#34;</span><span class="p">,</span> <span class="s2">&#34;vue&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;include&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;src/**/*.ts&#34;</span><span class="p">,</span> <span class="s2">&#34;src/**/*.d.ts&#34;</span><span class="p">,</span> <span class="s2">&#34;src/**/*.tsx&#34;</span><span class="p">,</span> <span class="s2">&#34;src/**/*.vue&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="eslint-代码报错">ESLint 代码报错</h3>
+<p>如：Parsing error: &lsquo;;&rsquo; expected.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm install eslint-plugin-vue
+</span></span></code></pre></div><p>配置.eslintrc</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;extends&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;plugin:vue/vue3-essential&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="vue3-支持">Vue3 支持</h3>
+<h4 id="问题">问题</h4>
+<p>count 提示，已声明“__VLS_template”，但从未读取其值。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-Vue" data-lang="Vue"><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="p">&lt;</span><span class="nt">button</span> <span class="nt">@click</span><span class="s">=&#34;count++&#34;</span><span class="p">&gt;{{</span> <span class="na">count</span> <span class="p">}}&lt;/</span><span class="nt">button</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">template</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">script</span> <span class="na">setup</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">ref</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;vue&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">count</span> <span class="o">=</span> <span class="nx">ref</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><h4 id="解决">解决</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">npm install @vue/eslint-config-typescript
+</span></span></code></pre></div><p>配置.eslintrc</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;extends&#34;</span><span class="p">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;plugin:vue/vue3-essential&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;eslint:recommended&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;@vue/typescript/recommended&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">],</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="最后">最后</h3>
+<p>结束啦，<code>--save-dev</code> 按需求加吧。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/electron-forge/">Electron-Forge</a>
+        
+            <a href="/blog/zh/tags/vite/">Vite</a>
+        
+            <a href="/blog/zh/tags/typescript/">Typescript</a>
+        
+            <a href="/blog/zh/tags/vue3/">Vue3</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

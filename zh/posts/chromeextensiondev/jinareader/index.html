@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='大家好，今天继续薅jina.ai的羊毛。
+起因是有朋友使用kagi搜索能搜出来被墙了的内容，但是没挂梯子，点进去就是404 Not Found，就很尴尬，而且刚好还体验了jinaAI的URL读取功能。
+所以产生了这么个薅羊毛的流程：kagi搜索 - 404的地址 - r.jina.ai处理后展示。
+非常简单的流程，前天找到我的时候就顺带手给做了。当前代码在github.（后续在更新到方便访问的🐶）。当然了，jina ai不是这么用的！！！
+实现形式 整体都在在浏览器内操作，所以很自然，使用chrome extensions的方式去实现。
+chrome 插件开发 chrome 浏览器插件开发 正好在写这篇文章的时候测试插件，关闭了VPN这个地址是无法访问的，使用插件可以看到文档内容，虽然质量差了点儿哈哈哈哈。
+插件开发非常简单，和html开发一般。甚至直接将官方hello world demo下载下来，在chrome://extensions/打开开发者模式，直接加载项目就可以。
+v0.0.1 小菜一碟 需求非常简单，只需要点击，然后将当前tab地址增加https://r.jina.ai/前缀即可。不到半小时就能搞定~
+manifest.json添加授权
+&amp;#34;permissions&amp;#34;: [ &amp;#34;tabs&amp;#34; ] html添加点击的按钮
+&amp;lt;ul&amp;gt; &amp;lt;div id=&amp;#34;usePrefix&amp;#34;&amp;gt;use r.jina.ai prefix&amp;lt;/div&amp;gt; &amp;lt;/ul&amp;gt; &amp;lt;script src=&amp;#34;popup.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; 执行插件代码，获取url信息，添加前缀后更新到当前tab上。（注意：该js执行并非在当前tab页面f12唤起的控制台）
+document.querySelector(&amp;#39;#usePrefix&amp;#39;).addEventListener(&amp;#39;click&amp;#39;, () =&amp;gt; { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { var currentTab = tabs[0]; // 在当前窗口中获取活动标签 console.info(currentTab.url); // 输出当前标签的URL var newUrl = `https://r.jina.ai/${currentTab.url}`; // 您想要导航到的新URL console.info(`newUrl: ${newUrl}`); chrome.tabs.update(currentTab.id, {url: newUrl}); }); }); v0.'>
+<title>薅羊毛：使用kagi &#43; r.jina.ai 浅浅的翻半拉墙</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/chromeextensiondev/jinareader/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='薅羊毛：使用kagi &#43; r.jina.ai 浅浅的翻半拉墙'>
+<meta property='og:description' content='大家好，今天继续薅jina.ai的羊毛。
+起因是有朋友使用kagi搜索能搜出来被墙了的内容，但是没挂梯子，点进去就是404 Not Found，就很尴尬，而且刚好还体验了jinaAI的URL读取功能。
+所以产生了这么个薅羊毛的流程：kagi搜索 - 404的地址 - r.jina.ai处理后展示。
+非常简单的流程，前天找到我的时候就顺带手给做了。当前代码在github.（后续在更新到方便访问的🐶）。当然了，jina ai不是这么用的！！！
+实现形式 整体都在在浏览器内操作，所以很自然，使用chrome extensions的方式去实现。
+chrome 插件开发 chrome 浏览器插件开发 正好在写这篇文章的时候测试插件，关闭了VPN这个地址是无法访问的，使用插件可以看到文档内容，虽然质量差了点儿哈哈哈哈。
+插件开发非常简单，和html开发一般。甚至直接将官方hello world demo下载下来，在chrome://extensions/打开开发者模式，直接加载项目就可以。
+v0.0.1 小菜一碟 需求非常简单，只需要点击，然后将当前tab地址增加https://r.jina.ai/前缀即可。不到半小时就能搞定~
+manifest.json添加授权
+&amp;#34;permissions&amp;#34;: [ &amp;#34;tabs&amp;#34; ] html添加点击的按钮
+&amp;lt;ul&amp;gt; &amp;lt;div id=&amp;#34;usePrefix&amp;#34;&amp;gt;use r.jina.ai prefix&amp;lt;/div&amp;gt; &amp;lt;/ul&amp;gt; &amp;lt;script src=&amp;#34;popup.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; 执行插件代码，获取url信息，添加前缀后更新到当前tab上。（注意：该js执行并非在当前tab页面f12唤起的控制台）
+document.querySelector(&amp;#39;#usePrefix&amp;#39;).addEventListener(&amp;#39;click&amp;#39;, () =&amp;gt; { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { var currentTab = tabs[0]; // 在当前窗口中获取活动标签 console.info(currentTab.url); // 输出当前标签的URL var newUrl = `https://r.jina.ai/${currentTab.url}`; // 您想要导航到的新URL console.info(`newUrl: ${newUrl}`); chrome.tabs.update(currentTab.id, {url: newUrl}); }); }); v0.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/chromeextensiondev/jinareader/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='proxy' /><meta property='article:tag' content='free' /><meta property='article:published_time' content='2024-05-27T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2024-05-27T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="薅羊毛：使用kagi &#43; r.jina.ai 浅浅的翻半拉墙">
+<meta name="twitter:description" content="大家好，今天继续薅jina.ai的羊毛。
+起因是有朋友使用kagi搜索能搜出来被墙了的内容，但是没挂梯子，点进去就是404 Not Found，就很尴尬，而且刚好还体验了jinaAI的URL读取功能。
+所以产生了这么个薅羊毛的流程：kagi搜索 - 404的地址 - r.jina.ai处理后展示。
+非常简单的流程，前天找到我的时候就顺带手给做了。当前代码在github.（后续在更新到方便访问的🐶）。当然了，jina ai不是这么用的！！！
+实现形式 整体都在在浏览器内操作，所以很自然，使用chrome extensions的方式去实现。
+chrome 插件开发 chrome 浏览器插件开发 正好在写这篇文章的时候测试插件，关闭了VPN这个地址是无法访问的，使用插件可以看到文档内容，虽然质量差了点儿哈哈哈哈。
+插件开发非常简单，和html开发一般。甚至直接将官方hello world demo下载下来，在chrome://extensions/打开开发者模式，直接加载项目就可以。
+v0.0.1 小菜一碟 需求非常简单，只需要点击，然后将当前tab地址增加https://r.jina.ai/前缀即可。不到半小时就能搞定~
+manifest.json添加授权
+&amp;#34;permissions&amp;#34;: [ &amp;#34;tabs&amp;#34; ] html添加点击的按钮
+&amp;lt;ul&amp;gt; &amp;lt;div id=&amp;#34;usePrefix&amp;#34;&amp;gt;use r.jina.ai prefix&amp;lt;/div&amp;gt; &amp;lt;/ul&amp;gt; &amp;lt;script src=&amp;#34;popup.js&amp;#34;&amp;gt;&amp;lt;/script&amp;gt; 执行插件代码，获取url信息，添加前缀后更新到当前tab上。（注意：该js执行并非在当前tab页面f12唤起的控制台）
+document.querySelector(&amp;#39;#usePrefix&amp;#39;).addEventListener(&amp;#39;click&amp;#39;, () =&amp;gt; { chrome.tabs.query({active: true, currentWindow: true}, function(tabs) { var currentTab = tabs[0]; // 在当前窗口中获取活动标签 console.info(currentTab.url); // 输出当前标签的URL var newUrl = `https://r.jina.ai/${currentTab.url}`; // 您想要导航到的新URL console.info(`newUrl: ${newUrl}`); chrome.tabs.update(currentTab.id, {url: newUrl}); }); }); v0.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#实现形式">实现形式</a></li>
+          </ul>
+        </li>
+        <li><a href="#chrome-插件开发">chrome 插件开发</a></li>
+        <li><a href="#v001-小菜一碟">v0.0.1 小菜一碟</a></li>
+        <li><a href="#v002--v00n-1-痛苦挣扎">v0.0.2 ~ v0.0.n-1 痛苦挣扎</a>
+          <ul>
+            <li><a href="#注入js获取内容">注入js，获取内容</a></li>
+            <li><a href="#尝试获取chrome-error状态">尝试获取chrome error状态</a></li>
+          </ul>
+        </li>
+        <li><a href="#v00n-柳暗花明">v0.0.n 柳暗花明</a></li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/chromeextensiondev/jinareader/">薅羊毛：使用kagi &#43; r.jina.ai 浅浅的翻半拉墙</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-05-27</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好，今天继续薅jina.ai的羊毛。</p>
+<p>起因是有朋友使用<a class="link" href="https://kagi.com/"  target="_blank" rel="noopener"
+    >kagi搜索</a>能搜出来被墙了的内容，但是没挂梯子，点进去就是404 Not Found，就很尴尬，而且刚好还体验了<a class="link" href="https://jina.ai/"  target="_blank" rel="noopener"
+    >jinaAI</a>的<a class="link" href="https://r.jina.ai/"  target="_blank" rel="noopener"
+    >URL读取功能</a>。</p>
+<p>所以产生了这么个薅羊毛的流程：<strong>kagi搜索 - 404的地址 - r.jina.ai处理后展示。</strong></p>
+<p>非常简单的流程，前天找到我的时候就顺带手给做了。当前代码在<a class="link" href="https://github.com/hawkeye-xb/jinaAIReader"  target="_blank" rel="noopener"
+    >github</a>.（后续在更新到方便访问的🐶）。<strong>当然了，jina ai不是这么用的！！！</strong></p>
+<h4 id="实现形式">实现形式</h4>
+<p>整体都在在浏览器内操作，所以很自然，使用chrome extensions的方式去实现。</p>
+<h3 id="chrome-插件开发">chrome 插件开发</h3>
+<p><a class="link" href="https://developer.chrome.com/docs/extensions/get-started/tutorial/hello-world"  target="_blank" rel="noopener"
+    >chrome 浏览器插件开发</a> 正好在写这篇文章的时候测试插件，关闭了VPN这个地址是无法访问的，使用插件可以看到文档内容，虽然质量差了点儿哈哈哈哈。</p>
+<p>插件开发非常简单，和html开发一般。甚至直接将<a class="link" href="https://github.com/GoogleChrome/chrome-extensions-samples/tree/main/functional-samples/tutorial.hello-world"  target="_blank" rel="noopener"
+    >官方hello world demo</a>下载下来，在<code>chrome://extensions/</code>打开开发者模式，直接加载项目就可以。</p>
+<h3 id="v001-小菜一碟">v0.0.1 小菜一碟</h3>
+<p>需求非常简单，只需要点击，然后将当前tab地址增加<code>https://r.jina.ai/</code>前缀即可。不到半小时就能搞定~</p>
+<p>manifest.json添加授权</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="s2">&#34;permissions&#34;</span><span class="err">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">  <span class="s2">&#34;tabs&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">]</span> 
+</span></span></code></pre></div><p>html添加点击的按钮</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">ul</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">id</span><span class="o">=</span><span class="s">&#34;usePrefix&#34;</span><span class="p">&gt;</span>use r.jina.ai prefix<span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">ul</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;popup.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>执行插件代码，获取url信息，添加前缀后更新到当前tab上。（注意：该js执行并非在当前tab页面f12唤起的控制台）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="s1">&#39;#usePrefix&#39;</span><span class="p">).</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">query</span><span class="p">({</span><span class="nx">active</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span> <span class="nx">currentWindow</span><span class="o">:</span> <span class="kc">true</span><span class="p">},</span> <span class="kd">function</span><span class="p">(</span><span class="nx">tabs</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kd">var</span> <span class="nx">currentTab</span> <span class="o">=</span> <span class="nx">tabs</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span> <span class="c1">// 在当前窗口中获取活动标签
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="nx">currentTab</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span> <span class="c1">// 输出当前标签的URL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kd">var</span> <span class="nx">newUrl</span> <span class="o">=</span> <span class="sb">`https://r.jina.ai/</span><span class="si">${</span><span class="nx">currentTab</span><span class="p">.</span><span class="nx">url</span><span class="si">}</span><span class="sb">`</span><span class="p">;</span> <span class="c1">// 您想要导航到的新URL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="sb">`newUrl: </span><span class="si">${</span><span class="nx">newUrl</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">chrome</span><span class="p">.</span><span class="nx">tabs</span><span class="p">.</span><span class="nx">update</span><span class="p">(</span><span class="nx">currentTab</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span><span class="nx">url</span><span class="o">:</span> <span class="nx">newUrl</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><h3 id="v002--v00n-1-痛苦挣扎">v0.0.2 ~ v0.0.n-1 痛苦挣扎</h3>
+<p>默认返回Markdown格式，查看jinaAi reader信息之后，发现支持返回其它的格式。md格式其它解析相关的内容太多，只做查看的话不需要这些内容，就研究返回其它的格式。</p>
+<p>可是在URL中无法携带header信息。第一直觉能想到就是使用fetch的时候添加header信息，返回的html内容，就使用blobURL加载到iframe上面就可以，还能加个iframe显示隐藏的标签，一切都是这么的美好。</p>
+<h4 id="注入js获取内容">注入js，获取内容</h4>
+<p>直接授权<code>&quot;scripting&quot;</code>，通过js注入的方式直接获取。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">fetch</span><span class="p">(</span><span class="nx">newUrl</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">method</span><span class="o">:</span> <span class="s1">&#39;GET&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="s1">&#39;x-respond-with&#39;</span><span class="o">:</span> <span class="s1">&#39;html&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">response</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">response</span><span class="p">.</span><span class="nx">text</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">blob</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Blob</span><span class="p">([</span><span class="nx">data</span><span class="p">],</span> <span class="p">{</span><span class="nx">type</span><span class="o">:</span> <span class="s1">&#39;text/html&#39;</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">blobUrl</span> <span class="o">=</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">blob</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">iframe</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">blobUrl</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></div><p>简单又快捷，关闭VPN测试下流程。ummm&hellip; 出现各种host未授权等等报错。简单来说，就是<code>chrome*://</code>等自保留的协议和页面，出于一些安全和体验是不允许修改的。原则上插件系统和Tab页错误状态也是应该分开的。</p>
+<h4 id="尝试获取chrome-error状态">尝试获取chrome error状态</h4>
+<p>既然没法在当前tab注入，那重定向到别的页面，能正常访问的页面总可以了吧，都到自定义页面，好像也不需要注入了。就直接将包含这段fetch代码的index.html部署到了deno（本以为还得薅Deno deploy的羊毛），通过URL获取传递过来的目标URL。</p>
+<p>这会儿又行了哈哈哈哈，不如直接获取当前tab的url加载状态，直接就发起重定向好了。</p>
+<p>不管是通过<code>webNavigation.onCompleted</code>还是<code>tabs.onUpdated</code>页面和插件的js执行环境数据交互，都不能很好的获取。暂且作罢。</p>
+<h3 id="v00n-柳暗花明">v0.0.n 柳暗花明</h3>
+<p>于是先朋友去使用，顺便吐槽下实现的过程。刚开始就突然想到，不就是要修改header嘛，直接拦截请求修改多直接啊，还需要什么重定向！！！</p>
+<p>AI直接给出的实现方案使用的是<code>manifest_version: 2</code>，<code>webRequest, webRequestBlocking</code>权限，在<code>onBeforeSendHeaders</code>方法，有点儿落后了。还得<a class="link" href="https://stackoverflow.com/questions/3274144/can-i-modify-outgoing-request-headers-with-a-chrome-extension"  target="_blank" rel="noopener"
+    >stackoverflow</a>自己找。</p>
+<p>最终是通过下面代码实现添加headers。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">initLevelOfDetails</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl"><span class="kr">async</span> <span class="kd">function</span> <span class="nx">initLevelOfDetails</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">levelOfDetails</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">getStorage</span><span class="p">(</span><span class="s1">&#39;levelOfDetails&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">setHeaders</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="s2">&#34;X-Return-Format&#34;</span><span class="o">:</span> <span class="nx">levelOfDetails</span><span class="p">.</span><span class="nx">toLowerCase</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">async</span> <span class="kd">function</span> <span class="nx">setHeaders</span><span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">allResourceTypes</span> <span class="o">=</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">values</span><span class="p">(</span><span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeNetRequest</span><span class="p">.</span><span class="nx">ResourceType</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">MY_CUSTOM_RULE_ID</span> <span class="o">=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">chrome</span><span class="p">.</span><span class="nx">declarativeNetRequest</span><span class="p">.</span><span class="nx">updateDynamicRules</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">removeRuleIds</span><span class="o">:</span> <span class="p">[</span><span class="nx">MY_CUSTOM_RULE_ID</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">addRules</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">id</span><span class="o">:</span> <span class="nx">MY_CUSTOM_RULE_ID</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">priority</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">action</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">type</span><span class="o">:</span> <span class="s2">&#34;modifyHeaders&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">requestHeaders</span><span class="o">:</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">keys</span><span class="p">(</span><span class="nx">obj</span><span class="p">).</span><span class="nx">map</span><span class="p">(</span><span class="nx">el</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="kr">const</span> <span class="nx">value</span> <span class="o">=</span> <span class="nx">obj</span><span class="p">[</span><span class="nx">el</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">operation</span><span class="o">:</span> <span class="s2">&#34;set&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">header</span><span class="o">:</span> <span class="nx">el</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">value</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}</span>
+</span></span><span class="line"><span class="cl">          <span class="p">})</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// requestHeaders: [
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">//   {
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">//     operation: &#34;set&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">//     header: &#34;X-Return-Format&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">//     value: &#34;screenshot&#34;
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">//   },
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// ]
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">condition</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">urlFilter</span><span class="o">:</span> <span class="s2">&#34;r.jina.ai&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">resourceTypes</span><span class="o">:</span> <span class="nx">allResourceTypes</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>验证整个流程，通过kagi搜索 - 进入404页面 - 点击插件直接重定向到r.jina.ai处理返回，能够<strong>免费</strong>浅浅的在墙上探出脑袋，阅读下别的内容。</p>
+<h3 id="最后">最后</h3>
+<p>你永远也不知道用户会怎么使用你的产品，说的就是这个了哈哈哈。勉强也能算薅点儿羊毛了，算是对chrome 插件开发的快速探索吧，通信、权限、settings的持久化等。因为属于chrome插件，不能翻墙的也无法通过插件平台下载并且收到插件更新，<del>所以后续会探索下Release托管，RSS。提供下载、订阅这类功能。</del> （5G网络、普通网络能访问到github，应该是我本地路由配置有问题导致无法访问。）所以就托管到<a class="link" href="https://github.com/hawkeye-xb/jinaAIReader"  target="_blank" rel="noopener"
+    >github</a>做分发了。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/proxy/">Proxy</a>
+        
+            <a href="/blog/zh/tags/free/">Free</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title"></h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/other/openaiproxy/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">薅Deno 羊毛：一分钟代理OpenAI API</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

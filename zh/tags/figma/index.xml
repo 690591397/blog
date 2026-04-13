@@ -1,0 +1,629 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Figma on Hawkeye-xb 技术博客</title>
+        <link>https://690591397.github.io/blog/zh/tags/figma/</link>
+        <description>Recent content in Figma on Hawkeye-xb 技术博客</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh</language>
+        <lastBuildDate>Sat, 21 Dec 2024 10:00:00 +0800</lastBuildDate><atom:link href="https://690591397.github.io/blog/zh/tags/figma/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Figma MCP 工具数据类型详解</title>
+        <link>https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/</link>
+        <pubDate>Sat, 21 Dec 2024 10:00:00 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/</guid>
+        <description>&lt;p&gt;（Created by AI）&lt;/p&gt;
+&lt;h1 id=&#34;figma-mcp-工具数据类型详解&#34;&gt;Figma MCP 工具数据类型详解&lt;/h1&gt;
+&lt;p&gt;本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。&lt;/p&gt;
+&lt;h2 id=&#34;工具概览&#34;&gt;工具概览&lt;/h2&gt;
+&lt;p&gt;Figma MCP 提供以下核心工具：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;get_metadata&lt;/strong&gt; - 获取节点元数据信息&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code&lt;/strong&gt; - 生成 UI 代码实现&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_variable_defs&lt;/strong&gt; - 获取设计变量定义&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code_connect_map&lt;/strong&gt; - 获取代码连接映射（企业版功能）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_image&lt;/strong&gt; - 生成节点图像&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;create_design_system_rules&lt;/strong&gt; - 创建设计系统规则&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;示例分析&#34;&gt;示例分析&lt;/h2&gt;
+&lt;p&gt;使用 Figma 设计稿：&lt;code&gt;https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;amp;m=dev&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;从 URL 中提取的 node-id: &lt;code&gt;12849-12248&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;1-元数据信息-get_metadata&#34;&gt;1. 元数据信息 (get_metadata)&lt;/h2&gt;
+&lt;p&gt;元数据提供了节点的基本结构信息，包括：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;节点类型（frame、instance、symbol 等）&lt;/li&gt;
+&lt;li&gt;节点名称&lt;/li&gt;
+&lt;li&gt;位置坐标 (x, y)&lt;/li&gt;
+&lt;li&gt;尺寸信息 (width, height)&lt;/li&gt;
+&lt;li&gt;子节点层级结构&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;示例输出&#34;&gt;示例输出：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-xml&#34; data-lang=&#34;xml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;frame&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12248&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Frame 1739333131&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;60&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;676&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12249&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Filter Bar&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;symbol&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;13088:67609&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Frame 1739333044&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;52&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;952&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;572&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;frame&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12627&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;per page&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;644&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;244&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12628&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Pagination&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;1&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;30&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;30&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;lt;instance&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;id=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12849:12629&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;name=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;Pagination&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;x=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;34&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;y=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;0&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;width=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;height=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;32&amp;#34;&lt;/span&gt; &lt;span class=&#34;nt&#34;&gt;/&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;c&#34;&gt;&amp;lt;!-- 更多子节点... --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;lt;/frame&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;&amp;lt;/frame&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;用途：&lt;/strong&gt; 快速了解设计稿的整体结构，适合在实现前进行架构规划。&lt;/p&gt;
+&lt;h2 id=&#34;2-代码实现-get_code&#34;&gt;2. 代码实现 (get_code)&lt;/h2&gt;
+&lt;p&gt;这是最核心的功能，将 Figma 设计直接转换为可运行的代码：&lt;/p&gt;
+&lt;h3 id=&#34;主要特性&#34;&gt;主要特性：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;React + TypeScript&lt;/strong&gt; 组件代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Tailwind CSS&lt;/strong&gt; 样式系统&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;完整的 Props 接口定义&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图片资源处理&lt;/strong&gt;&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;响应式设计支持&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;代码结构示例&#34;&gt;代码结构示例：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-typescript&#34; data-lang=&#34;typescript&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;interface&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOptionProps&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nx&#34;&gt;state&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;?:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Default&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Selected&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;|&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Active&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOption&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;({&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;state&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Default&amp;#34;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;FilterOptionProps&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;bg-white relative rounded-[5px] size-full&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;         &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;State=Default&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;         &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;node&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12555:10420&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;box-border content-stretch flex items-center justify-between min-w-inherit overflow-clip px-2 py-1 relative size-full&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;font-[&amp;#39;Inter:Regular&amp;#39;,_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#3d3d3d] text-[12px] text-nowrap&amp;#34;&lt;/span&gt; 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;             &lt;span class=&#34;na&#34;&gt;data&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;node&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;-&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;12555:10397&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;          &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;className&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;leading-[18px] whitespace-pre&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;Last&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;24&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;hours&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;&lt;span class=&#34;cm&#34;&gt;/* 更多组件内容... */&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;div&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;重要特性&#34;&gt;重要特性：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;data-node-id 属性&lt;/strong&gt;：每个元素都包含对应的 Figma 节点 ID&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;精确的样式还原&lt;/strong&gt;：包括字体、颜色、间距、圆角等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;组件化设计&lt;/strong&gt;：自动识别重复元素并生成可复用组件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;图片资源管理&lt;/strong&gt;：自动处理 SVG 和位图资源&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;3-设计变量定义-get_variable_defs&#34;&gt;3. 设计变量定义 (get_variable_defs)&lt;/h2&gt;
+&lt;p&gt;获取设计系统中定义的所有变量，包括：&lt;/p&gt;
+&lt;h3 id=&#34;变量类型&#34;&gt;变量类型：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;颜色变量&lt;/strong&gt;：主色、辅助色、状态色等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;字体变量&lt;/strong&gt;：字体族、字重、字号、行高&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;间距变量&lt;/strong&gt;：padding、margin、gap 等&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;圆角变量&lt;/strong&gt;：border-radius 值&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;其他样式变量&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;示例输出-1&#34;&gt;示例输出：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Primary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#000000&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Secondary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#3d3d3d&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Tertiary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#858c9b&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/Quaternary&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#a3a3a3&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Labels/White&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#ffffff&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Family/Font&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Inter&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Size/Body&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;14&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Font Size/Footnote&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;14&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Line Height/Body&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;22&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Line Height/Footnote&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_4&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;4&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;20&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Spacing_24&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;24&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Radius_5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;5&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Status/Destructive&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#ff503f&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Template Community/Icon/Moss&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#4cbf69&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;Template Community/Icon/Ember&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;#cc7447&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;&lt;strong&gt;用途：&lt;/strong&gt; 建立统一的设计系统，确保代码实现与设计保持一致。&lt;/p&gt;
+&lt;h2 id=&#34;4-代码连接映射-get_code_connect_map&#34;&gt;4. 代码连接映射 (get_code_connect_map)&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;&lt;strong&gt;注意：&lt;/strong&gt; 此功能仅在 Figma Organization 和 Enterprise 计划中可用&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;用于建立 Figma 组件与代码库中实际组件的映射关系：&lt;/p&gt;
+&lt;h3 id=&#34;功能&#34;&gt;功能：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;将 Figma 组件链接到代码库中的具体文件&lt;/li&gt;
+&lt;li&gt;提供组件名称映射&lt;/li&gt;
+&lt;li&gt;支持版本管理和同步&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;预期输出格式&#34;&gt;预期输出格式：&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;1:2&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;codeConnectSrc&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;https://github.com/foo/components/Button.tsx&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;codeConnectName&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;Button&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;5-图像生成-get_image&#34;&gt;5. 图像生成 (get_image)&lt;/h2&gt;
+&lt;p&gt;为指定节点生成图像文件，用于：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;设计稿预览&lt;/li&gt;
+&lt;li&gt;文档展示&lt;/li&gt;
+&lt;li&gt;设计评审&lt;/li&gt;
+&lt;li&gt;开发参考&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;6-设计系统规则-create_design_system_rules&#34;&gt;6. 设计系统规则 (create_design_system_rules)&lt;/h2&gt;
+&lt;p&gt;生成适用于当前项目的设计系统规则和约束。&lt;/p&gt;
+&lt;h2 id=&#34;使用流程&#34;&gt;使用流程&lt;/h2&gt;
+&lt;h3 id=&#34;1-建立连接&#34;&gt;1. 建立连接&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;确保 Figma 桌面应用已打开&lt;/li&gt;
+&lt;li&gt;选择要处理的节点或提供 node-id&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;2-数据获取顺序建议&#34;&gt;2. 数据获取顺序建议&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;get_metadata&lt;/strong&gt; - 了解整体结构&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_variable_defs&lt;/strong&gt; - 获取设计变量&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_code&lt;/strong&gt; - 生成具体实现&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;get_image&lt;/strong&gt; - 获取视觉参考（可选）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;3-从-url-提取-node-id&#34;&gt;3. 从 URL 提取 node-id&lt;/h3&gt;
+&lt;p&gt;URL 格式：&lt;code&gt;https://figma.com/design/:fileKey/:fileName?node-id=1-2&lt;/code&gt;
+提取的 node-id：&lt;code&gt;1:2&lt;/code&gt;（将 &lt;code&gt;-&lt;/code&gt; 替换为 &lt;code&gt;:&lt;/code&gt;）&lt;/p&gt;
+&lt;h2 id=&#34;实际应用场景&#34;&gt;实际应用场景&lt;/h2&gt;
+&lt;h3 id=&#34;设计到代码的完整流程&#34;&gt;设计到代码的完整流程：&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;设计师&lt;/strong&gt; 在 Figma 中完成设计&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开发者&lt;/strong&gt; 使用 MCP 工具获取元数据了解结构&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;自动生成&lt;/strong&gt; 基础组件代码&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;开发者&lt;/strong&gt; 基于生成的代码进行业务逻辑开发&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;设计变量&lt;/strong&gt; 确保样式一致性&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;优势&#34;&gt;优势：&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;高效率&lt;/strong&gt;：大幅减少手动编写 UI 代码的时间&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;高精度&lt;/strong&gt;：像素级别的设计还原&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;可维护&lt;/strong&gt;：生成的代码结构清晰，易于维护&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;一致性&lt;/strong&gt;：通过设计变量确保整个项目的视觉一致性&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;注意事项&#34;&gt;注意事项&lt;/h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;图片资源&lt;/strong&gt;：生成的代码中图片资源指向 localhost 服务器，实际使用时需要替换为项目中的资源路径&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;样式系统&lt;/strong&gt;：工具会自动检测项目的样式方案（Tailwind CSS、CSS-in-JS 等）&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;组件复用&lt;/strong&gt;：工具会自动识别重复设计模式并生成可复用组件&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;TypeScript 支持&lt;/strong&gt;：生成的代码包含完整的类型定义&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;总结&#34;&gt;总结&lt;/h2&gt;
+&lt;p&gt;Figma MCP 工具提供了从设计到代码的完整解决方案，通过多种数据类型的获取，可以实现高效、精确的设计实现流程。合理使用这些工具，可以显著提升前端开发效率，并确保设计与实现的一致性。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>学习和研究Figma：WebviewTag 还是BrowserView？</title>
+        <link>https://690591397.github.io/blog/zh/posts/studyfigma/webvieworbrowserview/</link>
+        <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/studyfigma/webvieworbrowserview/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;今天继续来学习Figma客户端。在看&lt;a class=&#34;link&#34; href=&#34;https://www.electronjs.org/docs/latest/tutorial/web-embeds#webview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Electron Web Embeds&lt;/a&gt; 文档的时候，知道官方因为Webview结构还在发生变化，而不推荐使用。但如果锁定Electron版本不再升级，这种不用考虑结构变动的情况下，到底应该使用WebviewTag还是BrowserView呢？&lt;/p&gt;
+&lt;h3 id=&#34;figma-是如何选择的&#34;&gt;Figma 是如何选择的？&lt;/h3&gt;
+&lt;p&gt;当然了，BrowserView都是Figma牵头提供的，这里选择很明显，但是为什么需要这个东西呢？&lt;a class=&#34;link&#34; href=&#34;https://www.Figma.com/blog/introducing-browserview-for-electron/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;好些年前（2017）是这么说的&lt;/a&gt;：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;在使用&lt;webview&gt;时遇到了比如拖放功能的bug和性能问题。&lt;/li&gt;
+&lt;li&gt;BrowserView不再使用DOM层次结构，使用位于操作系统窗口层次结构（类似chrome标签管理）。提升了性能，&lt;strong&gt;消除了与&lt;webview&gt;相关的大量特定bug&lt;/strong&gt;。&lt;/li&gt;
+&lt;li&gt;新的问题，不能使用常规的HTML和CSS布局和层叠。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;也没有说明具体的性能问题和bug。 &lt;br&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://stackoverflow.com/questions/66493829/electron-why-does-browserview-has-better-performance-then-webview&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Stackoverflow: Electron: Why does BrowserView has better performance then Webview?&lt;/a&gt; 在翻了不少内容，也没有找到比较好的答案。&lt;/p&gt;
+&lt;h3 id=&#34;从实现方式分析&#34;&gt;从实现方式分析&lt;/h3&gt;
+&lt;h4 id=&#34;settopbrowserview&#34;&gt;setTopBrowserView&lt;/h4&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.electronjs.org/zh/docs/latest/api/browser-view&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;BrowserView文档描述&lt;/a&gt;: 它就像一个子窗口，除了它的位置是相对于父窗口。 &lt;br&gt;
+就挺直观的描述了，可以理解为使用chrome打开了多个窗口，都缩放成为对应的大小在屏幕排列。都是同级的窗口，只需要简单的做z轴堆叠（setTopBrowserView）和平面排列即可。&lt;/p&gt;
+&lt;h4 id=&#34;标签&#34;&gt;标签&lt;/h4&gt;
+&lt;p&gt;以特有的&lt;webview&gt;&lt;/webview&gt;标签方式使用，能够通过JS获取Dom元素并且对其进行操作。就意味着需要在依赖加载的HTML中解析到&lt;webview&gt;&lt;/webview&gt;标签，加载内容后再在标签位置渲染。&lt;/p&gt;
+&lt;!-- ，完成之后通过ifrmae使得能在同一个渲染引擎内做渲染。    --&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-cpp&#34; data-lang=&#34;cpp&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// shell/browser/api/electron_api_web_contents.h
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 函数名AttachTolframe表明它的功能是将当前WebContents对象附加到一个iframe元素
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;// Methods for creating &amp;lt;webview&amp;gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;na&#34;&gt;[[nodiscard]]&lt;/span&gt; &lt;span class=&#34;kt&#34;&gt;bool&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;is_guest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;()&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;type_&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;==&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;Type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;kWebView&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;AttachToIframe&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;content&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;::&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WebContents&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;*&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;embedder_web_contents&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                      &lt;span class=&#34;kt&#34;&gt;int&lt;/span&gt; &lt;span class=&#34;n&#34;&gt;embedder_frame_id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kt&#34;&gt;void&lt;/span&gt; &lt;span class=&#34;nf&#34;&gt;DetachFromOuterFrame&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;();&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Element
+&lt;img src=&#34;https://s2.loli.net/2024/07/13/W6jbSVFJtToZvpY.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;2024-07-13 15.52.43.png&#34;
+	
+	
+&gt;
+Layout
+&lt;img src=&#34;https://s2.loli.net/2024/07/13/MlikWf24zjpuJdt.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;2024-07-13 15.52.54.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;!-- 【再补充layer图 和Element图来佐证】 --&gt;
+&lt;!-- 至此，可以大概的猜测，其实是通过&lt;webview&gt;&lt;/webview&gt;标签，将当前WebContents对象附加到一个iframe元素，然后通过iframe元素的DOM操作，来实现Webview的功能。 --&gt;
+&lt;p&gt;简单查看&lt;a class=&#34;link&#34; href=&#34;https://github.com/electron/electron/blob/main/shell/browser/api/electron_api_web_contents.h#L299&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Electron代码&lt;/a&gt;，再佐以WebviewTag运行时候的Element结构、Layer布局图片。不管是怎么实现的（还没看懂代码）注册Webview标签，渲染进程完成之后给出的什么产物，使得能在同一个引擎内渲染。至少也够证明在同样的引擎内渲染这个事情了。&lt;br&gt;
+假设Webview进程和BrowserView进程中间做的事情一样（假设最后输出Bitmap），Webview依赖的渲染引擎，每次都需要额外计算“合成”最终的渲染效果，在多标签页、页面内容复杂，需要频繁的缩放拖拽的情景下，Webview确实会拥有额外的性能开销。&lt;/p&gt;
+&lt;h3 id=&#34;该如何选择&#34;&gt;该如何选择&lt;/h3&gt;
+&lt;p&gt;花这么些功夫，只是想通过逻辑上去证明BrowserView在性能上的优势。即便如此，基于不同的结构实现方式导致的，那不同场景下应该怎么选择呢？
+对性能要求高、tab多的场景，更适合使用BrowserView，如果还有类似浏览器拖拽tab标签，打开独立窗口这种场景，更不能够创建新的窗口，再由&lt;webview&gt;&lt;/webview&gt;从头加载内容了。&lt;br&gt;
+但是对性要求不这么高的，也就没有必要额外的去管理BrowserView层级、进程生命周期了。&lt;/p&gt;
+&lt;h3 id=&#34;figma如何做bv层级管理的&#34;&gt;Figma如何做BV层级管理的&lt;/h3&gt;
+&lt;p&gt;这里Figma选择的，就开卷答题了，肯定就是BrowserView了。Figma有多BrowserView管理的场景，同时也有标题管理栏覆盖内容的场景。多窗口、多BrowserView的管理方式无法验证，后续直接给出我的一些思考和实践。对于BrowserView层级的管理，Figma会将标签管理栏始终设置为Top，点击展开内容的时候把标签管理栏这个View高度设置窗口高度，最直接证明就是hover状态无法穿透当前的BrowserView。   &lt;br&gt;
+未遮挡的hover状态
+&lt;img src=&#34;https://s2.loli.net/2024/07/13/dJHoENbciWXQars.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;2024-07-13 17.49.47.png&#34;
+	
+	
+&gt;
+遮挡的hover状态
+&lt;img src=&#34;https://s2.loli.net/2024/07/13/ojFZD52zHryA6EG.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;2024-07-13 17.50.39.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;印象中也看到过有大佬用debugtron验证这个结论，写文章的时候尝试再使用debugtron去连接Figma的进程，但是没有成功。&lt;/p&gt;
+&lt;h3 id=&#34;最后&#34;&gt;最后&lt;/h3&gt;
+&lt;p&gt;BrowserView 改名叫 WebContentsView了。&lt;/p&gt;
+&lt;!-- 这里Figma选择的，就开卷答题了，肯定就是BrowserView了。现在官方改名WebContentsView.。 --&gt;
+</description>
+        </item>
+        <item>
+        <title>学习和研究Figma：直接看代码(Extract Asar)</title>
+        <link>https://690591397.github.io/blog/zh/posts/studyfigma/extractfigmaasar/</link>
+        <pubDate>Wed, 03 Jul 2024 02:09:26 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/studyfigma/extractfigmaasar/</guid>
+        <description>&lt;p&gt;大家好呀，时隔两月，今天又来学习和研究figma客户端了。不管是从什么角度去揣测，分析，今天不如更直接一些，看代码！虽然是压缩混淆过的。  &lt;br&gt;
+&lt;strong&gt;过程仅供交流学习&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;过程仅供交流学习&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;过程仅供交流学习&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;那么，我们需要做些什么呢？&lt;/p&gt;
+&lt;h3 id=&#34;项目结构&#34;&gt;项目结构&lt;/h3&gt;
+&lt;p&gt;在Window系统中，右键跳转到文件所在目录，就可以很清晰的看到应用的结构，有exe入口执行文件，依赖的资源和动态链接库等等，可是在MacOS呢？ &lt;br&gt;
+&lt;strong&gt;打开访达（finder）—— 左侧选中应用程序 —— 右键对应的应用（如Figma）—— 显示包内容&lt;/strong&gt; &lt;br&gt;
+就可以看到应用的构成了，接着打开终端，把Content拖到终端里面，可以看到类似&lt;code&gt;/Applications/Figma.app/Contents&lt;/code&gt;的路径，也就是说，通过移动到&lt;code&gt;Applications&lt;/code&gt;的安装方式，会出现在这里，使用.app后缀的目录。 &lt;br&gt;
+用&lt;code&gt;tree&lt;/code&gt;指令输出下&lt;code&gt;Content&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── CodeResources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Info.plist
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── MacOS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── DynamicUniversalApp
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── PkgInfo
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── App.nib
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── en.lproj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── icon.icns
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── ja.lproj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;└── _CodeSignature
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    └── CodeResources
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;(这里是还未第一次启动的figma，在启动 DynamicUniversalApp 之后，才会真正的去下载客户端的应用。猜测是为了避免用户安装到其它的文件目录，导致持久化信息、目录访问受限、FigmaAgent无法安装等问题。毕竟在应用拖往Application的弹窗中直接双击启动，对应的根目录和正常启动的是不一致的) &lt;br&gt;
+安装好之后的tree结构如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── CodeResources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Frameworks
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Electron Framework.framework
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Figma Helper &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;GPU&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Figma Helper &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Plugin&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Figma Helper &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Renderer&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Figma Helper.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── Mantle.framework
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── ReactiveObjC.framework
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── Squirrel.framework
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Info.plist
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Library
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── FigmaAgent.app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── QuickLook
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── MacOS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── DynamicUniversalApp
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   └── Figma
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── PkgInfo
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;├── Resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── App.nib
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── af.lproj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── app.asar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── app.asar.unpacked
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;│   ├── ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;└── _CodeSignature
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    └── CodeResources
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;可以看到在MacOS下增加了客户端的入口文件，Resource多出了&lt;code&gt;app.asar&lt;/code&gt;、&lt;code&gt;app.asar.unpacked&lt;/code&gt;文件和目录。&lt;/p&gt;
+&lt;h3 id=&#34;asar是什么&#34;&gt;asar是什么？&lt;/h3&gt;
+&lt;p&gt;简单来说，是在 Electron 里用来打包应用资源文件的一种特殊格式。它能把好多文件和文件夹合成一个文件，这样能让应用的资源分发和加载更便捷高效。而且它能保持原来文件系统的结构和内容，既能减少文件数量，又能在使用时快速读取文件，&lt;del&gt;还能增加应用资源的安全性&lt;/del&gt;。&lt;/p&gt;
+&lt;p&gt;其实就是业务逻辑代码，会集中在这里，也就是今天讨论的重点。&lt;/p&gt;
+&lt;p&gt;既然在运行时候需要获取app.asar的内容，那么Electron是怎么做到的呢？找到&lt;a class=&#34;link&#34; href=&#34;https://github.com/electron/electron/blob/main/package.json&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Electron package.json&lt;/a&gt;，devDependencies依赖了&lt;code&gt;&amp;quot;@electron/asar&amp;quot;: &amp;quot;^3.2.1&amp;quot;&lt;/code&gt;这个包，再去&lt;a class=&#34;link&#34; href=&#34;https://www.npmjs.com/package/@electron/asar&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;npm搜索&lt;/a&gt;，对应的是&lt;a class=&#34;link&#34; href=&#34;https://github.com/electron/asar&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;github.com/electron/asar&lt;/a&gt;远端项目。&lt;/p&gt;
+&lt;p&gt;当然，现在需要单独的处理asar，而不是在Electron下。找了下社区，就有方案，使用&lt;code&gt;asar&lt;/code&gt;这个包即可，去&lt;a class=&#34;link&#34; href=&#34;https://www.npmjs.com/package/asar&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;npm查看&lt;/a&gt;，对应的同一个远端项目。这里就没问题，直接全局安装&lt;code&gt;npm install asar -g&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://s2.loli.net/2024/07/04/KjuQPeSpwWfiBDX.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;asar npm address.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;解压asar&#34;&gt;解压asar&lt;/h3&gt;
+&lt;p&gt;这样我们就可以参照文档，尝试解压figma的asar了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 进入目录&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; /Applications/Figma.app/Contents/Resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 解压&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;asar extract app.asar ./app
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h4 id=&#34;不出意外就会有意外报错了&#34;&gt;不出意外，就会有意外。报错了&lt;/h4&gt;
+&lt;h5 id=&#34;error-eperm-operation-not-permitted-mkdir-app&#34;&gt;Error: EPERM: operation not permitted, mkdir &amp;lsquo;./app&amp;rsquo;&lt;/h5&gt;
+&lt;p&gt;这个是没有授权终端创建目录。在【隐私与安全性】的【APP管理】，允许更新删除就好&lt;/p&gt;
+&lt;h5 id=&#34;the-value-of-size-is-out-of-range&#34;&gt;The value of &amp;ldquo;size&amp;rdquo; is out of range&lt;/h5&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node:internal/errors:541
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      throw error&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      ^
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;RangeError &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ERR_OUT_OF_RANGE&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;: The value of &lt;span class=&#34;s2&#34;&gt;&amp;#34;size&amp;#34;&lt;/span&gt; is out of range. It must be &amp;gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &amp;lt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; 4294967296. Received -1000
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    at Function.alloc &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;node:buffer:389:3&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    at module.exports.readFileSync &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;/xxx/.nvm/versions/node/v20.12.2/lib/node_modules/asar/lib/disk.js:106:23&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    at module.exports.extractAll &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;/xxx/.nvm/versions/node/v20.12.2/lib/node_modules/asar/lib/asar.js:204:28&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;直接就被硬控了，难道包出问题了？！&lt;/p&gt;
+&lt;h4 id=&#34;其它项目尝试&#34;&gt;其它项目尝试&lt;/h4&gt;
+&lt;p&gt;拿了个其它项目来尝试&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 解压&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;asar extract app.asar ./app
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 备份&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mv app.asar app-backup.asar 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 压缩&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;asar pack ./app ./app.asar
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;执行这个过程没有任何报错，执行MacOS的入口文件也都能正常的运行。只是app.asar比原有的包更大了（有app.asar.unpacked），原因是解压的目录会包含unpack，重新打包的时候包含进去。&lt;/p&gt;
+&lt;h3 id=&#34;修改-asar-包代码&#34;&gt;修改 asar 包代码&lt;/h3&gt;
+&lt;p&gt;没办法，只好去查看报错的代码了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readFileSync&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;filesystem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;info&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;kd&#34;&gt;let&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;buffer&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Buffer&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;alloc&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;info&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;size&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;info&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;size&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;&amp;lt;=&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;0&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;buffer&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;buffer&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;申请buffer时候超出范围了。&lt;code&gt;info.size&lt;/code&gt;是传入的参数，继续往下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filesystem&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;disk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readFilesystemSync&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fullPath&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;of&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filenames&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;c1&#34;&gt;// Remove leading slash
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filename&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;fullPath&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;substr&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;mi&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;destFilename&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;path&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;join&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;dest&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;file&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filesystem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;getFile&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;followLinks&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;files&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;else&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;c1&#34;&gt;// it&amp;#39;s a file, extract it
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;      &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;content&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;disk&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readFileSync&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;filesystem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;file&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;    &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;file信息是通过&lt;code&gt;filesystem.getFile(filename, followLinks)&lt;/code&gt;到的，filesystem又是通过&lt;code&gt;const filesystem = disk.readFilesystemSync(archive)&lt;/code&gt;得到的。
+这下好好看看，这一步到底做了什么事情。 &lt;br&gt;
+几次console调整之后。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;module&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;exports&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readFilesystemSync&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;kd&#34;&gt;function&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;!&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;filesystemCache&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;])&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;header&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;this&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;readArchiveHeaderSync&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;info&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;获取到的header元数据:&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;JSON&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;parse&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;header&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;headerString&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;));&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filesystem&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;new&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;Filesystem&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;c1&#34;&gt;// ...
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;return&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;filesystemCache&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;[&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;archive&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 重新跑 asar extract app.asar ./app ，得到输出
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 获取到的header元数据: {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//   files: {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;.codesign&amp;#39;: { size: -1000, offset: &amp;#39;0&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     assets: { files: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;bindings.node&amp;#39;: { size: 139808, unpacked: true, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;build.json&amp;#39;: { size: 26, offset: &amp;#39;477349&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;desktop_rust.node&amp;#39;: { size: 2280008, unpacked: true, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;desktop_shell.css&amp;#39;: { size: 323004, offset: &amp;#39;477375&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;desktop_shell.js&amp;#39;: { size: 373725, offset: &amp;#39;800379&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     i18n: { files: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     loading_screen: { files: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;main.js&amp;#39;: { size: 467065, offset: &amp;#39;1200404&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     node_modules: { files: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;package-lock.json&amp;#39;: { size: 16134, offset: &amp;#39;2069716&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;package.json&amp;#39;: { size: 536, offset: &amp;#39;2085850&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;shell_app_binding_renderer.js&amp;#39;: { size: 2180, offset: &amp;#39;2086386&amp;#39;, integrity: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     tray: { files: [Object] },
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//     &amp;#39;web_app_binding_renderer.js&amp;#39;: { size: 16626, offset: &amp;#39;2089567&amp;#39;, integrity: [Object] }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;//   }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;好你个浓眉大眼的.codesign，还是个隐藏文件。看偏移量&lt;code&gt;offset: &#39;0&#39;&lt;/code&gt;，打头的就是size出错的数据。 &lt;br&gt;
+为避免其它情况下使用asar出错，判断下这个filename，直接给你丫跳过。 &lt;br&gt;
+这样就可以解压出来内容了，虽然是压缩混淆的，有需要的硬翻也可以翻出来不少东西，后续怎么处理？&lt;strong&gt;过程仅供交流学习&lt;/strong&gt;。&lt;/p&gt;
+&lt;p&gt;到这里，过程就结束了，也就是为啥前面描述asar的时候，我把安全这个给划掉了，安全不了一点儿啊。但是figma的这个做法，确实也能增加一道门槛，文件名都非常直白了。&lt;/p&gt;
+&lt;h3 id=&#34;最后&#34;&gt;最后&lt;/h3&gt;
+&lt;p&gt;总的来说，就是用了个asar工具去解压包，碰到了个小错误，改完之后就能解压了。 &lt;br&gt;
+今天研究asar代码就到这儿，希望对你有帮助😉&lt;/p&gt;
+&lt;h3 id=&#34;更多一点儿&#34;&gt;更多一点儿&lt;/h3&gt;
+&lt;h4 id=&#34;codesign-真实-size-有多大&#34;&gt;.codesign 真实 size 有多大？&lt;/h4&gt;
+&lt;p&gt;很简单，offset从0开始，只要找到了第二个文件的起始点，那它就是这个文件的大小。 &lt;br&gt;
+通过上面获取到的元数据信息，发现有的包含了offset，而有的没有。没有的是因为unpack了，没有存在app.asar这个包。&lt;br&gt;
+但是，这第二个&lt;code&gt;assets&lt;/code&gt;是个目录！刚想递归遍历，但是直接输出下这个详情就好了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# console&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;s1&#34;&gt;&amp;#39;Inter.var.woff2&amp;#39;&lt;/span&gt;: &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    size: 319784,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    offset: &lt;span class=&#34;s1&#34;&gt;&amp;#39;0&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    integrity: &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      algorithm: &lt;span class=&#34;s1&#34;&gt;&amp;#39;SHA256&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      hash: &lt;span class=&#34;s1&#34;&gt;&amp;#39;0f409d1d652d526bcfd7fd0c2cae003cd1b32a009e71f7f9e614f644bd1d8f52&amp;#39;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      blockSize: 4194304,
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      blocks: &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;Array&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;offset依旧是0，惊不惊喜意不意外~。&lt;/p&gt;
+&lt;!-- xattr相关 --&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;过程仅供交流学习&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;过程仅供交流学习&lt;/strong&gt; &lt;br&gt;
+&lt;strong&gt;过程仅供交流学习&lt;/strong&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>学习和研究Figma：登录功能</title>
+        <link>https://690591397.github.io/blog/zh/posts/studyfigma/login/</link>
+        <pubDate>Tue, 30 Apr 2024 02:09:26 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/studyfigma/login/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;今天来学习和研究Figma的登录功能，毕竟这是APP所有功能的基础。&lt;/p&gt;
+&lt;p&gt;当作为前端我们研究某个网页的时候，下意识的就是打开chrome devtool，Figma也是保留了这个快捷键，MacOS环境下，&lt;code&gt;command + option + i&lt;/code&gt;就可以唤起。&lt;/p&gt;
+&lt;h3 id=&#34;加载远端登录页&#34;&gt;加载远端登录页&lt;/h3&gt;
+&lt;p&gt;打开Figma客户端，一阵“白屏”之后，加载出来简单的登录页面。切到Network快捷键&lt;code&gt;command + shift + R&lt;/code&gt;强制刷新下页面。Doc加载的是&lt;code&gt;https://www.figma.com/login?locale=en&amp;amp;is_not_gen_0=true&lt;/code&gt;的资源，果然加载的远端资源，一生要强的前端er们，时常和白屏做斗争。这里登录页面猜测都在Web项目维护，做了拆包，查看整体Network资源加载，总共3M多。&lt;/p&gt;
+&lt;h4 id=&#34;白屏&#34;&gt;白屏&lt;/h4&gt;
+&lt;p&gt;即使只有3M多资源大小，对于现在国内网络环境，如果有插着网线的机器，更是微不足道。但是个人认为，这个页面更新频率不高，可以被划分到本地的渲染进程里，独有的登录页。随安装包分发到本地，通过loadFile加载更为合适。&lt;/p&gt;
+&lt;p&gt;也可能出于项目管理上的考虑，这么小的内容不值得单独管理，并再为之引入埋点、数据分析监控。&lt;/p&gt;
+&lt;p&gt;再回到Network，看到除了加载js文件，还加载了登录状态对应提示信息的JSON、两种数据分析监控，甚至还连接了两个ws。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://s2.loli.net/2024/04/30/2APMHYSunZzb1Iv.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;figma login load res 2024-04-30 11.27.30.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;发起登录请求&#34;&gt;发起登录请求&lt;/h3&gt;
+&lt;p&gt;不管点击login还是create account，获取该次登录的hash。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;https://www.figma.com/api/session/app_auth
+&lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;meta&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;id&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;auth_code_1&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;app_type&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;desktop&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;web授权&#34;&gt;Web授权&lt;/h3&gt;
+&lt;p&gt;这时候会唤起默认浏览器，打开授权页面，如: &lt;code&gt;https://www.figma.com/app_auth/{{ auth_code_1 }}/grant?desktop_protocol=figma&amp;amp;locale=en&lt;/code&gt;。&lt;/p&gt;
+&lt;p&gt;打开的地址会携带重新唤起APP的协议头&lt;code&gt;desktop_protocol=figma&lt;/code&gt;。&lt;/p&gt;
+&lt;h4 id=&#34;electron唤起默认浏览器打开url&#34;&gt;electron唤起默认浏览器打开URL&lt;/h4&gt;
+&lt;p&gt;框架默认支持功能。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;shell&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;electron&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;// 在默认浏览器中打开URL
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;shell&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;openExternal&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;https://www.example.com&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;).&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;then&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;log&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;网页已在浏览器中打开！&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}).&lt;/span&gt;&lt;span class=&#34;k&#34;&gt;catch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nx&#34;&gt;console&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;error&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;打开浏览器失败:&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;err&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;);&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;});&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h5 id=&#34;跨平台实现&#34;&gt;跨平台实现&lt;/h5&gt;
+&lt;p&gt;在Windows上，可以使用ShellExecute或ShellExecuteEx函数。MacOS则是NSWorkspace的openURL方法，Linux有xdg-open。印象中几个平台都支持，只是在Linux反向唤起APP的时候，设置比较麻烦。&lt;/p&gt;
+&lt;h4 id=&#34;授权登录&#34;&gt;授权登录&lt;/h4&gt;
+&lt;p&gt;到这里完全就托管给web端去实现登录了，不管是未注册、未登录还是直接授权，能都够复用现有的Web能力了。为什么要这么做呢？直接将登录页面嵌入客户端，不更好吗？如果登录与后续绑定倒是挺合适的，但是如果涉及到三方、单点登录这些场景，就不这么好处理了。&lt;/p&gt;
+&lt;p&gt;举个例子，假设需要接入第三方内部OA系统的授权登录，出于安全考虑，不允许在非安全客户端环境下登录，这样则需要接入该三方提供的SDK，或者将客户端环境，设置成为可以被校验安全的环境（比如固定的UA字段）。不管是修改环境还是接入SDK，都需要对客户端做出兼容修改。一旦接入的客户量足够多，这种方案根本管理不过来，无法维护。况且，Web端也需要进行相应的兼容。&lt;/p&gt;
+&lt;p&gt;这里跳转到浏览器，使用Web的登录状态，不管叫中介、代理还是什么模式都好，就将客户端和三方隔离开了。&lt;/p&gt;
+&lt;p&gt;再结合Figma面向团队、组织这类ToB模式的产品，就更好理解客户端为什么选择了这种登录方式了。&lt;/p&gt;
+&lt;h4 id=&#34;同意授权&#34;&gt;同意授权&lt;/h4&gt;
+&lt;p&gt;回到Figma登录流程，在web端有登录状态之后，点击授权，发起请求验证登录。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;https://www.figma.com/api/session/app_auth/{{ auth_code_1 }}/grant
+&lt;/code&gt;&lt;/pre&gt;&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;{
+  &amp;#34;error&amp;#34;: false,
+  &amp;#34;status&amp;#34;: 200,
+  &amp;#34;meta&amp;#34;: {
+    &amp;#34;id&amp;#34;: &amp;#34;auth_code_1&amp;#34;,
+    &amp;#34;app_type&amp;#34;: &amp;#34;desktop&amp;#34;,
+    &amp;#34;g_secret&amp;#34;: &amp;#34;auth_code_2&amp;#34;
+  },
+  &amp;#34;i18n&amp;#34;: null
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;h4 id=&#34;url-scheme浏览器唤起electron客户端&#34;&gt;URL Scheme，浏览器唤起electron客户端&lt;/h4&gt;
+&lt;p&gt;获得g_secret信息后，流程就需要重新唤起客户端APP了。不管是桌面端还是移动端，外部唤起APP，都需要再URL Scheme表注册内容，在协议请求的时候，会去校验这个表，如存在对应协议，则会获取协议的启动路径，执行APP的启动文件。&lt;/p&gt;
+&lt;p&gt;electron 可以通过&lt;a class=&#34;link&#34; href=&#34;https://www.electronjs.org/zh/docs/latest/api/protocol&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;protocol&lt;/a&gt;模块设置URL Scheme。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-js&#34; data-lang=&#34;js&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;kr&#34;&gt;const&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;net&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;=&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;require&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;electron&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nx&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;whenReady&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;().&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;then&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(()&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nx&#34;&gt;protocol&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;handle&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;atom&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;request&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;=&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nx&#34;&gt;net&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;fetch&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;file://&amp;#39;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;+&lt;/span&gt; &lt;span class=&#34;nx&#34;&gt;request&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;slice&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;atom://&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nx&#34;&gt;length&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)))&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;})&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;或者通过构建工具如&lt;a class=&#34;link&#34; href=&#34;https://www.electron.build/api/programmatic-usage.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;electron builder&lt;/a&gt;配置。不太建议自行管理，需要兼容多平台。&lt;strong&gt;另外需要注意杀毒软件，可能会导致注册失败&lt;/strong&gt;.&lt;/p&gt;
+&lt;p&gt;接着我们将Network过滤状态调整为过滤刚才请求头的协议&lt;code&gt;figma://&lt;/code&gt;。很明显，将二次验证的g_secret在唤起APP的时候传递过去了。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;figma://app_auth/redeem?g_secret=auth_code_2
+&lt;/code&gt;&lt;/pre&gt;&lt;h3 id=&#34;登录&#34;&gt;登录&lt;/h3&gt;
+&lt;p&gt;流程回到客户端，在授权之前把Network网络调成3G，方便我们观察数据。直接的就能看到，客户端使用&lt;code&gt;g_secret&lt;/code&gt;请求接口，换取用户id。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;https://www.figma.com/api/session/app_auth/redeem
+
+{
+  g_secret: &amp;#34;auth_code_2&amp;#34;
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;error&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;false&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;status&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;mi&#34;&gt;200&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;meta&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;nt&#34;&gt;&amp;#34;workspace&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;userId&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;userId&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;            &lt;span class=&#34;nt&#34;&gt;&amp;#34;orgId&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;p&#34;&gt;},&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;i18n&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;null&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;最终时序图如下
+&lt;img src=&#34;https://s2.loli.net/2024/04/30/p3xLJrX2We1nvFj.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;figma login time picture.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;对着这完整的流程，为什么要设计这么多授权相关的code呢？直接将web端的登录状态保持信息（Cookie）给到客户端不就可以了吗？&lt;/p&gt;
+&lt;p&gt;首先在产品形态上，客户端和Web不应该共用Cookie，也不能在URL通过明文传输（前端之间加密可以说是加寂寞），所以设计的&lt;code&gt;g_secret&lt;/code&gt;，回看唤起客户端的URL，这个值其实也很不安全，按道理客户端需要保有用来处理&lt;code&gt;g_secret&lt;/code&gt;值的信息，并且在获取用户信息的时候同时提供。换言之，第一步的id和g_secret对应不上也是不允许的。这里Figma使用了个临时的回话，Cookie里的figma.session来做这件事情，再进一步释放了客户端的复杂度。这里没做&lt;code&gt;g_secret&lt;/code&gt;存活时间、在另外机器使用的验证，原理都有做时效和使用次数的限制的。&lt;/p&gt;
+&lt;p&gt;在这整个流程中，目前还没有认识到会是哪种具名的授权方式。大家如果知道，还望告知。&lt;/p&gt;
+&lt;h3 id=&#34;最后&#34;&gt;最后&lt;/h3&gt;
+&lt;p&gt;最后总结下，本文主要拆解了Figma客户端的登录整个流程，并且对Electron唤起浏览器、浏览器唤起Electron做了个简单的介绍。&lt;/p&gt;
+&lt;p&gt;学习和研究Figma的登录功能，就先到这里了，希望对您有帮助。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>学习和研究Figma：背景</title>
+        <link>https://690591397.github.io/blog/zh/posts/studyfigma/background/</link>
+        <pubDate>Sun, 28 Apr 2024 02:09:26 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/studyfigma/background/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;前些时候看Electron更新的&lt;a class=&#34;link&#34; href=&#34;https://www.electronjs.org/blog/electron-30-0&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;blog&lt;/a&gt;，已经迭代30.0.0版本了，提供WebContentsView将browserView废弃了。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://s2.loli.net/2024/04/28/JDay3nrHqkWusBd.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;electron blog 30v remove bv 2024-04-28 18.04.06.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;想起当时接触客户端开发还是NW，了解Electron的时候才11.0.0的版本。那这和&lt;a class=&#34;link&#34; href=&#34;https://www.figma.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Figma&lt;/a&gt;有什么关系呢？在探索互联网产品的整个流程中，不管是设计、原型还是研发，多多少少都接触过Figma这款产品，或者听过Adobe计划两百亿美金收购Figma的事件，结果暂且不论，可以见得Figma这款产品的影响力。打开这款产品的安装包，我们可以看到，它使用的正是Electron框架，browserView都是Figma团队提供的。&lt;/p&gt;
+&lt;p&gt;一开始，还能直接解包看到Figma的源码，现在直接解包asar会出现内存越界，&lt;del&gt;目前还不知道怎么处理。不过这也不影响我们学习和研究Figma基础的功能。&lt;/del&gt;（已经更新&lt;a class=&#34;link&#34; href=&#34;https://690591397.github.io/blog/posts/studyFigma/ExtractFigmaAsar.md&#34; &gt;处理方式&lt;/a&gt;）。有些时间没有碰Electron，借此机会，也算是对之前做过的内容，进行了一个总结沉淀吧。&lt;/p&gt;
+&lt;p&gt;不管是产品视角看待功能，还是研发思维看待实现，说不定能够有不同的角度，设计和研发能够相互理解哈哈哈/doge。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

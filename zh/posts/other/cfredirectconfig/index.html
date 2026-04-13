@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='前端在 Monorepo 架构下（多HTML），难免是需要做静态资源的转发配置。 如果每个 Path 都有对应的资源，那也好说，但在现今 SPA 下，会有前端单页面托管处理路由的跳转逻辑，就难免出现访问某些 Path 下不存在的路由，或直接访问其自路由的情况下，到底应该加载哪个文件的问题。
+自建 Nginx 服务，增加对应 Path 转发的 try-files 也就可以。 使用 Cloudflare （因为免费）则需要做如下配置。
+部署文件目录下添加 _routes.json，告知服务检测路由配置。// 例如： { &amp;#34;version&amp;#34;: 1, &amp;#34;include&amp;#34;: [&amp;#34;/auth/*&amp;#34;], &amp;#34;exclude&amp;#34;: [] } 部署文件目录下添加 functions/auth/[[path]].js （注意名称需要是[[path]].js）对应 Path 的路由配置文件。拦截处理对应 Path 请求。 async function requestHandler({ request, next }, pathName) { const url = new URL(request.url); // 排除所有资源文件请求 if (url.pathname.match(/\.(js|css|png|jpg|json|ico)$/)) { return next(request); // 直接返回原始资源 } // 如果是静态资源 static/ if (url.pathname.match(/\/static\//) || url.pathname.match(/\/images\//)) { return next(request); // 直接返回原始资源 } // 仅重写页面路由请求 url.'>
+<title>Monorepo 多 SPA 下 Cloudflare 转发配置</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/cfredirectconfig/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Monorepo 多 SPA 下 Cloudflare 转发配置'>
+<meta property='og:description' content='前端在 Monorepo 架构下（多HTML），难免是需要做静态资源的转发配置。 如果每个 Path 都有对应的资源，那也好说，但在现今 SPA 下，会有前端单页面托管处理路由的跳转逻辑，就难免出现访问某些 Path 下不存在的路由，或直接访问其自路由的情况下，到底应该加载哪个文件的问题。
+自建 Nginx 服务，增加对应 Path 转发的 try-files 也就可以。 使用 Cloudflare （因为免费）则需要做如下配置。
+部署文件目录下添加 _routes.json，告知服务检测路由配置。// 例如： { &amp;#34;version&amp;#34;: 1, &amp;#34;include&amp;#34;: [&amp;#34;/auth/*&amp;#34;], &amp;#34;exclude&amp;#34;: [] } 部署文件目录下添加 functions/auth/[[path]].js （注意名称需要是[[path]].js）对应 Path 的路由配置文件。拦截处理对应 Path 请求。 async function requestHandler({ request, next }, pathName) { const url = new URL(request.url); // 排除所有资源文件请求 if (url.pathname.match(/\.(js|css|png|jpg|json|ico)$/)) { return next(request); // 直接返回原始资源 } // 如果是静态资源 static/ if (url.pathname.match(/\/static\//) || url.pathname.match(/\/images\//)) { return next(request); // 直接返回原始资源 } // 仅重写页面路由请求 url.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/cfredirectconfig/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-07-23T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-07-23T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Monorepo 多 SPA 下 Cloudflare 转发配置">
+<meta name="twitter:description" content="前端在 Monorepo 架构下（多HTML），难免是需要做静态资源的转发配置。 如果每个 Path 都有对应的资源，那也好说，但在现今 SPA 下，会有前端单页面托管处理路由的跳转逻辑，就难免出现访问某些 Path 下不存在的路由，或直接访问其自路由的情况下，到底应该加载哪个文件的问题。
+自建 Nginx 服务，增加对应 Path 转发的 try-files 也就可以。 使用 Cloudflare （因为免费）则需要做如下配置。
+部署文件目录下添加 _routes.json，告知服务检测路由配置。// 例如： { &amp;#34;version&amp;#34;: 1, &amp;#34;include&amp;#34;: [&amp;#34;/auth/*&amp;#34;], &amp;#34;exclude&amp;#34;: [] } 部署文件目录下添加 functions/auth/[[path]].js （注意名称需要是[[path]].js）对应 Path 的路由配置文件。拦截处理对应 Path 请求。 async function requestHandler({ request, next }, pathName) { const url = new URL(request.url); // 排除所有资源文件请求 if (url.pathname.match(/\.(js|css|png|jpg|json|ico)$/)) { return next(request); // 直接返回原始资源 } // 如果是静态资源 static/ if (url.pathname.match(/\/static\//) || url.pathname.match(/\/images\//)) { return next(request); // 直接返回原始资源 } // 仅重写页面路由请求 url.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li>
+          <ul>
+            <li><a href="#为什么不使用-redirects-和-rewrites">为什么不使用 Redirects 和 Rewrites</a></li>
+          </ul>
+        </li>
+        <li><a href="#cloudflare-转发原理">Cloudflare 转发原理</a>
+          <ul>
+            <li><a href="#1-边缘函数-edge-functions">1. 边缘函数 (Edge Functions)</a></li>
+            <li><a href="#2-路由匹配优先级">2. 路由匹配优先级</a></li>
+            <li><a href="#3-请求处理流程">3. 请求处理流程</a></li>
+            <li><a href="#4-核心优势">4. 核心优势</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/cfredirectconfig/">Monorepo 多 SPA 下 Cloudflare 转发配置</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-07-23</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>前端在 Monorepo 架构下（多HTML），难免是需要做静态资源的转发配置。 <br>
+如果每个 Path 都有对应的资源，那也好说，但在现今 SPA 下，会有前端单页面托管处理路由的跳转逻辑，就难免出现访问某些 Path 下不存在的路由，或直接访问其自路由的情况下，到底应该加载哪个文件的问题。</p>
+<p>自建 Nginx 服务，增加对应 Path 转发的 try-files 也就可以。
+使用 Cloudflare （因为免费）则需要做如下配置。</p>
+<ol>
+<li>部署文件目录下添加 _routes.json，告知服务检测路由配置。// 例如：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;version&#34;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;include&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;/auth/*&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;exclude&#34;</span><span class="p">:</span> <span class="p">[]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><ol start="2">
+<li>部署文件目录下添加 functions/auth/[[path]].js （注意名称需要是[[path]].js）对应 Path 的路由配置文件。拦截处理对应 Path 请求。</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">async</span> <span class="kd">function</span> <span class="nx">requestHandler</span><span class="p">({</span> <span class="nx">request</span><span class="p">,</span> <span class="nx">next</span> <span class="p">},</span> <span class="nx">pathName</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">url</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URL</span><span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 排除所有资源文件请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\.(js|css|png|jpg|json|ico)$/</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">request</span><span class="p">);</span> <span class="c1">// 直接返回原始资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 如果是静态资源 static/
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">if</span> <span class="p">(</span><span class="nx">url</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\/static\//</span><span class="p">)</span> <span class="o">||</span> <span class="nx">url</span><span class="p">.</span><span class="nx">pathname</span><span class="p">.</span><span class="nx">match</span><span class="p">(</span><span class="sr">/\/images\//</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="nx">request</span><span class="p">);</span> <span class="c1">// 直接返回原始资源
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 仅重写页面路由请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">url</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">=</span> <span class="nx">pathName</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">next</span><span class="p">(</span><span class="k">new</span> <span class="nx">Request</span><span class="p">(</span><span class="nx">url</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">onRequest</span> <span class="o">=</span> <span class="nx">context</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">requestHandler</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="s1">&#39;/auth/index.html&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h4 id="为什么不使用-redirects-和-rewrites">为什么不使用 Redirects 和 Rewrites</h4>
+<p>不支持、不满足场景。</p>
+<p><a class="link" href="https://developers.cloudflare.com/pages/configuration/redirects/"  target="_blank" rel="noopener"
+    >Redirects · Cloudflare Pages docs</a> <br>
+<a class="link" href="https://developers.cloudflare.com/pages/functions/api-reference/"  target="_blank" rel="noopener"
+    >Routing · Cloudflare Pages docs</a></p>
+<h3 id="cloudflare-转发原理">Cloudflare 转发原理</h3>
+<h4 id="1-边缘函数-edge-functions">1. 边缘函数 (Edge Functions)</h4>
+<ul>
+<li>在 Cloudflare 的全球边缘节点上执行 JavaScript 代码</li>
+<li>可以拦截和修改请求，实现路由重写、重定向等逻辑</li>
+<li>执行速度快，延迟低</li>
+</ul>
+<h4 id="2-路由匹配优先级">2. 路由匹配优先级</h4>
+<ul>
+<li><code>_routes.json</code> 定义路由规则和优先级</li>
+<li>支持通配符匹配 (<code>*</code>) 和参数捕获 (<code>[[path]]</code>)</li>
+<li>按配置顺序依次匹配，找到第一个匹配项即停止</li>
+</ul>
+<h4 id="3-请求处理流程">3. 请求处理流程</h4>
+<pre tabindex="0"><code>用户请求 → Cloudflare 边缘节点 → 检查 _routes.json → 匹配函数 → 执行函数逻辑 → 返回响应
+</code></pre><h4 id="4-核心优势">4. 核心优势</h4>
+<ul>
+<li><strong>全局分发</strong>: 利用 Cloudflare 的 CDN 网络，就近访问</li>
+<li><strong>动态路由</strong>: 通过 JavaScript 实现复杂的路由逻辑</li>
+<li><strong>性能优化</strong>: 边缘计算减少回源请求，提升响应速度</li>
+<li><strong>成本效益</strong>: 免费额度足够个人和小型项目使用</li>
+</ul>
+<p>这种架构特别适合 SPA 应用，可以在边缘节点处理前端路由，避免 404 错误，同时保持静态资源的正常访问。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

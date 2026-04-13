@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Github 地址 游戏地址 文档地址
+背景 最近因为其他原因，借助 Trae 完成了这款“扫雷”小游戏。本来打算是参与掘金产品体验活动的，无奈这台五年前的 MacBook 内存实在支撑不住，把存档和截图都删了。那就就着这个项目，聊聊 AI 对前端开发的影响吧。
+一点思考 模型发展至今，虽然 Claude-3.5-Sonnet 发布很长时间了，但与当初的 4096 Token 长度限制，不管是文本长度和多模态，都已经领先了非常多了。这类模型之上的工具，使得研发在拿到需求，设计业务流程、项目结构，沟通接口、字段等之后，不用展开更多任务派发和业务指导即可着手开发，直接颠覆了传统研发需要（大概）的一高二中四初级的人员配备。
+也就是说，资深开发参与到一线研发会更高效，减少沟通的同时产出也更有保障。对于入门、初级研发，会是巨大的挑战，但好处是门槛更低，成长更快了。
+在技术侧，文档的准备、强类型的定义变得更为重要，语义越明确代码的产出质量越高。先开发再补文档，可能效率还真没有这么快。
+过程 回到“扫雷”这个项目，就是边写文档边写代码。
+优先：文档 or 代码 雷区生成函数，因为考虑到第一次点击的问题，优先设计了文档，再给出代码逻辑，这块直接给出代码后，就没再修改。
+UI 部分直接给的图片与简单描述，拆分的模块和状态管理就没有这么完美了，按道理 游戏（业务）的状态和较基础的状态有关联，应由一处组合管理，基础组件的单一性会更清晰；并且从UI的角度，雷区布局组合成了仅透传状态的组件，多个层级虽然可以更好的聚合操作，但这里其实还没有这个必要。在后续调整的时候浪费了不少时间。
+强类型 和 语义 这个项目虽然在类型使用上没有出现问题，就定义 type key 的时候会根据当前代码定义了。在语义上建议使用 tailwind.css 和 tsx 这类包含信息更多更标准，逻辑表述更强的方式。
+最后 在初步完成之后，还引导和手动的处理了遍历翻开死循环，道具功能添加和 UI 调整等内容。具体想了解的可以查看 Github，代码量挺少的，就是遍历算法加了 UI。
+最后，与其说 AI 在取代开发者，不如说它在重新定义开发者的角色，它的上限，取决于我们。'>
+<title>Trae 开发体验，半天完成 “扫雷” 小游戏</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/codebyai/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Trae 开发体验，半天完成 “扫雷” 小游戏'>
+<meta property='og:description' content='Github 地址 游戏地址 文档地址
+背景 最近因为其他原因，借助 Trae 完成了这款“扫雷”小游戏。本来打算是参与掘金产品体验活动的，无奈这台五年前的 MacBook 内存实在支撑不住，把存档和截图都删了。那就就着这个项目，聊聊 AI 对前端开发的影响吧。
+一点思考 模型发展至今，虽然 Claude-3.5-Sonnet 发布很长时间了，但与当初的 4096 Token 长度限制，不管是文本长度和多模态，都已经领先了非常多了。这类模型之上的工具，使得研发在拿到需求，设计业务流程、项目结构，沟通接口、字段等之后，不用展开更多任务派发和业务指导即可着手开发，直接颠覆了传统研发需要（大概）的一高二中四初级的人员配备。
+也就是说，资深开发参与到一线研发会更高效，减少沟通的同时产出也更有保障。对于入门、初级研发，会是巨大的挑战，但好处是门槛更低，成长更快了。
+在技术侧，文档的准备、强类型的定义变得更为重要，语义越明确代码的产出质量越高。先开发再补文档，可能效率还真没有这么快。
+过程 回到“扫雷”这个项目，就是边写文档边写代码。
+优先：文档 or 代码 雷区生成函数，因为考虑到第一次点击的问题，优先设计了文档，再给出代码逻辑，这块直接给出代码后，就没再修改。
+UI 部分直接给的图片与简单描述，拆分的模块和状态管理就没有这么完美了，按道理 游戏（业务）的状态和较基础的状态有关联，应由一处组合管理，基础组件的单一性会更清晰；并且从UI的角度，雷区布局组合成了仅透传状态的组件，多个层级虽然可以更好的聚合操作，但这里其实还没有这个必要。在后续调整的时候浪费了不少时间。
+强类型 和 语义 这个项目虽然在类型使用上没有出现问题，就定义 type key 的时候会根据当前代码定义了。在语义上建议使用 tailwind.css 和 tsx 这类包含信息更多更标准，逻辑表述更强的方式。
+最后 在初步完成之后，还引导和手动的处理了遍历翻开死循环，道具功能添加和 UI 调整等内容。具体想了解的可以查看 Github，代码量挺少的，就是遍历算法加了 UI。
+最后，与其说 AI 在取代开发者，不如说它在重新定义开发者的角色，它的上限，取决于我们。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/codebyai/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-02-17T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-02-17T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Trae 开发体验，半天完成 “扫雷” 小游戏">
+<meta name="twitter:description" content="Github 地址 游戏地址 文档地址
+背景 最近因为其他原因，借助 Trae 完成了这款“扫雷”小游戏。本来打算是参与掘金产品体验活动的，无奈这台五年前的 MacBook 内存实在支撑不住，把存档和截图都删了。那就就着这个项目，聊聊 AI 对前端开发的影响吧。
+一点思考 模型发展至今，虽然 Claude-3.5-Sonnet 发布很长时间了，但与当初的 4096 Token 长度限制，不管是文本长度和多模态，都已经领先了非常多了。这类模型之上的工具，使得研发在拿到需求，设计业务流程、项目结构，沟通接口、字段等之后，不用展开更多任务派发和业务指导即可着手开发，直接颠覆了传统研发需要（大概）的一高二中四初级的人员配备。
+也就是说，资深开发参与到一线研发会更高效，减少沟通的同时产出也更有保障。对于入门、初级研发，会是巨大的挑战，但好处是门槛更低，成长更快了。
+在技术侧，文档的准备、强类型的定义变得更为重要，语义越明确代码的产出质量越高。先开发再补文档，可能效率还真没有这么快。
+过程 回到“扫雷”这个项目，就是边写文档边写代码。
+优先：文档 or 代码 雷区生成函数，因为考虑到第一次点击的问题，优先设计了文档，再给出代码逻辑，这块直接给出代码后，就没再修改。
+UI 部分直接给的图片与简单描述，拆分的模块和状态管理就没有这么完美了，按道理 游戏（业务）的状态和较基础的状态有关联，应由一处组合管理，基础组件的单一性会更清晰；并且从UI的角度，雷区布局组合成了仅透传状态的组件，多个层级虽然可以更好的聚合操作，但这里其实还没有这个必要。在后续调整的时候浪费了不少时间。
+强类型 和 语义 这个项目虽然在类型使用上没有出现问题，就定义 type key 的时候会根据当前代码定义了。在语义上建议使用 tailwind.css 和 tsx 这类包含信息更多更标准，逻辑表述更强的方式。
+最后 在初步完成之后，还引导和手动的处理了遍历翻开死循环，道具功能添加和 UI 调整等内容。具体想了解的可以查看 Github，代码量挺少的，就是遍历算法加了 UI。
+最后，与其说 AI 在取代开发者，不如说它在重新定义开发者的角色，它的上限，取决于我们。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#背景">背景</a></li>
+        <li><a href="#一点思考">一点思考</a></li>
+        <li><a href="#过程">过程</a>
+          <ul>
+            <li><a href="#优先文档-or-代码">优先：文档 or 代码</a></li>
+            <li><a href="#强类型-和-语义">强类型 和 语义</a></li>
+          </ul>
+        </li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/codebyai/">Trae 开发体验，半天完成 “扫雷” 小游戏</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-02-17</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p><a class="link" href="https://github.com/hawkeye-xb/minesweeper?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >Github 地址</a> <br>
+<a class="link" href="https://hawkeye-minesweeper.deno.dev/"  target="_blank" rel="noopener"
+    >游戏地址</a> <br>
+<a class="link" href="https://kr1wuqvrba.feishu.cn/docx/JwFLdqIjFomBw3xUwKfcG9lcn7b"  target="_blank" rel="noopener"
+    >文档地址</a></p>
+<h3 id="背景">背景</h3>
+<p>最近因为其他原因，借助 Trae 完成了这款“扫雷”小游戏。本来打算是参与掘金产品体验活动的，无奈这台五年前的 MacBook 内存实在支撑不住，把存档和截图都删了。那就就着这个项目，聊聊 AI 对前端开发的影响吧。</p>
+<h3 id="一点思考">一点思考</h3>
+<p>模型发展至今，虽然 Claude-3.5-Sonnet 发布很长时间了，但与当初的 4096 Token 长度限制，不管是文本长度和多模态，都已经领先了非常多了。这类模型之上的工具，使得研发在拿到需求，设计业务流程、项目结构，沟通接口、字段等之后，不用展开更多任务派发和业务指导即可着手开发，直接颠覆了传统研发需要（大概）的一高二中四初级的人员配备。</p>
+<p>也就是说，资深开发参与到一线研发会更高效，减少沟通的同时产出也更有保障。对于入门、初级研发，会是巨大的挑战，但好处是门槛更低，成长更快了。</p>
+<p>在技术侧，文档的准备、强类型的定义变得更为重要，语义越明确代码的产出质量越高。先开发<del>再补文档</del>，可能效率还真没有这么快。</p>
+<h3 id="过程">过程</h3>
+<p>回到“扫雷”这个项目，就是边写文档边写代码。</p>
+<h4 id="优先文档-or-代码">优先：文档 or 代码</h4>
+<p>雷区生成函数，因为考虑到第一次点击的问题，优先设计了文档，再给出代码逻辑，这块直接给出代码后，就没再修改。</p>
+<p>UI 部分直接给的图片与简单描述，拆分的模块和状态管理就没有这么完美了，按道理 游戏（业务）的状态和较基础的状态有关联，应由一处组合管理，基础组件的单一性会更清晰；并且从UI的角度，雷区布局组合成了仅透传状态的组件，多个层级虽然可以更好的聚合操作，但这里其实还没有这个必要。在后续调整的时候浪费了不少时间。</p>
+<h4 id="强类型-和-语义">强类型 和 语义</h4>
+<p>这个项目虽然在类型使用上没有出现问题，就定义 type key 的时候会根据当前代码定义了。在语义上建议使用 tailwind.css 和 tsx 这类包含信息更多更标准，逻辑表述更强的方式。</p>
+<h3 id="最后">最后</h3>
+<p>在初步完成之后，还引导和手动的处理了遍历翻开死循环，道具功能添加和 UI 调整等内容。具体想了解的可以查看 <a class="link" href="https://github.com/hawkeye-xb/minesweeper?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >Github</a>，代码量挺少的，就是遍历算法加了 UI。</p>
+<p>最后，与其说 AI 在取代开发者，不如说它在重新定义开发者的角色，它的上限，取决于我们。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

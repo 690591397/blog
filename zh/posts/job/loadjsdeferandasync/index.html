@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='html.spec.whatwg.org 对属性的描述 The async and defer attributes are boolean attributes that indicate how the script should be evaluated. Classic scripts may specify defer or async, but must not specify either unless the src attribute is present. Module scripts may specify the async attribute, but must not specify the defer attribute.
+Async 和defer 是用于指示脚本应该怎么被解析的布尔值属性。 对于传统的脚本，除非src属性存在，否则不能指定defer或者async属性。 对于module类型的脚本，可以指定async，但不能指定defer属性。
+There are several possible modes that can be selected using these attributes, and depending on the script&amp;rsquo;s type.'>
+<title>script中的defer和async属性</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/job/loadjsdeferandasync/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='script中的defer和async属性'>
+<meta property='og:description' content='html.spec.whatwg.org 对属性的描述 The async and defer attributes are boolean attributes that indicate how the script should be evaluated. Classic scripts may specify defer or async, but must not specify either unless the src attribute is present. Module scripts may specify the async attribute, but must not specify the defer attribute.
+Async 和defer 是用于指示脚本应该怎么被解析的布尔值属性。 对于传统的脚本，除非src属性存在，否则不能指定defer或者async属性。 对于module类型的脚本，可以指定async，但不能指定defer属性。
+There are several possible modes that can be selected using these attributes, and depending on the script&amp;rsquo;s type.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/job/loadjsdeferandasync/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-06-01T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-06-01T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="script中的defer和async属性">
+<meta name="twitter:description" content="html.spec.whatwg.org 对属性的描述 The async and defer attributes are boolean attributes that indicate how the script should be evaluated. Classic scripts may specify defer or async, but must not specify either unless the src attribute is present. Module scripts may specify the async attribute, but must not specify the defer attribute.
+Async 和defer 是用于指示脚本应该怎么被解析的布尔值属性。 对于传统的脚本，除非src属性存在，否则不能指定defer或者async属性。 对于module类型的脚本，可以指定async，但不能指定defer属性。
+There are several possible modes that can be selected using these attributes, and depending on the script&amp;rsquo;s type.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#htmlspecwhatwgorg-对属性的描述httpshtmlspecwhatwgorgmultipagescriptinghtmlattr-script-async"><a href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-async">html.spec.whatwg.org 对属性的描述</a></a></li>
+        <li><a href="#问题async脚本执行的时候是否会阻塞解析">问题：async脚本执行的时候，是否会阻塞解析</a></li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/job/loadjsdeferandasync/">script中的defer和async属性</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-06-01</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="htmlspecwhatwgorg-对属性的描述httpshtmlspecwhatwgorgmultipagescriptinghtmlattr-script-async"><a class="link" href="https://html.spec.whatwg.org/multipage/scripting.html#attr-script-async"  target="_blank" rel="noopener"
+    >html.spec.whatwg.org 对属性的描述</a></h3>
+<p>The async and defer attributes are boolean attributes that indicate how the script should be evaluated.
+Classic scripts may specify defer or async, but must not specify either unless the src attribute is present.
+Module scripts may specify the async attribute, but must not specify the defer attribute.</p>
+<p>Async 和defer 是用于指示脚本应该怎么被解析的布尔值属性。
+对于传统的脚本，除非<code>src</code>属性存在，否则不能指定defer或者async属性。
+对于<code>module</code>类型的脚本，可以指定async，但不能指定defer属性。</p>
+<p>There are several possible modes that can be selected using these attributes, and depending on the script&rsquo;s type.</p>
+<p>这些属性可以被选择使用有几种可能的模式，取决于脚本的类型。</p>
+<p>For classic scripts, if the async attribute is present, then the classic script will be fetched in parallel to parsing and evaluated as soon as it is available (potentially before parsing completes).
+If the async attribute is not present but the defer attribute is present, then the classic script will be fetched in parallel and evaluated when the page has finished parsing.
+If neither attribute is present, then the script is fetched and evaluated immediately, blocking parsing until these are both complete.</p>
+<p>对于存在<code>async</code>属性的传统脚本，会并行的获取在解析的时候，在可用的时候立即执行（可能在解析完成之前）。如果是<code>defer</code>属性，会同步获取，在解析完成之后才执行。如果两个属性都不存在，解析会阻塞直到脚本获取并执行完成。</p>
+<p>For module scripts, if the async attribute is present, then the module script and all its dependencies will be fetched in parallel to parsing, and the module script will be evaluated as soon as it is available (potentially before parsing completes).<br>
+Otherwise, the module script and its dependencies will be fetched in parallel to parsing and evaluated when the page has finished parsing. (The defer attribute has no effect on module scripts.)</p>
+<p>对于<code>module</code>类型脚本存在<code>async</code>属性，该脚本和它的依赖项在解析的过程中会被同时获取，同样的会在可用时候立即执行（可能在解析完成之前）。否则，会并行获取，在解析完成之后执行（<code>defer</code>属性对<code>module</code>脚本没有影响）。</p>
+<p>This is all summarized in the following schematic diagram:
+<img src="https://html.spec.whatwg.org/images/asyncdefer.svg"
+	
+	
+	
+	loading="lazy"
+	
+		alt="from https://html.spec.whatwg.org/multipage/scripting.html#attr-script-defer"
+	
+	
+></p>
+<h3 id="问题async脚本执行的时候是否会阻塞解析">问题：async脚本执行的时候，是否会阻塞解析</h3>
+<p>虽然whatwg给的图已经很清晰了，但是文字描述上没有很明确的表述出，async脚本在加载完成立即执行的时候，是否会阻塞解析。答案是：<strong>会的</strong>。</p>
+<p>但是很多人认为，async属性的脚本在执行的过程，并不会阻塞文档的解析，以至于在询问AI的过程中，某些模型坚持认为是不会阻塞的，查看部分博客的时候，多少也看到了些类似的观点。</p>
+<p>传统的JS脚本在执行的时候，因为允许修改页面结构，会阻塞页面的解析过程，这个我们是知道的。按照这些原因推测，任何的执行都应该会阻塞解析的。</p>
+<p>为了更好的控制接口返回的延迟时间，可以使用<a class="link" href="https://dash.deno.com/account/overview"  target="_blank" rel="noopener"
+    >deno deploy playground</a> 简易的部署个服务，返回<code>&quot;Content-Type&quot;: &quot;application/javascript&quot;</code>。</p>
+<pre tabindex="0"><code class="language-deno" data-lang="deno">Deno.serve(async (request: Request, response: Response) =&gt; {
+  const url = new URL(request.url);
+  const jsCode = `
+    (() =&gt; {
+      const start = performance.now();
+      for(let i =0; i&lt; 100000; i++) {
+        console.log(&#39;exec&#39;);
+      }
+      console.info(performance.now() - start);
+    })()
+  `;
+
+  const headers = new Headers();
+  headers.set(&#34;Content-Type&#34;, &#34;application/javascript&#34;);
+
+  if (url.pathname === &#34;/api/delay/0.js&#34;) {
+    return new Response(`console.log(&#34;Response after 0 second delay&#34;);` + jsCode, { headers });
+  } else {
+    return new Response(&#34;Not found&#34;, { status: 404 });
+  }
+});
+
+async function delay(ms: number): Promise&lt;void&gt; {
+  return new Promise(resolve =&gt; setTimeout(resolve, ms));
+}
+</code></pre><p>然后在测试文件中引入</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-html" data-lang="html"><span class="line"><span class="cl"><span class="cp">&lt;!DOCTYPE html&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">html</span> <span class="na">lang</span><span class="o">=</span><span class="s">&#34;en&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">charset</span><span class="o">=</span><span class="s">&#34;UTF-8&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">meta</span> <span class="na">name</span><span class="o">=</span><span class="s">&#34;viewport&#34;</span> <span class="na">content</span><span class="o">=</span><span class="s">&#34;width=device-width, initial-scale=1.0&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">title</span><span class="p">&gt;</span>Document<span class="p">&lt;/</span><span class="nt">title</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">head</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="c">&lt;!-- 部分带id的标签，用于检测Dom解析 --&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">script</span> <span class="na">async</span> <span class="na">src</span><span class="o">=</span><span class="s">&#34;https://dry-pheasant-18.deno.dev/api/delay/0.js&#34;</span><span class="p">&gt;&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="c">&lt;!-- 足够多的标签加长解析时间，和部分带id的标签，用于检测Dom解析 --&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span> <span class="k">for</span><span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span><span class="mi">0</span><span class="p">;</span> <span class="nx">i</span><span class="o">&lt;</span> <span class="mi">100000</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// log 一些Dom获取情况
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span> <span class="p">})()</span>
+</span></span><span class="line"><span class="cl">  <span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="c">&lt;!-- 部分带id的标签，用于检测Dom解析 --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">body</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">html</span><span class="p">&gt;</span>
+</span></span></code></pre></div><p>通过使用Dom解析之后，可以被JS获取的特性，来判断执行时间段内，是否能够继续继续文档。</p>
+<p>测试结果如文档所示，也就是<strong>会阻塞</strong>。</p>
+<h3 id="最后">最后</h3>
+<p>最后也侧向说明了AI的局限性，有时候实如鸡肋。</p>
+<!-- The exact processing details for these attributes are, for mostly historical reasons, somewhat non-trivial, involving a number of aspects of HTML. The implementation requirements are therefore by necessity scattered throughout the specification. The algorithms below (in this section) describe the core of this processing, but these algorithms reference and are referenced by the parsing rules for script start and end tags in HTML, in foreign content, and in XML, the rules for the document.write() method, the handling of scripting, etc. -->
+<!-- 当使用 document.write() 方法插入脚本元素时，这些脚本通常会执行（通常会阻塞进一步的脚本执行或HTML解析）。而当使用 innerHTML 和 outerHTML 属性插入脚本元素时，它们根本不会执行。
+（`document.write`是一个在文档仍在解析时向文档流中写入内容的方法。） -->
+<!-- document.write() 写入async脚本，async属性也会生效，毕竟相当于就在当前的解析流程中解析到了async属性的script一样。
+innerHTML确实不会执行里面的代码。 -->
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

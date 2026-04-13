@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Categories on Hawkeye-xb 技术博客</title>
+        <link>https://690591397.github.io/blog/zh/categories/</link>
+        <description>Recent content in Categories on Hawkeye-xb 技术博客</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh</language>
+        <lastBuildDate>Fri, 12 Sep 2025 00:00:00 +0000</lastBuildDate><atom:link href="https://690591397.github.io/blog/zh/categories/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Other</title>
+        <link>https://690591397.github.io/blog/zh/categories/other/</link>
+        <pubDate>Fri, 12 Sep 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/other/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Electron</title>
+        <link>https://690591397.github.io/blog/zh/categories/electron/</link>
+        <pubDate>Fri, 14 Mar 2025 00:00:00 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/electron/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>学习</title>
+        <link>https://690591397.github.io/blog/zh/categories/%E5%AD%A6%E4%B9%A0/</link>
+        <pubDate>Sat, 13 Jul 2024 00:00:00 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/%E5%AD%A6%E4%B9%A0/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Travel</title>
+        <link>https://690591397.github.io/blog/zh/categories/travel/</link>
+        <pubDate>Tue, 14 May 2024 20:47:40 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/travel/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Blog</title>
+        <link>https://690591397.github.io/blog/zh/categories/blog/</link>
+        <pubDate>Fri, 26 Apr 2024 14:47:40 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/blog/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Flutter</title>
+        <link>https://690591397.github.io/blog/zh/categories/flutter/</link>
+        <pubDate>Fri, 05 Apr 2024 00:00:00 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/categories/flutter/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

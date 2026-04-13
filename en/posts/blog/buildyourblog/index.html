@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' Discover the simplicity of building your personal blog with Hugo, Github, and Vercel. Learn how to set up your local environment on MacOS, create a new blog, and deploy it effortlessly. Customize your domain, integrate Google Analytics, and add a comment section with giscus. Start your blogging journey with ease and enjoy the freedom of sharing your thoughts with the world.'>
+<title>Build a personal blog in five minutes: build it zero cost</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/en/posts/blog/buildyourblog/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Build a personal blog in five minutes: build it zero cost'>
+<meta property='og:description' content=' Discover the simplicity of building your personal blog with Hugo, Github, and Vercel. Learn how to set up your local environment on MacOS, create a new blog, and deploy it effortlessly. Customize your domain, integrate Google Analytics, and add a comment section with giscus. Start your blogging journey with ease and enjoy the freedom of sharing your thoughts with the world.'>
+<meta property='og:url' content='https://690591397.github.io/blog/en/posts/blog/buildyourblog/'>
+<meta property='og:site_name' content='Hawkeye-xb Blog'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='hugo' /><meta property='article:published_time' content='2024-04-23T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2024-04-23T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="Build a personal blog in five minutes: build it zero cost">
+<meta name="twitter:description" content=" Discover the simplicity of building your personal blog with Hugo, Github, and Vercel. Learn how to set up your local environment on MacOS, create a new blog, and deploy it effortlessly. Customize your domain, integrate Google Analytics, and add a comment section with giscus. Start your blogging journey with ease and enjoy the freedom of sharing your thoughts with the world.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="Toggle Menu">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/en/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/en">Hawkeye-xb Blog</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/archives/' >
+                
+                
+                
+                <span>archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>series</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/about/' >
+                
+                
+                
+                <span>about</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" >简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" selected>English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span>Dark Mode</span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">Table of contents</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#small-fork-builds-with-one-click-by-vercel">small fork: builds with one click by Vercel</a></li>
+    <li><a href="#macos-local-env-setup">MacOS local env setup</a>
+      <ul>
+        <li><a href="#install-hugo">install Hugo</a></li>
+      </ul>
+    </li>
+    <li><a href="#create-a-new-blog-in-local">create a new blog in local</a></li>
+    <li><a href="#deploy-to-vercel">deploy to Vercel</a></li>
+    <li><a href="#googleanalytics">GoogleAnalytics</a>
+      <ul>
+        <li><a href="#successful-verification">successful verification</a></li>
+      </ul>
+    </li>
+    <li><a href="#custom-domain">custom domain</a></li>
+    <li><a href="#comments">comments</a>
+      <ul>
+        <li><a href="#using-giscus">Using giscus</a></li>
+      </ul>
+    </li>
+    <li><a href="#google-ads">Google ads</a></li>
+    <li><a href="#finally">finally</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/en/categories/blog/" >
+                Blog
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/en/posts/blog/buildyourblog/">Build a personal blog in five minutes: build it zero cost</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             Discover the simplicity of building your personal blog with Hugo, Github, and Vercel. Learn how to set up your local environment on MacOS, create a new blog, and deploy it effortlessly. Customize your domain, integrate Google Analytics, and add a comment section with giscus. Start your blogging journey with ease and enjoy the freedom of sharing your thoughts with the world.
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-23</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    5 minute read
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+        <footer class="article-translations">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+            <div>
+                
+                    <a href="https://690591397.github.io/blog/zh/posts/blog/buildyourblog/" class="link">简体中文(chinese)</a>
+                
+            </div>
+        </footer>
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>Hello everyone.</p>
+<p>Today we will continue to study the blog construction of personal webmaster exploration.</p>
+<p>Personal blog advantages:</p>
+<ul>
+<li>freedom</li>
+<li>archive your knowledge</li>
+<li>global perspective</li>
+</ul>
+<p>However, none of the above is necessary hah. What prompted me to set up blog was that it was simple and free. In just five minutes i could build it using Github and Vercel.</p>
+<p>In this article you can see how to build a blog using <strong>Hugo(PaperMod theme), Github content management, Vercal static hosting, custom domain, Google analytics, comments and advertising.</strong></p>
+<h2 id="small-fork-builds-with-one-click-by-vercel">small fork: builds with one click by Vercel</h2>
+<p>Github authorizes <a class="link" href="https://vercel.com/"  target="_blank" rel="noopener"
+    >vercel</a>, create a team, create a project, search Hugo template and clone it. After a short wait, you can access it though the domain name in the Domains provided by the Vercel project. At the same time, the Hugo project will be created in Github, and then the content can be written according to the Hugo docs.</p>
+<h2 id="macos-local-env-setup">MacOS local env setup</h2>
+<p>Of course, when we write the content later, we need to see the effect locally before we publish it. Sure you can also read the <a class="link" href="https://gohugo.io/getting-started/quick-start/"  target="_blank" rel="noopener"
+    >Hugo guide</a></p>
+<h3 id="install-hugo">install Hugo</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">brew install hugo
+</span></span><span class="line"><span class="cl"><span class="c1"># or</span>
+</span></span><span class="line"><span class="cl">sudo port install hugo
+</span></span></code></pre></div><p>verify</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo version
+</span></span><span class="line"><span class="cl"><span class="c1"># hugo v0.125.2-4e483f5d4abae136c4312d397a55e9e1d39148df+extended darwin/arm64 BuildDate=2024-04-20T15:29:44Z VendorInfo=brew</span>
+</span></span></code></pre></div><p>and we need install git, <a class="link" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"  target="_blank" rel="noopener"
+    >learn git</a></p>
+<h2 id="create-a-new-blog-in-local">create a new blog in local</h2>
+<p><code>--format yaml</code> it is the format of the configuration file. The default is .toml. You can choose it according to your personal preference.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo new site MyFreshWebsite --format yaml
+</span></span><span class="line"><span class="cl"><span class="c1"># replace MyFreshWebsite with name of your website</span>
+</span></span></code></pre></div><p>Enter the &lsquo;MyFreshWebsite&rsquo; directory, install theme(<a class="link" href="https://github.com/adityatelange/hugo-PaperMod?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >PaperMod</a>), Using themes through git modules, We cannot and should not actively modify the files of the theme project, this way you can stay up to new.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> MyFreshWebsite
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># download theme resources</span>
+</span></span><span class="line"><span class="cl">git init
+</span></span><span class="line"><span class="cl">git submodule add --depth<span class="o">=</span><span class="m">1</span> https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
+</span></span><span class="line"><span class="cl">git submodule update --init --recursive <span class="c1"># needed when you reclone your repo (submodules may not get cloned automatically)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># add theme dependencies</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;theme: [&#39;PaperMod&#39;]&#34;</span> &gt;&gt; hugo.yaml
+</span></span></code></pre></div><p>and we can start it.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo server
+</span></span></code></pre></div><p>The <code>hugo</code> command can build static resources directly locally. It should be noted that <strong>public</strong> ist the product after construction, in other words, there is no need to manage and upload Github separately.</p>
+<h2 id="deploy-to-vercel">deploy to Vercel</h2>
+<p>Without using the Vercel template, create a new project in Vercel and choose to import from Github(<strong>Import Git Repository</strong>), build command is set to <code>git submodule update --init --recursive &amp;&amp; hugo --gc</code>. Above, our theme is used through the git module, which leads to problem: theme download may fail when building Vercel project. But, even if fails, it can be built and deployed successfully, an xml error message will appear when accessing the blog, similar<code>This XML file does not appear to have any style information associated with it. The document tree is shown below.</code>. So we reset this build command.
+<img src="https://s2.loli.net/2024/04/23/GM6Yor5qvhKbQe8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="vercel hugo settings2024-04-23 14.48.51.png"
+	
+	
+>
+In addition, inconsistent Hugo versions can alse cause xml problems. It is recommended to increase the <code>HUGO_VERSION</code> environment variable settings.</p>
+<p>Immediately afterwards, we will encounter another problem during the first build.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Skipping build cache since Node.js version changed from <span class="s2">&#34;18.x&#34;</span> to <span class="s2">&#34;20.x&#34;</span>
+</span></span><span class="line"><span class="cl">Running <span class="s2">&#34;vercel build&#34;</span>
+</span></span><span class="line"><span class="cl">Vercel CLI 33.7.1
+</span></span><span class="line"><span class="cl">sh: line 1: hugo: <span class="nb">command</span> not found
+</span></span><span class="line"><span class="cl">Error: Command <span class="s2">&#34;hugo --gc&#34;</span> exited with <span class="m">127</span>
+</span></span></code></pre></div><p>We provide a package.json file in the root directory here to limit the version to the range.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;engines&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;node&#34;</span><span class="p">:</span> <span class="s2">&#34;18.x&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>push code it will rebuild.</p>
+<p>At this point, we have our own blog and our own website ✿✿ヽ(°▽°)ノ✿。</p>
+<hr>
+<!-- ## 图床：smms
+有了文本内容，当然少不了需要图片，图文并茂才更好的表达内容。这些资源存储成本不低，有免费的咱也不能掏钱，这类产品有非常多，目前使用的[SM.MS](https://smms.app/)做图床，有5个G的免费额度。 -->
+<h2 id="googleanalytics">GoogleAnalytics</h2>
+<p>It&rsquo;s so easy, just get your id.</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">G-xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ...</span><span class="w">
+</span></span></span></code></pre></div><h3 id="successful-verification">successful verification</h3>
+<p>On the blog page, open the console(chrome f12) and filter the infomation about the <code>gtag</code> file download under the network option. Or deploy it and see data reports on Google console.</p>
+<h2 id="custom-domain">custom domain</h2>
+<p>Although Vercel will provide the domain name, but it is not yours. Not so easy for visitors to remember.</p>
+<p>We can buy a cheap domain name at any registrar for the price of a piece of bread, making your blog look more formal, and make be can making you happier, is not cost /doge.</p>
+<p>After the domain name is successfully registered, it takes time(within 48 hours) to be distributed to various DNS servers. But we can go to the corresponding domain name registrar(where it was purchased) and add resolution information to the target server(Vercel), which is the address given by Vercel, as shown below: <code>76.76.21.21</code>.</p>
+<p><strong>Google Search Console verify ownership is the same as this.</strong></p>
+<p>Waiting for a while, you can set up a custom domain name and access your blog through your favorite domain name.</p>
+<p><img src="https://s2.loli.net/2024/04/23/RwspDPGBC1ZJWES.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="invalid domain config 2024-04-23 15.44.56.png"
+	
+	
+></p>
+<h2 id="comments">comments</h2>
+<p>Some people like the comment function and some don&rsquo;t, here is a quick and easy way to integrate, <a class="link" href="https://giscus.app/"  target="_blank" rel="noopener"
+    >giscus</a>, using the Github Discussion. <strong>It&rsquo;s free!</strong> /doge</p>
+<h3 id="using-giscus">Using giscus</h3>
+<ol>
+<li>Check this item in the project settings and select Github Discussions.</li>
+<li>Make the project public to allow access to comment data.</li>
+<li><a class="link" href="https://github.com/apps/giscus"  target="_blank" rel="noopener"
+    >Install giscus</a> to Github project.</li>
+<li>Copy the script information generated by giscus.</li>
+<li>Set up <a class="link" href="https://adityatelange.github.io/hugo-PaperMod/posts/papermod/papermod-features/#comments"  target="_blank" rel="noopener"
+    >config</a>.</li>
+<li>Copy script code into <code>layouts/partials/comments.html</code>.</li>
+<li>Params add comments: true(yaml), as follows:</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">comments</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></div><h2 id="google-ads">Google ads</h2>
+<p>No permission yet. 🕊🕊🕊</p>
+<h2 id="finally">finally</h2>
+<p>I hope these five minutes today will be helpful to you/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/en/tags/hugo/">Hugo</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb Blog
+    </section>
+    
+    <section class="powerby">
+        Built with <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> <br />
+        Theme <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.21.0">Stack</a></b> designed by <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

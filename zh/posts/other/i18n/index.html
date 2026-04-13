@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='之前在做 blog 多语言支持的时候，也曾经短暂的做过 hugo 构建的拦截进行 AI 机翻，奈何 GPT4 成本太高和效果自己无法验证放弃了。 而后做 Web SaaS（Vue3 &#43; Vite &#43; TS &#43; i18n） 项目，需要到多语言的支持。重新设计了一套满足快速定位，和自动 AI 机翻的多语言方案。
+满足以下需求：
+设计需求 避免全量加载利用率不高的资源，支持分包加载。 语言切换后直接 Reload Page 分包就涉及到 Key 相同问题，支持命名空间 开发便利性 自动机翻 导出母审表格（todo） 更新校正内容（todo） 设计方案 现在除了导出母审和更新审核的内容未完成，其它都已完成，但设计方案也还是可以作为参考。
+分包 架构渐进式演进过程中，很大情况就是在全局统一一个对应的 [local].json 就不在往下拆了，重复的 key 也能很快的找到，再写上个自动 load files 的脚本，项目运行时执行，将语言内容都加载上，按照语言去初始。如果您是处于这样的代码，谁写的就上去抽他丫的两大笔兜，自己写的抽自己（我先来）。 假设：需要支持 10 种语言，每种 60KB，首页需要 load 600KB，传输速率 1M/s；那么就得多花差不多 500ms，还不算流量计费的成本。 所以需要根据使用频率，按 Golbal、Views、Components 等需要的时机去控制加载，但相应的，会增加请求数量。
+命名空间 另外，不管是何种文件拆分方式，也都可能会遇到同 Key 不同 Value 的场景，这还是比较好处理的，增加独立的命名空间就行。 幸运的是，&amp;quot;vue-i18n&amp;quot;: &amp;quot;^11.1.9&amp;quot; 基础能力能够满足需求。
+开发便利性 在基础要求之外的开发便利上，直觉上我们会以 Golbal.common.[key] 或者 [namespace].[key] 这样的方式，去读取；需要修改 Value 可能需要先找到 Key，再去找到 Key 使用的地方，再结合同 key 名的情况，有时候还是挺费劲的事儿（同时使用 tailwind）。'>
+<title>Vue 多语言支持设计，满足快速定位和自动机翻</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/i18n/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Vue 多语言支持设计，满足快速定位和自动机翻'>
+<meta property='og:description' content='之前在做 blog 多语言支持的时候，也曾经短暂的做过 hugo 构建的拦截进行 AI 机翻，奈何 GPT4 成本太高和效果自己无法验证放弃了。 而后做 Web SaaS（Vue3 &#43; Vite &#43; TS &#43; i18n） 项目，需要到多语言的支持。重新设计了一套满足快速定位，和自动 AI 机翻的多语言方案。
+满足以下需求：
+设计需求 避免全量加载利用率不高的资源，支持分包加载。 语言切换后直接 Reload Page 分包就涉及到 Key 相同问题，支持命名空间 开发便利性 自动机翻 导出母审表格（todo） 更新校正内容（todo） 设计方案 现在除了导出母审和更新审核的内容未完成，其它都已完成，但设计方案也还是可以作为参考。
+分包 架构渐进式演进过程中，很大情况就是在全局统一一个对应的 [local].json 就不在往下拆了，重复的 key 也能很快的找到，再写上个自动 load files 的脚本，项目运行时执行，将语言内容都加载上，按照语言去初始。如果您是处于这样的代码，谁写的就上去抽他丫的两大笔兜，自己写的抽自己（我先来）。 假设：需要支持 10 种语言，每种 60KB，首页需要 load 600KB，传输速率 1M/s；那么就得多花差不多 500ms，还不算流量计费的成本。 所以需要根据使用频率，按 Golbal、Views、Components 等需要的时机去控制加载，但相应的，会增加请求数量。
+命名空间 另外，不管是何种文件拆分方式，也都可能会遇到同 Key 不同 Value 的场景，这还是比较好处理的，增加独立的命名空间就行。 幸运的是，&amp;quot;vue-i18n&amp;quot;: &amp;quot;^11.1.9&amp;quot; 基础能力能够满足需求。
+开发便利性 在基础要求之外的开发便利上，直觉上我们会以 Golbal.common.[key] 或者 [namespace].[key] 这样的方式，去读取；需要修改 Value 可能需要先找到 Key，再去找到 Key 使用的地方，再结合同 key 名的情况，有时候还是挺费劲的事儿（同时使用 tailwind）。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/i18n/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-07-29T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-07-29T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Vue 多语言支持设计，满足快速定位和自动机翻">
+<meta name="twitter:description" content="之前在做 blog 多语言支持的时候，也曾经短暂的做过 hugo 构建的拦截进行 AI 机翻，奈何 GPT4 成本太高和效果自己无法验证放弃了。 而后做 Web SaaS（Vue3 &#43; Vite &#43; TS &#43; i18n） 项目，需要到多语言的支持。重新设计了一套满足快速定位，和自动 AI 机翻的多语言方案。
+满足以下需求：
+设计需求 避免全量加载利用率不高的资源，支持分包加载。 语言切换后直接 Reload Page 分包就涉及到 Key 相同问题，支持命名空间 开发便利性 自动机翻 导出母审表格（todo） 更新校正内容（todo） 设计方案 现在除了导出母审和更新审核的内容未完成，其它都已完成，但设计方案也还是可以作为参考。
+分包 架构渐进式演进过程中，很大情况就是在全局统一一个对应的 [local].json 就不在往下拆了，重复的 key 也能很快的找到，再写上个自动 load files 的脚本，项目运行时执行，将语言内容都加载上，按照语言去初始。如果您是处于这样的代码，谁写的就上去抽他丫的两大笔兜，自己写的抽自己（我先来）。 假设：需要支持 10 种语言，每种 60KB，首页需要 load 600KB，传输速率 1M/s；那么就得多花差不多 500ms，还不算流量计费的成本。 所以需要根据使用频率，按 Golbal、Views、Components 等需要的时机去控制加载，但相应的，会增加请求数量。
+命名空间 另外，不管是何种文件拆分方式，也都可能会遇到同 Key 不同 Value 的场景，这还是比较好处理的，增加独立的命名空间就行。 幸运的是，&amp;quot;vue-i18n&amp;quot;: &amp;quot;^11.1.9&amp;quot; 基础能力能够满足需求。
+开发便利性 在基础要求之外的开发便利上，直觉上我们会以 Golbal.common.[key] 或者 [namespace].[key] 这样的方式，去读取；需要修改 Value 可能需要先找到 Key，再去找到 Key 使用的地方，再结合同 key 名的情况，有时候还是挺费劲的事儿（同时使用 tailwind）。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#设计需求">设计需求</a></li>
+        <li><a href="#设计方案">设计方案</a>
+          <ul>
+            <li><a href="#分包">分包</a></li>
+            <li><a href="#命名空间">命名空间</a></li>
+            <li><a href="#开发便利性">开发便利性</a></li>
+            <li><a href="#自动机翻">自动机翻</a></li>
+            <li><a href="#导出母审表格todo">导出母审表格（todo）</a></li>
+            <li><a href="#更新校正内容todo">更新校正内容（todo）</a></li>
+          </ul>
+        </li>
+        <li><a href="#实现方式">实现方式</a>
+          <ul>
+            <li><a href="#分包加载--命名空间">分包加载 &amp; 命名空间</a></li>
+            <li><a href="#diff--机翻">Diff &amp; 机翻</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/i18n/">Vue 多语言支持设计，满足快速定位和自动机翻</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-07-29</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>之前在做 blog 多语言支持的时候，也曾经短暂的做过 hugo 构建的拦截进行 AI 机翻，奈何 GPT4 成本太高和效果自己无法验证放弃了。
+而后做 Web SaaS（Vue3 + Vite + TS + i18n） 项目，需要到多语言的支持。重新设计了一套满足快速定位，和自动 AI 机翻的多语言方案。</p>
+<p>满足以下需求：</p>
+<h3 id="设计需求">设计需求</h3>
+<ol>
+<li>避免全量加载利用率不高的资源，支持分包加载。
+<ol>
+<li>语言切换后直接 Reload Page</li>
+<li>分包就涉及到 Key 相同问题，支持命名空间</li>
+</ol>
+</li>
+<li>开发便利性</li>
+<li>自动机翻</li>
+<li>导出母审表格（todo）</li>
+<li>更新校正内容（todo）</li>
+</ol>
+<h3 id="设计方案">设计方案</h3>
+<p>现在除了导出母审和更新审核的内容未完成，其它都已完成，但设计方案也还是可以作为参考。</p>
+<h4 id="分包">分包</h4>
+<p>架构渐进式演进过程中，很大情况就是在全局统一一个对应的 <code>[local].json</code> 就不在往下拆了，重复的 key 也能很快的找到，再写上个自动 load files 的脚本，项目运行时执行，将语言内容都加载上，按照语言去初始。如果您是处于这样的代码，谁写的就上去抽他丫的两大笔兜，自己写的抽自己（我先来）。 <br>
+假设：需要支持 10 种语言，每种 60KB，首页需要 load 600KB，传输速率 1M/s；那么就得多花差不多 500ms，还不算流量计费的成本。 <br>
+所以需要根据使用频率，按 Golbal、Views、Components 等需要的时机去控制加载，但相应的，会增加请求数量。</p>
+<h4 id="命名空间">命名空间</h4>
+<p>另外，不管是何种文件拆分方式，也都可能会遇到同 Key 不同 Value 的场景，这还是比较好处理的，增加独立的命名空间就行。 <br>
+幸运的是，<code>&quot;vue-i18n&quot;: &quot;^11.1.9&quot;</code> 基础能力能够满足需求。</p>
+<h4 id="开发便利性">开发便利性</h4>
+<p>在基础要求之外的开发便利上，直觉上我们会以 <code>Golbal.common.[key]</code> 或者 <code>[namespace].[key]</code> 这样的方式，去读取；需要修改 Value 可能需要先找到 Key，再去找到 Key 使用的地方，再结合同 key 名的情况，有时候还是挺费劲的事儿（同时使用 tailwind）。</p>
+<p>这里我选择基于 EN 作为 Base，Key === Value。<br>
+可能有的人会说，啊，这么多特殊字符，这么长的 Value 你用来当 Key？！  <br>
+除了超长或者同 Key 不同 Value 需要单独处理之外。每个 Key（Value）都可以看作唯一的，定位到 （Key）Value 等效；只要内容发生改变，Key 也就废弃了，相当于完成了原 Key 的删除，和新内容 Key 的新增。当然，你也可以直接修改 Value 不修改 Key 使用的代码，更少改动完成内容更新，也许会出现 Key（Value）含义对应不上的小问题。</p>
+<h4 id="自动机翻">自动机翻</h4>
+<p>再一个就是自动化机翻的考虑，依旧选择 EN 作为 Base。你必须要副本一份 EN 旧文件（首次可以是空）才能计算出来新、删、改（直接从目标语言对比 Base 语言，无法得到修改的）的 Key，而后依旧要和目标语言进行对比（否则后增加的语言文件，可能缺少数据），调用接口机翻到目标语言的操作。 <br>
+Key（Value）相同则可以直接使用目标语言进行对比，因为不存在“改”这个选项了，就不用在每个 Base 语言的文件隔壁，自动“拉”一个副本文件了。 <br>
+当然，以上的开发便利性和机翻的做法，是仁者见仁智者见智了。</p>
+<h4 id="导出母审表格todo">导出母审表格（todo）</h4>
+<p>以审核要求的格式来，正常就是以 Base 的 Key（Value）导出成表格，发给对应翻译员审核回填后返回。</p>
+<h4 id="更新校正内容todo">更新校正内容（todo）</h4>
+<p>有文件都好自动化解析，回写。</p>
+<h3 id="实现方式">实现方式</h3>
+<h4 id="分包加载--命名空间">分包加载 &amp; 命名空间</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// 构建映射
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">i18nModules</span> <span class="o">=</span> <span class="kr">import</span><span class="p">.</span><span class="nx">meta</span><span class="p">.</span><span class="nx">glob</span><span class="p">(</span><span class="s1">&#39;/src/**/i18n/*.ts&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">module</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">i18nModules</span><span class="p">[</span><span class="kr">module</span><span class="nx">Key</span><span class="p">]()</span>
+</span></span></code></pre></div><p>卸载同理，获取所有 key，删除目标内容，重新 set 就好。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// 使用 vue-i18n 内置的 mergeLocaleMessage 方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">namespacedMessages</span> <span class="o">=</span> <span class="p">{</span> <span class="p">[</span><span class="kr">namespace</span><span class="p">]</span><span class="o">:</span> <span class="nx">messages</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">i18n</span><span class="p">.</span><span class="kr">global</span><span class="p">.</span><span class="nx">mergeLocaleMessage</span><span class="p">(</span><span class="nx">locale</span><span class="p">,</span> <span class="nx">namespacedMessages</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// or i18n.global.setLocaleMessage(locale, updatedMessages)
+</span></span></span></code></pre></div><p><a class="link" href="https://github.com/hawkeye-xb/code-share/blob/main/i18n/index.ts"  target="_blank" rel="noopener"
+    >简单代码样例：https://github.com/hawkeye-xb/code-share/blob/main/i18n/index.ts</a></p>
+<h4 id="diff--机翻">Diff &amp; 机翻</h4>
+<p>按照 Key === Value 的结构，代码应该都挺简单的。DFS（BFS）遍历下所有 i18n 目录，获取 EN Base ，直接进行 Diff 和 调用机翻 API 就好。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

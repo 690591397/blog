@@ -1,0 +1,592 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='五分钟搭建个人博客：零成本搭建。使用Hugo框架和Vercel部署，详细介绍了如何创建、配置和部署个人博客。包括本地环境搭建、新项目创建、部署到Vercel、图床使用、数据分析、自定义域名、评论功能等内容。'>
+<title>五分钟搭建个人博客：零成本搭建</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/blog/buildyourblog/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='五分钟搭建个人博客：零成本搭建'>
+<meta property='og:description' content='五分钟搭建个人博客：零成本搭建。使用Hugo框架和Vercel部署，详细介绍了如何创建、配置和部署个人博客。包括本地环境搭建、新项目创建、部署到Vercel、图床使用、数据分析、自定义域名、评论功能等内容。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/blog/buildyourblog/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='hugo' /><meta property='article:published_time' content='2024-04-23T10:09:26&#43;08:00'/><meta property='article:modified_time' content='2024-04-23T10:09:26&#43;08:00'/>
+<meta name="twitter:title" content="五分钟搭建个人博客：零成本搭建">
+<meta name="twitter:description" content="五分钟搭建个人博客：零成本搭建。使用Hugo框架和Vercel部署，详细介绍了如何创建、配置和部署个人博客。包括本地环境搭建、新项目创建、部署到Vercel、图床使用、数据分析、自定义域名、评论功能等内容。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#vercel-一键搭建">Vercel 一键搭建</a></li>
+    <li><a href="#macos-本地环境搭建">MacOS 本地环境搭建</a>
+      <ul>
+        <li><a href="#安装-hugo">安装 Hugo</a></li>
+      </ul>
+    </li>
+    <li><a href="#创建新项目">创建新项目</a></li>
+    <li><a href="#部署到-vercel">部署到 Vercel</a></li>
+    <li><a href="#图床smms">图床：smms</a></li>
+    <li><a href="#数据分析googleanalytics">数据分析：GoogleAnalytics</a>
+      <ul>
+        <li><a href="#接入成功验证">接入成功验证</a></li>
+      </ul>
+    </li>
+    <li><a href="#自定义域名">自定义域名</a>
+      <ul>
+        <li><a href="#google-search-console验证域名所有权">Google Search Console验证域名所有权</a></li>
+      </ul>
+    </li>
+    <li><a href="#评论功能">评论功能</a>
+      <ul>
+        <li><a href="#giscus使用方式">giscus使用方式</a></li>
+      </ul>
+    </li>
+    <li><a href="#google-ads">Google ads</a></li>
+    <li><a href="#最后">最后</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/blog/" >
+                Blog
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/blog/buildyourblog/">五分钟搭建个人博客：零成本搭建</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+            五分钟搭建个人博客：零成本搭建。使用Hugo框架和Vercel部署，详细介绍了如何创建、配置和部署个人博客。包括本地环境搭建、新项目创建、部署到Vercel、图床使用、数据分析、自定义域名、评论功能等内容。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-23</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+        <footer class="article-translations">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+            <div>
+                
+                    <a href="https://690591397.github.io/blog/en/posts/blog/buildyourblog/" class="link">English</a>
+                
+            </div>
+        </footer>
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好。</p>
+<p>今天接着研究个人站长探索之博客搭建。</p>
+<p>大家可能会想，我们国内有各种各样的平台，能够分享心情状态、生活、技术等等，图文并茂。有很好的内容编辑、数据分析、评论和广告接入等工具。为什么还需要自建博客呢？没有流量，没有阅读	，还得辛苦维护。  <br>
+最大的优势就是打造个人品牌的同时还比较“自由”，毕竟在别人的地方就得遵守别人的规则；再有就是不同平台都有自己的特色，自建博客可以当个人输出的归档；虽然没有平台推荐，但是视野可以扩展到全球，总不能分布到每个地区的专有平台，这渠道也太多了。</p>
+<!-- ## 整体流程 -->
+<p>即使有说的这些优势，搭建麻烦也不见得非得要自建。要是放在以前类似购买维护服务器就这一项都给我劝退了。好在现在博客框架，静态网站托管服务等让这个过程无比简单。就这么说，如果你有Github账号，五分钟就能搭起来，甚至都不用五分钟，授权Vercel后，只需网址上勾选即可。</p>
+<p>这里我也是使用了Hugo（PaperMod主题），Github管理内容，Vercel部署静态资源，完成带<font color=#000000>自定义域名、GoogleAnalytics、评论、广告</font>的博客。</p>
+<!-- ## 搭建过程 -->
+<p>再唠叨下为什么选择这些，Hugo是使用Golang开发的，后续如果访问量多自建服务还能简单些，远没有Wordpress复杂；Vercel则是在国内外都有cdn加速。</p>
+<h2 id="vercel-一键搭建">Vercel 一键搭建</h2>
+<p>Github授权 <a class="link" href="https://vercel.com/"  target="_blank" rel="noopener"
+    >vercel</a>，创建团队，创建项目后，选择clone template，从所有的模板里面搜索Hugo，选中部署项目即可。稍作等待之后就可以通过项目右边Domains中的域名访问博客了，同时也会在Github里面创建Hugo项目，后续根据Hugo文档编写内容即可。</p>
+<h2 id="macos-本地环境搭建">MacOS 本地环境搭建</h2>
+<p>当然后续咱们在写内容的时候，需要在本地看过效果，才能真正发布出来。下面是在MacOS系统下环境搭建，当然<a class="link" href="https://gohugo.io/getting-started/quick-start/"  target="_blank" rel="noopener"
+    >Hugo官方引导</a>也很清晰。</p>
+<h3 id="安装-hugo">安装 Hugo</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">brew install hugo
+</span></span><span class="line"><span class="cl"><span class="c1"># 或者</span>
+</span></span><span class="line"><span class="cl">sudo port install hugo
+</span></span></code></pre></div><p>验证安装成功</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo version
+</span></span><span class="line"><span class="cl"><span class="c1"># hugo v0.125.2-4e483f5d4abae136c4312d397a55e9e1d39148df+extended darwin/arm64 BuildDate=2024-04-20T15:29:44Z VendorInfo=brew</span>
+</span></span></code></pre></div><p>git操作这里就不多展开了，具体可以在<a class="link" href="https://git-scm.com/book/en/v2/Getting-Started-Installing-Git"  target="_blank" rel="noopener"
+    >git</a>安装和学习。</p>
+<h2 id="创建新项目">创建新项目</h2>
+<p>安装之后我们就可以创建我们第一个博客了。<code>--format yaml</code> 是配置文件的格式，默认.toml，根据个人喜好选择就可以。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo new site MyFreshWebsite --format yaml
+</span></span><span class="line"><span class="cl"><span class="c1"># replace MyFreshWebsite with name of your website</span>
+</span></span></code></pre></div><p>进入到生成的 MyFreshWebsite 目录，初始化主题（这里使用的是<a class="link" href="https://github.com/adityatelange/hugo-PaperMod?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >PaperMod</a>），通过git模块的方式使用主题的，也就是说不能也不应该主动修改主题项目的文件，这样才能在需要更新的时候，通过git更新。也是因为这种方式部署的时候遇到了些问题，后续说明。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> MyFreshWebsite
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 下载主题资源</span>
+</span></span><span class="line"><span class="cl">git init
+</span></span><span class="line"><span class="cl">git submodule add --depth<span class="o">=</span><span class="m">1</span> https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
+</span></span><span class="line"><span class="cl">git submodule update --init --recursive <span class="c1"># needed when you reclone your repo (submodules may not get cloned automatically)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 给配置文件添加主题依赖</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;theme: [&#39;PaperMod&#39;]&#34;</span> &gt;&gt; hugo.yaml
+</span></span></code></pre></div><p>在这里基本就准备完毕了，接下来就能启动项目了。<code>-D</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hugo server
+</span></span></code></pre></div><p>如果需要本地构建静态文件，直接<code>hugo</code>就会在public生成资源了。需要稍加注意的是public是构建之后的产物，也就是说不需要单独管理和上传Github的，可以<code>.gitignore</code>（需要创建）选择将其忽略。</p>
+<h2 id="部署到-vercel">部署到 Vercel</h2>
+<p>在Vercel创建新的项目，选择从Github导入“Import Git Repository”，框架选择Hugo（不选也没关系，反正都得改），将构建指令Build Command设置为<code>git submodule update --init --recursive &amp;&amp; hugo --gc</code>。上面说过我们使用的主题是通过git模块的，这就导致一个问题，在Vercel构建的时候可能会下载失败。即使下载失败也是可以构建、部署成功，但是在访问的时候会出现xml错误提示，类似<code>This XML file does not appear to have any style information associated with it. The document tree is shown below.</code> 。
+<img src="https://s2.loli.net/2024/04/23/GM6Yor5qvhKbQe8.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="vercel hugo settings2024-04-23 14.48.51.png"
+	
+	
+>
+除此之外，Hugo版本不一致也会导致xml问题，所以建议增加<code>HUGO_VERSION</code>环境变量设置。完成之后会触发第一次构建部署，可能会遇到以下报错。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Skipping build cache since Node.js version changed from <span class="s2">&#34;18.x&#34;</span> to <span class="s2">&#34;20.x&#34;</span>
+</span></span><span class="line"><span class="cl">Running <span class="s2">&#34;vercel build&#34;</span>
+</span></span><span class="line"><span class="cl">Vercel CLI 33.7.1
+</span></span><span class="line"><span class="cl">sh: line 1: hugo: <span class="nb">command</span> not found
+</span></span><span class="line"><span class="cl">Error: Command <span class="s2">&#34;hugo --gc&#34;</span> exited with <span class="m">127</span>
+</span></span></code></pre></div><p>这里根目录提供个package.json 文件，将版本限制在范围内即可</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;engines&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;node&#34;</span><span class="p">:</span> <span class="s2">&#34;18.x&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>重新将代码推到Github，就会触发自动构建。</p>
+<p>到这里，我们就拥有了自己的博客，自己的网站啦✿✿ヽ(°▽°)ノ✿。</p>
+<hr>
+<h2 id="图床smms">图床：smms</h2>
+<p>有了文本内容，当然少不了需要图片，图文并茂才更好的表达内容。这些资源存储成本不低，有免费的咱也不能掏钱，这类产品有非常多，目前使用的<a class="link" href="https://smms.app/"  target="_blank" rel="noopener"
+    >SM.MS</a>做图床，有5个G的免费额度。因为可能会直接复制迁移到别的平台，顺便引流当前博客，所以先不使用当前项目的资源地址。但是smms使用过程不是这么丝滑，时长出现上传之后页面挂了的情况，后续如果有合适的直接在这里更新。</p>
+<h2 id="数据分析googleanalytics">数据分析：GoogleAnalytics</h2>
+<p>如果希望能够收集访问的数据，根据反馈去让自己的输出内容好，写作手法提升，这套主题可以说几乎零修改就能接入GoogleAnalytics。不需要修改主题文件，增加代码片段，也不需要添加全局的layouts文件和主题相冲突。将id设置到配置文件即可。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># ...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">services</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">googleAnalytics</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">G-xxx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ...</span><span class="w">
+</span></span></span></code></pre></div><h3 id="接入成功验证">接入成功验证</h3>
+<p>在开发阶段和正式博客页面，打开控制台(f12)，network选项下过滤到gtag文件的信息，代表是有相关代码，就是接入成功了。在相关网站也能看到访问数据的报告了。</p>
+<h2 id="自定义域名">自定义域名</h2>
+<p>虽然通过Vercel托管之后，会给到个随机的xxx.vercel.app域名，显得不是这么的正式，让人容易记住。可以去申请个人相关的域名，比如.xyz或其它后缀的域名，几块十块的一年。到目前为止支付的第一笔钱，让博客显得更正式，自己更开心的成本，不算成本（狗头）。</p>
+<p>域名注册成功之后需要经过一段时间（48小时内）才能分发到各个DNS解析服务器。这时候在Vercel会设置不上，但是会给出这边DNS的地址，去到相应的域名注册商（购买域名的地方），添加解析到目标服务器，也就是Vercel给出的地址，如下图76.76.21.21。稍微等待一会，就能设置上自定义的域名了，通过喜欢的域名访问自己的博客了。
+<img src="https://s2.loli.net/2024/04/23/RwspDPGBC1ZJWES.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="invalid domain config 2024-04-23 15.44.56.png"
+	
+	
+></p>
+<h3 id="google-search-console验证域名所有权">Google Search Console验证域名所有权</h3>
+<p><a class="link" href="https://support.google.com/webmasters/answer/9128668?hl=zh-Hans&amp;ref_topic=9128571&amp;sjid=12333764337225485116-NC"  target="_blank" rel="noopener"
+    >Search Console 简介</a>，可以帮助我们改进Google处理我们网站的方式（不验证所有权也有可能会收录）。
+<img src="https://s2.loli.net/2024/04/26/nxkh635vLwrj2Gi.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="gsc verify ownership 2024-04-26 13.36.53.png"
+	
+	
+>
+具体设置办法和域名自定义的一样。腾讯云注册的域名如下，左上角添加即可。
+<img src="https://s2.loli.net/2024/04/26/hfDXWQ86delY2w1.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="txcloud DNS set result 2024-04-26 13.31.03.png"
+	
+	
+></p>
+<h2 id="评论功能">评论功能</h2>
+<p>评论功能就挺仁者见仁智者见智的，有的并不喜欢开放在个人博客，只想安安静静写作。评论模块搭建也有不同的方式，这里给出集成速度快、简单的<a class="link" href="https://giscus.app/zh-CN"  target="_blank" rel="noopener"
+    >giscus</a> 方式，利用的是Github Discussion功能，设置简单，永久免费~。其它优势可以参考<a class="link" href="https://giscus.app/zh-CN"  target="_blank" rel="noopener"
+    >giscus网址</a>。</p>
+<h3 id="giscus使用方式">giscus使用方式</h3>
+<ol>
+<li>开通GitHub Discussions，具体就是在项目的settings 中把该项勾选上即可。（<a class="link" href="https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/enabling-or-disabling-github-discussions-for-a-repository"  target="_blank" rel="noopener"
+    >github文档</a>）</li>
+<li>将项目设置为public，能被别人访问，获取到评论数据。如对项目有协议要求或者其它问题，可以考虑另外的方案。</li>
+<li>将<a class="link" href="https://github.com/apps/giscus"  target="_blank" rel="noopener"
+    >giscus 安装</a>到项目里面。</li>
+<li>输入<a class="link" href="https://giscus.app/zh-CN"  target="_blank" rel="noopener"
+    >giscus</a>网址中生成script信息（标题：启用 giscus）。</li>
+<li>接入项目，这里PaperMod主题也给出了<a class="link" href="https://adityatelange.github.io/hugo-PaperMod/posts/papermod/papermod-features/#comments"  target="_blank" rel="noopener"
+    >配置方式</a>。</li>
+<li>生成的script代码复制到<code>layouts/partials/comments.html</code></li>
+<li>配置文件params增加comments: true, 如下：</li>
+</ol>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">comments</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></div><p>本地启动项目就能看到评论区域了。</p>
+<h2 id="google-ads">Google ads</h2>
+<p>ads接入好像是需要前提条件，先🕊一下。</p>
+<h2 id="最后">最后</h2>
+<p>最后，麻雀虽小，五脏俱全了。今天这五分钟，希望对您有帮助/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/hugo/">Hugo</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='Why Turborepo Quick start 依赖关系 与 package.json 通过最基础创建项目的指令pnpm dlx create-turbo@latest ，得到的 demo 项目。 目录结构需要注意：（以下说的每个，指的都是 apps 和 packages） Using this configuration, every directory with a package.json in the apps or packages directories will be considered a package.
+Ui 项目作为被依赖的 packages，package.json 中 name 的作用类似 appid，建议在前面加命名空间前缀。demo 是 &amp;ldquo;name&amp;rdquo;: &amp;ldquo;@repo/ui&amp;rdquo;, 再辅助以 export 将文件资源导出。通过即时打包的方式导出（非Build之后）
+{ &amp;#34;name&amp;#34;: &amp;#34;@repo/ui&amp;#34;, &amp;#34;private&amp;#34;: true, &amp;#34;exports&amp;#34;: { &amp;#34;./*&amp;#34;: &amp;#34;./src/*.tsx&amp;#34; }, } // apps/docs/app/page.tsx 使用用例 import { Button } from &amp;#34;@repo/ui/button&amp;#34;; Using exports this way provides three major benefits:'>
+<title>turborepo 快速入门</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/turborepoqs/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='turborepo 快速入门'>
+<meta property='og:description' content='Why Turborepo Quick start 依赖关系 与 package.json 通过最基础创建项目的指令pnpm dlx create-turbo@latest ，得到的 demo 项目。 目录结构需要注意：（以下说的每个，指的都是 apps 和 packages） Using this configuration, every directory with a package.json in the apps or packages directories will be considered a package.
+Ui 项目作为被依赖的 packages，package.json 中 name 的作用类似 appid，建议在前面加命名空间前缀。demo 是 &amp;ldquo;name&amp;rdquo;: &amp;ldquo;@repo/ui&amp;rdquo;, 再辅助以 export 将文件资源导出。通过即时打包的方式导出（非Build之后）
+{ &amp;#34;name&amp;#34;: &amp;#34;@repo/ui&amp;#34;, &amp;#34;private&amp;#34;: true, &amp;#34;exports&amp;#34;: { &amp;#34;./*&amp;#34;: &amp;#34;./src/*.tsx&amp;#34; }, } // apps/docs/app/page.tsx 使用用例 import { Button } from &amp;#34;@repo/ui/button&amp;#34;; Using exports this way provides three major benefits:'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/turborepoqs/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-08-29T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-08-29T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="turborepo 快速入门">
+<meta name="twitter:description" content="Why Turborepo Quick start 依赖关系 与 package.json 通过最基础创建项目的指令pnpm dlx create-turbo@latest ，得到的 demo 项目。 目录结构需要注意：（以下说的每个，指的都是 apps 和 packages） Using this configuration, every directory with a package.json in the apps or packages directories will be considered a package.
+Ui 项目作为被依赖的 packages，package.json 中 name 的作用类似 appid，建议在前面加命名空间前缀。demo 是 &amp;ldquo;name&amp;rdquo;: &amp;ldquo;@repo/ui&amp;rdquo;, 再辅助以 export 将文件资源导出。通过即时打包的方式导出（非Build之后）
+{ &amp;#34;name&amp;#34;: &amp;#34;@repo/ui&amp;#34;, &amp;#34;private&amp;#34;: true, &amp;#34;exports&amp;#34;: { &amp;#34;./*&amp;#34;: &amp;#34;./src/*.tsx&amp;#34; }, } // apps/docs/app/page.tsx 使用用例 import { Button } from &amp;#34;@repo/ui/button&amp;#34;; Using exports this way provides three major benefits:">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#依赖关系-与-packagejson">依赖关系 与 package.json</a></li>
+    <li><a href="#公共配置文件tsconfig">公共配置文件（tsconfig）</a></li>
+    <li><a href="#外部依赖管理pnpm">外部依赖管理（pnpm）</a></li>
+    <li><a href="#任务规划启动指令配置">任务规划（启动指令配置）</a>
+      <ul>
+        <li><a href="#默认执行">默认执行</a></li>
+        <li><a href="#根任务新项目基本用不上">根任务（新项目基本用不上）</a></li>
+        <li><a href="#更定制的配置">更定制的配置</a></li>
+        <li><a href="#更多配置">更多配置</a></li>
+      </ul>
+    </li>
+    <li><a href="#cache-">Cache !</a>
+      <ul>
+        <li><a href="#缓存的规则">缓存的规则</a></li>
+      </ul>
+    </li>
+    <li><a href="#环境参数">环境参数</a></li>
+    <li><a href="#参考文档">参考文档</a></li>
+  </ul>
+
+  <ul>
+    <li><a href="#remote-cache">remote cache</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/turborepoqs/">turborepo 快速入门</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-08-29</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h1 id="why-turborepo">Why Turborepo</h1>
+<h1 id="quick-start">Quick start</h1>
+<h2 id="依赖关系-与-packagejson">依赖关系 与 package.json</h2>
+<p>通过最基础创建项目的指令<code>pnpm dlx create-turbo@latest</code> ，得到的 demo 项目。 <br>
+目录结构需要注意：（以下说的每个，指的都是 apps 和 packages） <br>
+Using this configuration, every directory with a package.json in the apps or packages directories will be considered a package.</p>
+<p>Ui 项目作为被依赖的 packages，package.json 中 name 的作用类似 appid，建议在前面加命名空间前缀。demo 是 &ldquo;name&rdquo;: &ldquo;@repo/ui&rdquo;, 再辅助以 export 将文件资源导出。通过即时打包的方式导出（非Build之后）</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;@repo/ui&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;private&#34;</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;exports&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;./*&#34;</span><span class="p">:</span> <span class="s2">&#34;./src/*.tsx&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><pre tabindex="0"><code>// apps/docs/app/page.tsx 使用用例
+import { Button } from &#34;@repo/ui/button&#34;;
+</code></pre><p>Using exports this way provides three major benefits:</p>
+<ul>
+<li>Avoiding barrel files: Barrel files are files that re-export other files in the same package, creating one entrypoint for the entire package. While they might appear convenient, they&rsquo;re difficult for compilers and bundlers to handle and can quickly lead to performance problems.</li>
+<li>More powerful features: exports also has other powerful features compared to the main field like Conditional Exports. In general, we recommend using exports over main whenever possible as it is the more modern option.</li>
+<li>IDE autocompletion: By specifying the entrypoints for your package using exports, you can ensure that your code editor can provide auto-completion for the package&rsquo;s exports.</li>
+</ul>
+<p>当然如果需要 publish 到公网，再按照目录独立的构建出 dist 即可，我猜没有什么难度。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="c1">// packages/typescript-config/package.json
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="s2">&#34;publishConfig&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;access&#34;</span><span class="p">:</span> <span class="s2">&#34;public&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="公共配置文件tsconfig">公共配置文件（tsconfig）</h2>
+<p>再一个，不同项目会有相同和定制的 config 信息，拿 demo 中 ts <code>packages/typescript-config</code> 来举例。 <br>
+我们不再需要再在根目录保留，而是作为单独的依赖包在 packages 中导出。     <br>
+在 demo 中，会有 base.js，和针对定制的 next.js 文件，apps 中，tsconfig.ts 使用 <code>&quot;extends&quot;: &quot;@repo/typescript-config/nextjs.json&quot;</code>, 这里因为 extends 是 TypeScript 编译器的内置功能，不依赖 package.json 的 export 字段也能找到。对应的，<code>packages/eslint-config/package.json</code> 就需要指明文件的导出了。</p>
+<h2 id="外部依赖管理pnpm">外部依赖管理（pnpm）</h2>
+<p>幽灵依赖对 monorepo 来说是很容易出现的问题，并且要求所有项目使用统一版本依赖是不现实的。 <br>
+建议就近初始化依赖，在每个项目 package.json 中声明，turborepo 也是通过声明来限制 apps 中依赖的访问。但是也没有彻底的限制幽灵依赖，可以增加 .npmrc 配置限制。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">shamefully-hoist<span class="o">=</span><span class="nb">false</span>
+</span></span><span class="line"><span class="cl">strict-peer-dependencies<span class="o">=</span><span class="nb">true</span>
+</span></span></code></pre></div><p>包管理方式使用了 pnpm，对于重复的依赖，会提升到根目录，再以软链的方式指向文件，避免产生 node modules 黑洞。demo 项目可以通过依赖的指向验证</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-sh" data-lang="sh"><span class="line"><span class="cl">ls -la apps/docs/node_modules/react
+</span></span><span class="line"><span class="cl">ls -la apps/web/node_modules/react
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">/*
+</span></span><span class="line"><span class="cl">apps/docs/node_modules/react -&gt; ../../../node_modules/.pnpm/react@19.1.0/node_modules/react
+</span></span><span class="line"><span class="cl">apps/web/node_modules/react -&gt; ../../../node_modules/.pnpm/react@19.1.0/node_modules/react
+</span></span><span class="line"><span class="cl">*/
+</span></span></code></pre></div><h2 id="任务规划启动指令配置">任务规划（启动指令配置）</h2>
+<p><a class="link" href="https://turborepo.com/docs/crafting-your-repository/configuring-tasks#depending-on-a-specific-task-in-a-specific-package"  target="_blank" rel="noopener"
+    >看文档！看文档！看文档！</a>
+<a class="link" href="https://turborepo.com/docs/crafting-your-repository/configuring-tasks#depending-on-a-specific-task-in-a-specific-package"  target="_blank" rel="noopener"
+    >https://turborepo.com/docs/crafting-your-repository/configuring-tasks#depending-on-a-specific-task-in-a-specific-package</a></p>
+<h3 id="默认执行">默认执行</h3>
+<p>和其他的 monorepo 项目一样，通过执行 turbo run dev，会自动查找包 script 下的 dev 指令，同步（是否同步？）执行。
+如果需要定制执行任务，则需要在 turbo.json 中配置 tasks。
+dependsOn 需要注意的是：</p>
+<ul>
+<li>^build: 会根据依赖逐级往上查找，并且执行 build 任务，直到依赖构建完成，再运行该指令（内容为以上，自动查找 script 执行）。</li>
+<li>build: 无【 ^ 】符号，意思是当前指令依赖 build 指令的执行（全局指令，可以用 &ndash;filter 指定项目）。比如：test 之前，需要执行构建。</li>
+<li>utils#build: 运行指定指令之前，优先执行 utils 包下的 build 指令</li>
+</ul>
+<h3 id="根任务新项目基本用不上">根任务（新项目基本用不上）</h3>
+<p>正常执行 turbo run 只会针对 apps 和 packages 的包执行，而根执行，则是所有目录都执行。场景是在项目迁移，需要执行一些 lint pretty 指令啥的。</p>
+<h3 id="更定制的配置">更定制的配置</h3>
+<p>项目内部的 turbo.json 会覆盖根目录的配置。</p>
+<h3 id="更多配置">更多配置</h3>
+<p>等等更多请查看官方文档</p>
+<ul>
+<li>任务过程中长任务（不终止）</li>
+<li>不缓存</li>
+<li>依赖并行执行</li>
+</ul>
+<h2 id="cache-">Cache !</h2>
+<h3 id="缓存的规则">缓存的规则</h3>
+<p>基于包的，会处理每个包输出的。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl">  <span class="s2">&#34;tasks&#34;</span><span class="err">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;build&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;dependsOn&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;^build&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;inputs&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;$TURBO_DEFAULT$&#34;</span><span class="p">,</span> <span class="s2">&#34;.env*&#34;</span><span class="p">],</span>
+</span></span><span class="line"><span class="cl">      <span class="nt">&#34;outputs&#34;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&#34;.next/**&#34;</span><span class="p">,</span> <span class="s2">&#34;!.next/cache/**&#34;</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><p>类似写代码一样，inputs 相当于依赖，比如 .env 内容发生了变更，则不使用缓存。否则检测到缓存内容，该执行会返回缓存，用于提高速度。 <br>
+而 outputs 则相当需要缓存内容的配置。如上的意思：缓存 .next/* （next 的构建产物），忽略其中 cache 目录。 <br>
+<a class="link" href="https://turborepo.com/docs/reference/globs"  target="_blank" rel="noopener"
+    >更多规范</a> <a class="link" href="https://turborepo.com/docs/reference/globs"  target="_blank" rel="noopener"
+    >https://turborepo.com/docs/reference/globs</a></p>
+<p>私有包的缓存？
+<a class="link" href="https://turborepo.com/docs/crafting-your-repository/creating-an-internal-package#create-an-empty-directory"  target="_blank" rel="noopener"
+    >https://turborepo.com/docs/crafting-your-repository/creating-an-internal-package#create-an-empty-directory</a></p>
+<h2 id="环境参数">环境参数</h2>
+<p>类似：mode=dev；globalEnv 是什么？Task env 字段是什么？</p>
+<p>Turborepo 不做环境变量的处理，可以理解为只做任务的启动器，但是为什么 turbo.json 有配置？因为 turbo 很重要的缓存功能，避免出现环境变量发生了更新，而继续使用缓存内容的问题（dev 和 prod，导致使用了dev 缓存等等），所以需要做“依赖更新”的配置。<br>
+dev；globalEnv 和 task env，都是用于告诉缓存是否需要更新的。</p>
+<p>好在 turbo 也允许 “&ndash;” 透穿参数：turbo run dev &ndash; &ndash;mode=development</p>
+<pre tabindex="0"><code>&#34;passThroughArgs&#34;: true,  // 允许透传参数给下游 scripts
+</code></pre><h2 id="参考文档">参考文档</h2>
+<p>依赖关系、公共配置文件；参考：https://turborepo.com/docs/crafting-your-repository/structuring-a-repository#anatomy-of-a-package <br>
+外部依赖管理；参考：https://turborepo.com/docs/crafting-your-repository/managing-dependencies <br>
+任务规划；参考：https://turborepo.com/docs/crafting-your-repository/configuring-tasks <br>
+缓存配置；参考：https://turborepo.com/docs/crafting-your-repository/caching <br>
+环境变量；参考：https://turborepo.com/docs/crafting-your-repository/using-environment-variables</p>
+<h1 id="cache">Cache</h1>
+<h2 id="remote-cache">remote cache</h2>
+<h1 id="add-electron-projectwebpack">Add Electron Project(Webpack)</h1>
+<h1 id="add-vue3-projectvite">Add Vue3 Project(Vite)</h1>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

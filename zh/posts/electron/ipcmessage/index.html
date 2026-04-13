@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='背景 进程间通信（IPC，Inter-Process Communication）是 Electron 中构建功能丰富的桌面应用程序的关键部分之一。在深入探讨 Electron IPC 的实现之前，我们先来了解这种设计的背景。
+假设我们使用单个进程来管理多窗口、多标签页以及第三方插件的加载，这种方式可以有效减少额外进程的资源消耗。然而，这也带来了显著的弊端：任何窗口或插件的崩溃都可能导致整个应用程序瘫痪。为了解决这一问题，Chrome 团队采用了多进程模型，将浏览器划分为多个独立进程（如浏览器进程、渲染进程、插件进程等），每个进程负责特定任务，彼此隔离。即使某个渲染进程崩溃，也不会影响主进程或其他窗口的正常运行。
+Electron 继承了 Chromium 的多进程架构。虽然 Electron 提供了 contextIsolation 和 nodeIntegration 等配置选项，允许渲染进程直接调用 Node.js 功能，但这也带来了安全隐患——任何加载的 HTML 内容（包括第三方脚本）都可以无限制地访问本地资源。这在浏览器环境中是不可想象的，但在桌面客户端中却是常见需求，因为客户端的优势之一正是能够与本地系统深度集成。
+所以，我们需要在隔离上下文的环境下，有选择地暴露主进程的能力给渲染进程，同时避免安全漏洞。IPC 正是解决这一问题的核心机制，通过它，主进程和渲染进程可以在安全、高效的前提下进行通信。
+Electron IPC 的实现原理 Electron IPC 是基于 Chromium IPC 机制封装而来的，其底层依赖管道（Pipe）或类似机制。简单来说，管道就像一根电话线，由操作系统管理两个进程之间的连接。发送端将数据序列化后写入管道，操作系统通过文件描述符通知接收端进程，接收端像接线员一样取出数据并反序列化。这种通信通常是单向的，若需双向交互，则需要额外的管道或机制。
+管道的工作原理 数据写入：发送进程（如渲染进程）将消息序列化为字节流（通常是 JSON 格式），通过管道的写入端送入内核缓冲区。 事件通知：操作系统通过文件描述符监控管道状态，当缓冲区有数据时，通知接收进程（如主进程）。 数据读取：接收进程的事件循环检测到管道可读后，从读取端取出字节流。 反序列化：接收端将字节流还原为原始数据结构（如 JavaScript 对象），并触发相应的处理逻辑。 在 Electron 中，管道的具体实现因平台而异。
+管道的问题 尽管管道简单高效，但也存在问题：
+性能瓶颈：频繁的序列化和反序列化增加了 CPU 开销，尤其在传输大数据时。 接口复杂性：开发者需要手动定义消息格式和事件监听，代码维护成本较高。 安全性问题：低级的管道机制难以保证数据的完整性或防止未授权访问。 Mojo 对此 Chromium 提供了更高效、类型安全且灵活的 Mojo 解决方案。
+通过消息管道（Message Pipe）和数据管道（Data Pipe）支持零拷贝传输，减少序列化开销。 支持双向通信和复杂的交互模式，无需额外管道。 细粒度的权限控制和句柄传递机制，确保通信安全。 主进程与渲染进程通信 在了解了以上内容之后，Electron 已经提供 ipcMain 和 ipcRenderer 模块，实现主进程和渲染进程之间的通信。'>
+<title>进程间通信 —— IPC</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/electron/ipcmessage/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='进程间通信 —— IPC'>
+<meta property='og:description' content='背景 进程间通信（IPC，Inter-Process Communication）是 Electron 中构建功能丰富的桌面应用程序的关键部分之一。在深入探讨 Electron IPC 的实现之前，我们先来了解这种设计的背景。
+假设我们使用单个进程来管理多窗口、多标签页以及第三方插件的加载，这种方式可以有效减少额外进程的资源消耗。然而，这也带来了显著的弊端：任何窗口或插件的崩溃都可能导致整个应用程序瘫痪。为了解决这一问题，Chrome 团队采用了多进程模型，将浏览器划分为多个独立进程（如浏览器进程、渲染进程、插件进程等），每个进程负责特定任务，彼此隔离。即使某个渲染进程崩溃，也不会影响主进程或其他窗口的正常运行。
+Electron 继承了 Chromium 的多进程架构。虽然 Electron 提供了 contextIsolation 和 nodeIntegration 等配置选项，允许渲染进程直接调用 Node.js 功能，但这也带来了安全隐患——任何加载的 HTML 内容（包括第三方脚本）都可以无限制地访问本地资源。这在浏览器环境中是不可想象的，但在桌面客户端中却是常见需求，因为客户端的优势之一正是能够与本地系统深度集成。
+所以，我们需要在隔离上下文的环境下，有选择地暴露主进程的能力给渲染进程，同时避免安全漏洞。IPC 正是解决这一问题的核心机制，通过它，主进程和渲染进程可以在安全、高效的前提下进行通信。
+Electron IPC 的实现原理 Electron IPC 是基于 Chromium IPC 机制封装而来的，其底层依赖管道（Pipe）或类似机制。简单来说，管道就像一根电话线，由操作系统管理两个进程之间的连接。发送端将数据序列化后写入管道，操作系统通过文件描述符通知接收端进程，接收端像接线员一样取出数据并反序列化。这种通信通常是单向的，若需双向交互，则需要额外的管道或机制。
+管道的工作原理 数据写入：发送进程（如渲染进程）将消息序列化为字节流（通常是 JSON 格式），通过管道的写入端送入内核缓冲区。 事件通知：操作系统通过文件描述符监控管道状态，当缓冲区有数据时，通知接收进程（如主进程）。 数据读取：接收进程的事件循环检测到管道可读后，从读取端取出字节流。 反序列化：接收端将字节流还原为原始数据结构（如 JavaScript 对象），并触发相应的处理逻辑。 在 Electron 中，管道的具体实现因平台而异。
+管道的问题 尽管管道简单高效，但也存在问题：
+性能瓶颈：频繁的序列化和反序列化增加了 CPU 开销，尤其在传输大数据时。 接口复杂性：开发者需要手动定义消息格式和事件监听，代码维护成本较高。 安全性问题：低级的管道机制难以保证数据的完整性或防止未授权访问。 Mojo 对此 Chromium 提供了更高效、类型安全且灵活的 Mojo 解决方案。
+通过消息管道（Message Pipe）和数据管道（Data Pipe）支持零拷贝传输，减少序列化开销。 支持双向通信和复杂的交互模式，无需额外管道。 细粒度的权限控制和句柄传递机制，确保通信安全。 主进程与渲染进程通信 在了解了以上内容之后，Electron 已经提供 ipcMain 和 ipcRenderer 模块，实现主进程和渲染进程之间的通信。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/electron/ipcmessage/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-03-12T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-03-12T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="进程间通信 —— IPC">
+<meta name="twitter:description" content="背景 进程间通信（IPC，Inter-Process Communication）是 Electron 中构建功能丰富的桌面应用程序的关键部分之一。在深入探讨 Electron IPC 的实现之前，我们先来了解这种设计的背景。
+假设我们使用单个进程来管理多窗口、多标签页以及第三方插件的加载，这种方式可以有效减少额外进程的资源消耗。然而，这也带来了显著的弊端：任何窗口或插件的崩溃都可能导致整个应用程序瘫痪。为了解决这一问题，Chrome 团队采用了多进程模型，将浏览器划分为多个独立进程（如浏览器进程、渲染进程、插件进程等），每个进程负责特定任务，彼此隔离。即使某个渲染进程崩溃，也不会影响主进程或其他窗口的正常运行。
+Electron 继承了 Chromium 的多进程架构。虽然 Electron 提供了 contextIsolation 和 nodeIntegration 等配置选项，允许渲染进程直接调用 Node.js 功能，但这也带来了安全隐患——任何加载的 HTML 内容（包括第三方脚本）都可以无限制地访问本地资源。这在浏览器环境中是不可想象的，但在桌面客户端中却是常见需求，因为客户端的优势之一正是能够与本地系统深度集成。
+所以，我们需要在隔离上下文的环境下，有选择地暴露主进程的能力给渲染进程，同时避免安全漏洞。IPC 正是解决这一问题的核心机制，通过它，主进程和渲染进程可以在安全、高效的前提下进行通信。
+Electron IPC 的实现原理 Electron IPC 是基于 Chromium IPC 机制封装而来的，其底层依赖管道（Pipe）或类似机制。简单来说，管道就像一根电话线，由操作系统管理两个进程之间的连接。发送端将数据序列化后写入管道，操作系统通过文件描述符通知接收端进程，接收端像接线员一样取出数据并反序列化。这种通信通常是单向的，若需双向交互，则需要额外的管道或机制。
+管道的工作原理 数据写入：发送进程（如渲染进程）将消息序列化为字节流（通常是 JSON 格式），通过管道的写入端送入内核缓冲区。 事件通知：操作系统通过文件描述符监控管道状态，当缓冲区有数据时，通知接收进程（如主进程）。 数据读取：接收进程的事件循环检测到管道可读后，从读取端取出字节流。 反序列化：接收端将字节流还原为原始数据结构（如 JavaScript 对象），并触发相应的处理逻辑。 在 Electron 中，管道的具体实现因平台而异。
+管道的问题 尽管管道简单高效，但也存在问题：
+性能瓶颈：频繁的序列化和反序列化增加了 CPU 开销，尤其在传输大数据时。 接口复杂性：开发者需要手动定义消息格式和事件监听，代码维护成本较高。 安全性问题：低级的管道机制难以保证数据的完整性或防止未授权访问。 Mojo 对此 Chromium 提供了更高效、类型安全且灵活的 Mojo 解决方案。
+通过消息管道（Message Pipe）和数据管道（Data Pipe）支持零拷贝传输，减少序列化开销。 支持双向通信和复杂的交互模式，无需额外管道。 细粒度的权限控制和句柄传递机制，确保通信安全。 主进程与渲染进程通信 在了解了以上内容之后，Electron 已经提供 ipcMain 和 ipcRenderer 模块，实现主进程和渲染进程之间的通信。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#背景">背景</a></li>
+        <li><a href="#electron-ipc-的实现原理">Electron IPC 的实现原理</a>
+          <ul>
+            <li><a href="#管道的工作原理">管道的工作原理</a></li>
+            <li><a href="#管道的问题">管道的问题</a></li>
+            <li><a href="#mojo">Mojo</a></li>
+          </ul>
+        </li>
+        <li><a href="#主进程与渲染进程通信">主进程与渲染进程通信</a>
+          <ul>
+            <li><a href="#渲染进程----主进程">渲染进程 &ndash;&gt; 主进程</a></li>
+            <li><a href="#主进程----渲染进程">主进程 &ndash;&gt; 渲染进程</a></li>
+            <li><a href="#渲染进程--渲染进程">渲染进程 &lt;==&gt; 渲染进程</a></li>
+          </ul>
+        </li>
+        <li><a href="#最后">最后</a></li>
+        <li><a href="#参考和引用">参考和引用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/electron/" >
+                Electron
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/electron/ipcmessage/">进程间通信 —— IPC</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-03-12</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="背景">背景</h3>
+<p>进程间通信（IPC，Inter-Process Communication）是 Electron 中构建功能丰富的桌面应用程序的关键部分之一。在深入探讨 Electron IPC 的实现之前，我们先来了解这种设计的背景。</p>
+<p>假设我们使用单个进程来管理多窗口、多标签页以及第三方插件的加载，这种方式可以有效减少额外进程的资源消耗。然而，这也带来了显著的弊端：任何窗口或插件的崩溃都可能导致整个应用程序瘫痪。为了解决这一问题，Chrome 团队采用了多进程模型，将浏览器划分为多个独立进程（如浏览器进程、渲染进程、插件进程等），每个进程负责特定任务，彼此隔离。即使某个渲染进程崩溃，也不会影响主进程或其他窗口的正常运行。</p>
+<p>Electron 继承了 Chromium 的多进程架构。虽然 Electron 提供了 contextIsolation 和 nodeIntegration 等配置选项，允许渲染进程直接调用 Node.js 功能，但这也带来了安全隐患——任何加载的 HTML 内容（包括第三方脚本）都可以无限制地访问本地资源。这在浏览器环境中是不可想象的，但在桌面客户端中却是常见需求，因为客户端的优势之一正是能够与本地系统深度集成。</p>
+<p>所以，我们需要在隔离上下文的环境下，有选择地暴露主进程的能力给渲染进程，同时避免安全漏洞。IPC 正是解决这一问题的核心机制，通过它，主进程和渲染进程可以在安全、高效的前提下进行通信。</p>
+<h3 id="electron-ipc-的实现原理">Electron IPC 的实现原理</h3>
+<p>Electron IPC 是基于 Chromium IPC 机制封装而来的，其底层依赖管道（Pipe）或类似机制。简单来说，管道就像一根电话线，由操作系统管理两个进程之间的连接。发送端将数据序列化后写入管道，操作系统通过文件描述符通知接收端进程，接收端像接线员一样取出数据并反序列化。这种通信通常是单向的，若需双向交互，则需要额外的管道或机制。</p>
+<h4 id="管道的工作原理">管道的工作原理</h4>
+<ol>
+<li>数据写入：发送进程（如渲染进程）将消息序列化为字节流（通常是 JSON 格式），通过管道的写入端送入内核缓冲区。</li>
+<li>事件通知：操作系统通过文件描述符监控管道状态，当缓冲区有数据时，通知接收进程（如主进程）。</li>
+<li>数据读取：接收进程的事件循环检测到管道可读后，从读取端取出字节流。</li>
+<li>反序列化：接收端将字节流还原为原始数据结构（如 JavaScript 对象），并触发相应的处理逻辑。</li>
+</ol>
+<p>在 Electron 中，管道的具体实现因平台而异。</p>
+<h4 id="管道的问题">管道的问题</h4>
+<p>尽管管道简单高效，但也存在问题：</p>
+<ol>
+<li>性能瓶颈：频繁的序列化和反序列化增加了 CPU 开销，尤其在传输大数据时。</li>
+<li>接口复杂性：开发者需要手动定义消息格式和事件监听，代码维护成本较高。</li>
+<li>安全性问题：低级的管道机制难以保证数据的完整性或防止未授权访问。</li>
+</ol>
+<h4 id="mojo">Mojo</h4>
+<p>对此 Chromium 提供了更高效、类型安全且灵活的 Mojo 解决方案。</p>
+<ol>
+<li>通过消息管道（Message Pipe）和数据管道（Data Pipe）支持零拷贝传输，减少序列化开销。</li>
+<li>支持双向通信和复杂的交互模式，无需额外管道。</li>
+<li>细粒度的权限控制和句柄传递机制，确保通信安全。</li>
+</ol>
+<h3 id="主进程与渲染进程通信">主进程与渲染进程通信</h3>
+<p>在了解了以上内容之后，Electron 已经提供 ipcMain 和 ipcRenderer 模块，实现主进程和渲染进程之间的通信。</p>
+<h4 id="渲染进程----主进程">渲染进程 &ndash;&gt; 主进程</h4>
+<p>有以下方式：</p>
+<ul>
+<li>ipcRenderer.send(channel: string, &hellip;args: any[]): void;</li>
+<li>ipcRenderer.sendSync(channel: string, &hellip;args: any[]): any;</li>
+<li>invoke(channel: string, &hellip;args: any[]): Promise<any>;</li>
+</ul>
+<p><code>channel</code> 是方法名称，<code>args</code> 会通过结构化的克隆算法进行序列化，就像 <code>window.postMessage</code> 一样，因此不会包含原型链。<strong>函数、承诺、符号、WeakMaps 或 WeakSet</strong> 这些都是会引发异常（例如：Uncaught Error: An object could not be cloned.）的数据，非标准 JavaScript 类型（如 DOM 对象或<code>ImageBitmap</code>、<code>File</code>、<code>DOMMatrix</code> 等）主进程无法解析的也不可以。</p>
+<p>另外，<code>sendSync</code> 同步消息将阻止整个渲染进程进程，直到主进程 <code>event.returnValue</code> 回复。 <br>
+如果想从主进程接收返回响应，例如方法调用的结果，建议使用 <code>ipcRenderer.invoke</code>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// main.js 主进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">ipcMain</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;sync-message&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">arg</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">event</span><span class="p">.</span><span class="nx">returnValue</span> <span class="o">=</span> <span class="s1">&#39;这是同步回复&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">ipcMain</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;async-message&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">arg</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">event</span><span class="p">.</span><span class="nx">reply</span><span class="p">(</span><span class="s1">&#39;async-reply&#39;</span><span class="p">,</span> <span class="s1">&#39;这是异步回复&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">ipcMain</span><span class="p">.</span><span class="nx">handle</span><span class="p">(</span><span class="s1">&#39;invoke-message&#39;</span><span class="p">,</span> <span class="kr">async</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">arg</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="s1">&#39;这是 invoke 回复&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// preload.js
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">contextBridge</span><span class="p">.</span><span class="nx">exposeInMainWorld</span><span class="p">(</span><span class="s1">&#39;electronAPI&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">sendSync</span><span class="o">:</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">sendSync</span><span class="p">(</span><span class="s1">&#39;sync-message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="nx">sendAsync</span><span class="o">:</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;async-message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onAsyncReply</span><span class="o">:</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;async-reply&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="p">...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">callback</span><span class="p">(...</span><span class="nx">args</span><span class="p">)),</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="nx">invoke</span><span class="o">:</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">invoke</span><span class="p">(</span><span class="s1">&#39;invoke-message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// html
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">electronAPI</span><span class="p">.</span><span class="nx">sendSync</span><span class="p">(</span><span class="s1">&#39;这是同步消息&#39;</span><span class="p">)</span>
+</span></span></code></pre></div><h4 id="主进程----渲染进程">主进程 &ndash;&gt; 渲染进程</h4>
+<p>同样的，主进程除了被动接受后返回，还可以主动通过 <code>webContents.send</code> 通知到渲染进程（<code>ipcRenderer.on</code>接收方式）。</p>
+<ul>
+<li>send(channel: string, &hellip;args: any[]): void;</li>
+</ul>
+<p>IPC 参数格式也受到类似的限制。<br>
+另外，除了 IPC 之外，还可以使用 webContents.executeJavaScript 在渲染进程中直接执行 JavaScript 代码。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// main.js 主进程广播消息到所有窗口
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">broadcastMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">windows</span> <span class="o">=</span> <span class="nx">BrowserWindow</span><span class="p">.</span><span class="nx">getAllWindows</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">windows</span><span class="p">.</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">win</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">win</span><span class="p">.</span><span class="nx">webContents</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;broadcast-message&#39;</span><span class="p">,</span> <span class="nx">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 使用 executeJavaScript 执行代码
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">win</span><span class="p">.</span><span class="nx">webContents</span><span class="p">.</span><span class="nx">executeJavaScript</span><span class="p">(</span><span class="sb">`
+</span></span></span><span class="line"><span class="cl"><span class="sb">  document.getElementById(&#39;js-messages&#39;).innerHTML += &#39;&lt;p&gt;通过 executeJavaScript 注入的消息: </span><span class="si">${</span><span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">toLocaleTimeString</span><span class="p">()</span><span class="si">}</span><span class="sb">&lt;/p&gt;&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sb">`</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// preload.js
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">contextBridge</span><span class="p">.</span><span class="nx">exposeInMainWorld</span><span class="p">(</span><span class="s1">&#39;electronAPI&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onBroadcast</span><span class="o">:</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;broadcast-message&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="p">...</span><span class="nx">args</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">callback</span><span class="p">(...</span><span class="nx">args</span><span class="p">))</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// html
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nb">window</span><span class="p">.</span><span class="nx">electronAPI</span><span class="p">.</span><span class="nx">onBroadcast</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">div</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;broadcast-messages&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">div</span><span class="p">.</span><span class="nx">innerHTML</span> <span class="o">+=</span> <span class="sb">`&lt;p&gt;收到广播消息: </span><span class="si">${</span><span class="nx">data</span><span class="p">.</span><span class="nx">message</span><span class="si">}</span><span class="sb"> (</span><span class="si">${</span><span class="nx">data</span><span class="p">.</span><span class="nx">time</span><span class="si">}</span><span class="sb">)&lt;/p&gt;`</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></div><h4 id="渲染进程--渲染进程">渲染进程 &lt;==&gt; 渲染进程</h4>
+<p>Electron 中没有直接的方法可以使用 ipcMain 和 ipcRenderer 模块在渲染进程之间发送消息。实现这个效果最简单的方式就是将主进程作为渲染进程之间的消息代理。 这需要将消息从一个渲染进程发送到主进程，然后主进程将消息转发到另一个渲染进程。</p>
+<p>另一种就是利用 <strong>MessagePost</strong> ，是一个允许在不同上下文之间传递消息的Web功能。属于原生功能，Electron 只是充当了建立初始连接的角色（MessageChannelMain 为 MessageChannel node 环境下的特殊实现），使用 Worker 也是可以的。由于 MessagePort 是一个 Transferable 对象，不能被复制，只能被转移所有权（转移后会失去访问权），postMessage 的第三个参数 transfer list 专门用于转移这类对象。</p>
+<p>Electron 下代码如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// main.js 主进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">async</span> <span class="kd">function</span> <span class="nx">setupMessageChannel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 使用 MessageChannelMain 创建通道
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">const</span> <span class="p">{</span> <span class="nx">port1</span><span class="p">,</span> <span class="nx">port2</span> <span class="p">}</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">MessageChannelMain</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 将端口发送给各自的渲染进程
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">win1</span><span class="p">.</span><span class="nx">webContents</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="s1">&#39;port&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">[</span><span class="nx">port1</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">win2</span><span class="p">.</span><span class="nx">webContents</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="s1">&#39;port&#39;</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="p">[</span><span class="nx">port2</span><span class="p">])</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// preload.js
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">let</span> <span class="nx">messagePort</span> <span class="o">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl"><span class="nx">contextBridge</span><span class="p">.</span><span class="nx">exposeInMainWorld</span><span class="p">(</span><span class="s1">&#39;electronAPI&#39;</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 发送消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">sendMessage</span><span class="o">:</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">messagePort</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">messagePort</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">message</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 接收消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">onMessageReceived</span><span class="o">:</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 监听端口设置
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">ipcRenderer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;port&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">messagePort</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">ports</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">messagePort</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="nx">callback</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">messagePort</span><span class="p">.</span><span class="nx">start</span><span class="p">()</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// html
+</span></span></span></code></pre></div><p><a class="link" href="https://github.com/hawkeye-xb/electron-learn/tree/main/ipc"  target="_blank" rel="noopener"
+    >MessagePort 代码地址</a></p>
+<h3 id="最后">最后</h3>
+<p>本篇简单的介绍了 Electron IPC 的基本概念和使用，知道其边界，能做和不能做的。希望有所帮助，想更深入了解可以查阅相关文档。</p>
+<p>ipcRenderer.sendTo 和 remote 模块都已被废弃，就不做介绍了。</p>
+<h3 id="参考和引用">参考和引用</h3>
+<p><a class="link" href="https://www.chromium.org/developers/design-documents/inter-process-communication/"  target="_blank" rel="noopener"
+    >Inter-process Communication (IPC)</a> <br>
+<a class="link" href="https://chromium.googlesource.com/chromium/src/&#43;/main/mojo/README.md"  target="_blank" rel="noopener"
+    >Mojo</a> <br>
+<a class="link" href="https://www.electronjs.org/zh/docs/latest/tutorial/process-model"  target="_blank" rel="noopener"
+    >Electron 文档: 流程模型</a> <br>
+<a class="link" href="https://www.electronjs.org/zh/docs/latest/api/structures/web-preferences"  target="_blank" rel="noopener"
+    >Electron 文档: WebPreferences</a> <br>
+<a class="link" href="https://www.electronjs.org/zh/docs/latest/tutorial/context-isolation"  target="_blank" rel="noopener"
+    >Electron 文档: 上下文隔离</a><br>
+<a class="link" href="https://www.electronjs.org/docs/latest/tutorial/ipc"  target="_blank" rel="noopener"
+    >Electron 文档: 进程间通信</a>   <br>
+<a class="link" href="https://www.electronjs.org/zh/docs/latest/tutorial/message-ports"  target="_blank" rel="noopener"
+    >Electron 中的消息端口</a> <br>
+<a class="link" href="https://developer.mozilla.org/zh-CN/docs/Web/API/MessagePort"  target="_blank" rel="noopener"
+    >MessagePort</a> <br>
+<a class="link" href="https://www.npmjs.com/package/electron?activeTab=code"  target="_blank" rel="noopener"
+    >electron.d.ts</a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

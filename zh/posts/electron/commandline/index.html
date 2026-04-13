@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='概念 Chromium（和Chrome）接受命令行开关，以启用特定功能或修改其他默认功能；Electron CommandLine Class 就是用于操作Chromium读取的应用程序的命令行参数的。
+打个比方，在调试 node 的时候，时常会使用 node --inspect 这样带命令行参数的指令来启动项目。Electron CommandLine 就类似这样，用特定功能启动 Chromium。
+打开 chrome://version/ 也能看到对应启动的信息。 跳转到 chrome://flags/ 能看到当前设备所支持的指令。 需要注意的是，有些开关是用于开发和临时情况。Chromium 不会通知更改或删除，得自行关注。
+应用场景 有了大概的了解，那它到底能做什么事情呢？既然作为“后门”，在技术上的意义可以让我们绕过应用层限制，无需用户手动操作，直接修改底层 Chromium/V8 的运行时参数（如关闭安全策略、开启硬件加速）。
+如何使用 回到 Electron，CommandLine 类提供了指令设置的增删改查。
+commandLine.hasSwitch(switch)：命令行开关是否存在 commandLine.getSwitchValue(switch)：获取值，默认空字符串 commandLine.appendSwitch(switch[, value])：添加开关 commandLine.appendArgument(value)：追加到命令行的参数 commandLine.removeSwitch(switch)：删除指定的开关，恢复到默认 这些参数直接传递给 Chromium 引擎，是不会影响应用启动时从操作系统获取的 process.argv。
+作为命令行开关，可能会影响内部模块或着整个生命周期，所以需要在app模块的ready事件发出之前添加。
+const { app } = require(&amp;#39;electron&amp;#39;) app.commandLine.appendSwitch(&amp;#39;remote-debugging-port&amp;#39;, &amp;#39;8315&amp;#39;) app.commandLine.appendSwitch(&amp;#39;host-rules&amp;#39;, &amp;#39;MAP * 127.0.0.1&amp;#39;) app.whenReady().then(() =&amp;gt; { // Your code here }) 常用指令 渲染相关
+app.commandLine.appendSwitch(&amp;lsquo;disable-gpu&amp;rsquo;); 关闭 GPU app.commandLine.appendSwitch(&amp;lsquo;ignore-gpu-blacklist&amp;rsquo;); 忽略 GPU 黑名单 app.'>
+<title>Chromium 的“后门”：CommandLine</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/electron/commandline/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Chromium 的“后门”：CommandLine'>
+<meta property='og:description' content='概念 Chromium（和Chrome）接受命令行开关，以启用特定功能或修改其他默认功能；Electron CommandLine Class 就是用于操作Chromium读取的应用程序的命令行参数的。
+打个比方，在调试 node 的时候，时常会使用 node --inspect 这样带命令行参数的指令来启动项目。Electron CommandLine 就类似这样，用特定功能启动 Chromium。
+打开 chrome://version/ 也能看到对应启动的信息。 跳转到 chrome://flags/ 能看到当前设备所支持的指令。 需要注意的是，有些开关是用于开发和临时情况。Chromium 不会通知更改或删除，得自行关注。
+应用场景 有了大概的了解，那它到底能做什么事情呢？既然作为“后门”，在技术上的意义可以让我们绕过应用层限制，无需用户手动操作，直接修改底层 Chromium/V8 的运行时参数（如关闭安全策略、开启硬件加速）。
+如何使用 回到 Electron，CommandLine 类提供了指令设置的增删改查。
+commandLine.hasSwitch(switch)：命令行开关是否存在 commandLine.getSwitchValue(switch)：获取值，默认空字符串 commandLine.appendSwitch(switch[, value])：添加开关 commandLine.appendArgument(value)：追加到命令行的参数 commandLine.removeSwitch(switch)：删除指定的开关，恢复到默认 这些参数直接传递给 Chromium 引擎，是不会影响应用启动时从操作系统获取的 process.argv。
+作为命令行开关，可能会影响内部模块或着整个生命周期，所以需要在app模块的ready事件发出之前添加。
+const { app } = require(&amp;#39;electron&amp;#39;) app.commandLine.appendSwitch(&amp;#39;remote-debugging-port&amp;#39;, &amp;#39;8315&amp;#39;) app.commandLine.appendSwitch(&amp;#39;host-rules&amp;#39;, &amp;#39;MAP * 127.0.0.1&amp;#39;) app.whenReady().then(() =&amp;gt; { // Your code here }) 常用指令 渲染相关
+app.commandLine.appendSwitch(&amp;lsquo;disable-gpu&amp;rsquo;); 关闭 GPU app.commandLine.appendSwitch(&amp;lsquo;ignore-gpu-blacklist&amp;rsquo;); 忽略 GPU 黑名单 app.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/electron/commandline/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2025-03-14T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2025-03-14T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="Chromium 的“后门”：CommandLine">
+<meta name="twitter:description" content="概念 Chromium（和Chrome）接受命令行开关，以启用特定功能或修改其他默认功能；Electron CommandLine Class 就是用于操作Chromium读取的应用程序的命令行参数的。
+打个比方，在调试 node 的时候，时常会使用 node --inspect 这样带命令行参数的指令来启动项目。Electron CommandLine 就类似这样，用特定功能启动 Chromium。
+打开 chrome://version/ 也能看到对应启动的信息。 跳转到 chrome://flags/ 能看到当前设备所支持的指令。 需要注意的是，有些开关是用于开发和临时情况。Chromium 不会通知更改或删除，得自行关注。
+应用场景 有了大概的了解，那它到底能做什么事情呢？既然作为“后门”，在技术上的意义可以让我们绕过应用层限制，无需用户手动操作，直接修改底层 Chromium/V8 的运行时参数（如关闭安全策略、开启硬件加速）。
+如何使用 回到 Electron，CommandLine 类提供了指令设置的增删改查。
+commandLine.hasSwitch(switch)：命令行开关是否存在 commandLine.getSwitchValue(switch)：获取值，默认空字符串 commandLine.appendSwitch(switch[, value])：添加开关 commandLine.appendArgument(value)：追加到命令行的参数 commandLine.removeSwitch(switch)：删除指定的开关，恢复到默认 这些参数直接传递给 Chromium 引擎，是不会影响应用启动时从操作系统获取的 process.argv。
+作为命令行开关，可能会影响内部模块或着整个生命周期，所以需要在app模块的ready事件发出之前添加。
+const { app } = require(&amp;#39;electron&amp;#39;) app.commandLine.appendSwitch(&amp;#39;remote-debugging-port&amp;#39;, &amp;#39;8315&amp;#39;) app.commandLine.appendSwitch(&amp;#39;host-rules&amp;#39;, &amp;#39;MAP * 127.0.0.1&amp;#39;) app.whenReady().then(() =&amp;gt; { // Your code here }) 常用指令 渲染相关
+app.commandLine.appendSwitch(&amp;lsquo;disable-gpu&amp;rsquo;); 关闭 GPU app.commandLine.appendSwitch(&amp;lsquo;ignore-gpu-blacklist&amp;rsquo;); 忽略 GPU 黑名单 app.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#概念">概念</a></li>
+        <li><a href="#应用场景">应用场景</a></li>
+        <li><a href="#如何使用">如何使用</a></li>
+        <li><a href="#常用指令">常用指令</a></li>
+        <li><a href="#最后">最后</a></li>
+        <li><a href="#参考和引用">参考和引用</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/electron/" >
+                Electron
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/electron/commandline/">Chromium 的“后门”：CommandLine</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-03-14</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h3 id="概念">概念</h3>
+<p>Chromium（和Chrome）接受命令行开关，以启用特定功能或修改其他默认功能；Electron CommandLine Class 就是用于操作Chromium读取的应用程序的命令行参数的。</p>
+<p>打个比方，在调试 node 的时候，时常会使用 <code>node --inspect</code> 这样带命令行参数的指令来启动项目。Electron CommandLine 就类似这样，用特定功能启动 Chromium。</p>
+<p>打开 <code>chrome://version/</code> 也能看到对应启动的信息。
+<a href="/images/electron/chrome-version.png" data-lightbox="chrome-version" data-title="chrome-version">
+<img src="/images/electron/chrome-version.png" alt="chrome-version">
+</a></p>
+<p>跳转到 <code>chrome://flags/</code> 能看到当前设备所支持的指令。
+<a href="/images/electron/chrome-flags.png" data-lightbox="chrome-flags" data-title="chrome-flags">
+<img src="/images/electron/chrome-flags.png" alt="chrome-flags">
+</a></p>
+<p>需要注意的是，有些开关是用于开发和临时情况。Chromium 不会通知更改或删除，得自行关注。</p>
+<h3 id="应用场景">应用场景</h3>
+<p>有了大概的了解，那它到底能做什么事情呢？既然作为“后门”，在技术上的意义可以让我们绕过应用层限制，无需用户手动操作，直接修改底层 Chromium/V8 的运行时参数（如关闭安全策略、开启硬件加速）。</p>
+<h3 id="如何使用">如何使用</h3>
+<p>回到 Electron，CommandLine 类提供了指令设置的增删改查。</p>
+<ul>
+<li>commandLine.hasSwitch(switch)：命令行开关是否存在</li>
+<li>commandLine.getSwitchValue(switch)：获取值，默认空字符串</li>
+<li>commandLine.appendSwitch(switch[, value])：添加开关</li>
+<li>commandLine.appendArgument(value)：追加到命令行的参数</li>
+<li>commandLine.removeSwitch(switch)：删除指定的开关，恢复到默认</li>
+</ul>
+<p>这些参数直接传递给 Chromium 引擎，是不会影响应用启动时从操作系统获取的 <code>process.argv</code>。</p>
+<p>作为命令行开关，可能会影响内部模块或着整个生命周期，所以<strong>需要在app模块的ready事件发出之前添加</strong>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="p">{</span> <span class="nx">app</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;electron&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">app</span><span class="p">.</span><span class="nx">commandLine</span><span class="p">.</span><span class="nx">appendSwitch</span><span class="p">(</span><span class="s1">&#39;remote-debugging-port&#39;</span><span class="p">,</span> <span class="s1">&#39;8315&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nx">app</span><span class="p">.</span><span class="nx">commandLine</span><span class="p">.</span><span class="nx">appendSwitch</span><span class="p">(</span><span class="s1">&#39;host-rules&#39;</span><span class="p">,</span> <span class="s1">&#39;MAP * 127.0.0.1&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">app</span><span class="p">.</span><span class="nx">whenReady</span><span class="p">().</span><span class="nx">then</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Your code here
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">})</span>
+</span></span></code></pre></div><h3 id="常用指令">常用指令</h3>
+<p>渲染相关</p>
+<ul>
+<li>app.commandLine.appendSwitch(&lsquo;disable-gpu&rsquo;); 关闭 GPU</li>
+<li>app.commandLine.appendSwitch(&lsquo;ignore-gpu-blacklist&rsquo;); 忽略 GPU 黑名单</li>
+<li>app.commandLine.appendSwitch(&lsquo;use-angle&rsquo;, &lsquo;opengl&rsquo;); 使用 opengl api，苹果逐步在废弃相关</li>
+<li>app.commandLine.appendSwitch(&lsquo;disable-frame-rate-limit&rsquo;); 忽略帧率限制</li>
+</ul>
+<p>调试相关</p>
+<ul>
+<li>app.commandLine.appendSwitch(&lsquo;ignore-certificate-errors&rsquo;); 忽略证书错误</li>
+<li>app.commandLine.appendSwitch(&lsquo;inspect&rsquo;); node 进程的调试，chrome://inspect （Node 的）</li>
+</ul>
+<p>V8 相关</p>
+<ul>
+<li>app.commandLine.appendSwitch(&lsquo;js-flags&rsquo;, &lsquo;&ndash;max-old-space-size=2048&rsquo;); 设置运行内存限制</li>
+</ul>
+<p>网络相关</p>
+<ul>
+<li>app.commandLine.appendSwitch(&rsquo;no-proxy-server&rsquo;); 直连模式</li>
+<li>app.commandLine.appendSwitch(&lsquo;host-rules&rsquo;, &lsquo;MAP * 127.0.0.1&rsquo;); 某些域名通过特定代理</li>
+</ul>
+<p>实验性功能</p>
+<ul>
+<li>app.commandLine.appendSwitch(&rsquo;enable-features&rsquo;, &lsquo;WebGPU&rsquo;);</li>
+<li>app.commandLine.appendSwitch(&lsquo;disable-features&rsquo;, &lsquo;PictureInPicture&rsquo;);</li>
+</ul>
+<p>等等非常多的指令，有的是在 <a class="link" href="https://www.electronjs.org/zh/docs/latest/api/command-line-switches"  target="_blank" rel="noopener"
+    >Electron 文档</a> 中有出现的，想了解更多可以看 <a class="link" href="https://peter.sh/experiments/chromium-command-line-switches/"  target="_blank" rel="noopener"
+    >List of Chromium Command Line Switches</a> 。</p>
+<p>比如：设置 <code>app.commandLine.appendSwitch('use-angle', 'opengl');</code> 之后，我的设备通过 <code>const debugInfo = gl.getExtension('WEBGL_debug_renderer_info');</code> 就获取不到 WebGL 的支持信息了。</p>
+<p><code>app.commandLine.appendSwitch('js-flags', '--max-old-space-size=2048');</code> V8 的就需要通过参数的方式传入。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">jsHeapSizeLimit</span><span class="o">:</span> <span class="mi">2248146944</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">totalJSHeapSize</span><span class="o">:</span> <span class="mi">14384451</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">usedJSHeapSize</span><span class="o">:</span> <span class="mi">8923123</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="最后">最后</h3>
+<p>CommandLine 作为 Electron 中连接应用层与 Chromium 引擎的重要桥梁，为开发者提供了灵活的底层配置能力。通过合理使用这些命令行开关，我们可以：</p>
+<ol>
+<li>优化应用性能：通过调整 GPU、内存等参数</li>
+<li>增强开发体验：启用调试端口、忽略证书错误等</li>
+<li>实现特殊需求：自定义网络代理、开启实验性功能等</li>
+</ol>
+<p>需要注意的是，在使用这些命令行开关时要谨慎：</p>
+<ul>
+<li>务必在 app ready 事件之前设置</li>
+<li>关注所用开关的兼容性和稳定性</li>
+<li>在生产环境中要谨慎使用实验性功能</li>
+</ul>
+<p>掌握 CommandLine 的使用，能让我们在 Electron 应用开发中游刃有余，但也要记住权力越大，责任越大。合理使用这个&quot;后门&quot;，才能让应用更加强大和稳定。</p>
+<h3 id="参考和引用">参考和引用</h3>
+<p><strong>注</strong>：关于 Electron CommandLine 相关的信息较少，以上内容仅是个人理解。 <br>
+<a class="link" href="https://github.com/hawkeye-xb/electron-learn/tree/main/command-line"  target="_blank" rel="noopener"
+    >Github 代码</a></p>
+<p><a class="link" href="https://www.electronjs.org/zh/docs/latest/api/command-line"  target="_blank" rel="noopener"
+    >Class: CommandLine</a> <br>
+<a class="link" href="https://www.electronjs.org/zh/docs/latest/api/command-line-switches"  target="_blank" rel="noopener"
+    >Supported Command Line Switches</a></p>
+<p><a class="link" href="https://chromium.googlesource.com/playground/chromium-org-site/&#43;/master/developers/how-tos/run-chromium-with-flags.md"  target="_blank" rel="noopener"
+    >Run Chromium with flags</a> <br>
+<a class="link" href="https://www.chromium.org/developers/how-tos/run-chromium-with-flags/"  target="_blank" rel="noopener"
+    >Run Chromium with command-line switches</a> <br>
+<a class="link" href="https://peter.sh/experiments/chromium-command-line-switches/"  target="_blank" rel="noopener"
+    >List of Chromium Command Line Switches</a> <br>
+<a class="link" href="" ></a> <br>
+<a class="link" href="" ></a></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

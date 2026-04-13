@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' 在探索Hugo博客系统的优化过程中，作者通过node脚本实现了front-matter配置的自动化，解决了中文环境下字数统计不准确的问题。文章详细记录了从发现问题到解决问题的全过程，包括对CJK语言特性的理解、Hugo配置的调整、以及最终通过node脚本批量修改文章配置的实现。作者分享了这一过程中遇到的技术挑战和解决方案，旨在帮助其他从其他博客工具迁移到Hugo的用户，实现更平滑的过渡。文章最后，作者提出了对现有解决方案的反思，以及对未来可能改进方向的思考。'>
+<title>五分钟搭建个人博客：字数统计，可配置的front-matter</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/blog/wordcount/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='五分钟搭建个人博客：字数统计，可配置的front-matter'>
+<meta property='og:description' content=' 在探索Hugo博客系统的优化过程中，作者通过node脚本实现了front-matter配置的自动化，解决了中文环境下字数统计不准确的问题。文章详细记录了从发现问题到解决问题的全过程，包括对CJK语言特性的理解、Hugo配置的调整、以及最终通过node脚本批量修改文章配置的实现。作者分享了这一过程中遇到的技术挑战和解决方案，旨在帮助其他从其他博客工具迁移到Hugo的用户，实现更平滑的过渡。文章最后，作者提出了对现有解决方案的反思，以及对未来可能改进方向的思考。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/blog/wordcount/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-04-29T06:47:40&#43;00:00'/><meta property='article:modified_time' content='2024-04-29T06:47:40&#43;00:00'/>
+<meta name="twitter:title" content="五分钟搭建个人博客：字数统计，可配置的front-matter">
+<meta name="twitter:description" content=" 在探索Hugo博客系统的优化过程中，作者通过node脚本实现了front-matter配置的自动化，解决了中文环境下字数统计不准确的问题。文章详细记录了从发现问题到解决问题的全过程，包括对CJK语言特性的理解、Hugo配置的调整、以及最终通过node脚本批量修改文章配置的实现。作者分享了这一过程中遇到的技术挑战和解决方案，旨在帮助其他从其他博客工具迁移到Hugo的用户，实现更平滑的过渡。文章最后，作者提出了对现有解决方案的反思，以及对未来可能改进方向的思考。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#hascjklanguage">hasCJKLanguage</a></li>
+        <li><a href="#archetypes">archetypes</a></li>
+        <li><a href="#data">data</a></li>
+        <li><a href="#node代码修改文章iscjklanguage配置">node代码修改文章isCJKLanguage配置</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/blog/wordcount/">五分钟搭建个人博客：字数统计，可配置的front-matter</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             在探索Hugo博客系统的优化过程中，作者通过node脚本实现了front-matter配置的自动化，解决了中文环境下字数统计不准确的问题。文章详细记录了从发现问题到解决问题的全过程，包括对CJK语言特性的理解、Hugo配置的调整、以及最终通过node脚本批量修改文章配置的实现。作者分享了这一过程中遇到的技术挑战和解决方案，旨在帮助其他从其他博客工具迁移到Hugo的用户，实现更平滑的过渡。文章最后，作者提出了对现有解决方案的反思，以及对未来可能改进方向的思考。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-29</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+        
+大家好。    
+今天接着研究个人站长探索之博客搭建。
+<p>这次是使用node脚本实现的front-matter可配置。</p>
+<p>上次在<a class="link" href="/series/%e4%ba%94%e5%88%86%e9%92%9f%e6%90%ad%e5%bb%ba%e4%b8%aa%e4%ba%ba%e5%8d%9a%e5%ae%a2/" >系列文章</a>“更多设置”中简单介绍过字数统计功能。在英文环境下稍微验证了下效果后就没过多留意了，但是，在今天切到中文语言下，发现只有短短的100来个字，啊？！</p>
+<p><img src="https://s2.loli.net/2024/04/29/nR1P2IgWKtZQHFs.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt=" 2024-04-29 22.45.58.png"
+	
+	
+></p>
+<h3 id="hascjklanguage">hasCJKLanguage</h3>
+<p>简单研究了下，大概是在文本渲染、分词、搜索或者字体处理等方面，CJK语言因为其独特的字符集和排版规则，通常需要特别对待。CJK是中文（Chinese）、日文（Japanese）、韩文（Korean）的缩写。</p>
+<p>所以Hugo提供了<a class="link" href="https://gohugo.io/getting-started/configuration/#hascjklanguage"  target="_blank" rel="noopener"
+    >hasCJKLanguage</a>配置。同样的，也需要再front-matter上设置<a class="link" href="https://gohugo.io/content-management/front-matter/#iscjklanguage"  target="_blank" rel="noopener"
+    >isCJKLanguage</a>。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># config yaml file</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">params</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ShowWordCount</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ShowReadingTime</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">hasCJKLanguage</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
+</span></span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-md" data-lang="md"><span class="line"><span class="cl"><span class="c">&lt;!-- article front-matter  --&gt;</span>
+</span></span><span class="line"><span class="cl">+++
+</span></span><span class="line"><span class="cl">ShowReadingTime = true
+</span></span><span class="line"><span class="cl">ShowWordCount = true
+</span></span><span class="line"><span class="cl">isCJKLanguage = true
+</span></span><span class="line"><span class="cl">+++
+</span></span></code></pre></div><p>在将参数复制了几个文件之后&hellip; 我发现还有好多草稿文件🤦🏻‍♀️。
+就又简单研究了下。</p>
+<p>在全局配置<code>isCJKLanguage: true</code>并不可以，后续有机会再研究源码看看这些参数都是什么个实现方式。</p>
+<h3 id="archetypes">archetypes</h3>
+<p>发现有推荐这个东西的，看了这个不是在创建时候的模板么。在使用指令创建文件的时候，会根据该目录路径对应起来，使用模板。比如在<code>content/zh/</code>下创建新文件，会使用<code>archetypes/zh/</code>下的模板。</p>
+<p>对于现有存量文章来说，并不适用。</p>
+<p>况且模板文件存在最大一个问题就是，模板修改，通过模板创建的文件并不会修改。</p>
+<h3 id="data">data</h3>
+<p>接着又找到了data目录下的数据使用，但是只能在模板文件中使用，模板参数中还不知道有什么参数可以获取，怎么设置&hellip;</p>
+<h3 id="node代码修改文章iscjklanguage配置">node代码修改文章isCJKLanguage配置</h3>
+<p>半天也没有找到有暴露构建前的生命周期钩子，或者在某个步骤能够修改，构建完成之后倒是有个<a class="link" href="https://gohugo.io/hugo-pipes/postprocess/"  target="_blank" rel="noopener"
+    >PostProcess</a>。</p>
+<p>一气之下&hellip; 掏出老工具node（主要是Vercel设置了node，可以直接使用）。直接修改文章内容，给头部添加上isCJKLanguage属性/doge。</p>
+<p>这一下午迭代的心路历程就不说了，简述下代码做了什么事情吧。</p>
+<ol>
+<li>开始遍历 front matter 配置目录。</li>
+<li>获取所有文件(yaml|toml)和目录，优先处理所有配置文件，同级同名的文件和目录，文件优先，比如en.yaml和/en/。</li>
+<li>获取配置信息。</li>
+<li>获取与配置文件对应的content路径，遍历路径所有文件。</li>
+<li>合并文件原配置和另外设置的配置。同key后覆盖前。</li>
+<li>回写文件。</li>
+</ol>
+<p>源码如下：</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-javascript" data-lang="javascript"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">fs</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;fs&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">path</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;path&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">matter</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;gray-matter&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">toml</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;@iarna/toml&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">yaml</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;js-yaml&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 定义内容和 front matter 配置的目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">contentDir</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;./content&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">frontMatterDir</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;./front-matter&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;contentDir, frontMatterDir&#39;</span><span class="p">,</span> <span class="nx">contentDir</span><span class="p">,</span> <span class="nx">frontMatterDir</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 读取 front matter 配置文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">readFrontMatterConfig</span><span class="p">(</span><span class="nx">filePath</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">ext</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">filePath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">ext</span> <span class="o">===</span> <span class="s1">&#39;.toml&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">toml</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">ext</span> <span class="o">===</span> <span class="s1">&#39;.yaml&#39;</span> <span class="o">||</span> <span class="nx">ext</span> <span class="o">===</span> <span class="s1">&#39;.yml&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">yaml</span><span class="p">.</span><span class="nx">load</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="sb">`Unsupported front matter config format: </span><span class="si">${</span><span class="nx">ext</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 更新指定目录下的 Markdown 文件的 front matter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">updateDirectoryFrontMatter</span><span class="p">(</span><span class="nx">dirPath</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">updateFile</span> <span class="o">=</span> <span class="p">()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">existsSync</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">dirPath</span><span class="si">}</span><span class="sb">.md`</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">updateFrontMatter</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">dirPath</span><span class="si">}</span><span class="sb">.md`</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">);</span> <span class="c1">// 更新文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">};</span>
+</span></span><span class="line"><span class="cl">  <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">dirPath</span><span class="p">).</span><span class="nx">isDirectory</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fs</span><span class="p">.</span><span class="nx">readdirSync</span><span class="p">(</span><span class="nx">dirPath</span><span class="p">).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">file</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">fullPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dirPath</span><span class="p">,</span> <span class="nx">file</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">).</span><span class="nx">isDirectory</span><span class="p">())</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">updateDirectoryFrontMatter</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">);</span> <span class="c1">// 递归子目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">)</span> <span class="o">===</span> <span class="s1">&#39;.md&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">updateFrontMatter</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">);</span> <span class="c1">// 更新文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;这里到得了？？？&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">updateFile</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">updateFile</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">replacePlusPlusPlus</span><span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">count</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">str</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="sr">/^\+\+\+\n/gm</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">match</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">count</span><span class="o">++</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nx">count</span> <span class="o">===</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="s1">&#39;---toml\n&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">count</span> <span class="o">===</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="s1">&#39;---\n&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="nx">match</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">parseFrontMatter</span> <span class="o">=</span> <span class="p">(</span><span class="nx">content</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">content</span><span class="p">.</span><span class="nx">startsWith</span><span class="p">(</span><span class="s1">&#39;+++&#39;</span><span class="p">))</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">matter</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">replacePlusPlusPlus</span><span class="p">(</span><span class="nx">content</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">engines</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">toml</span><span class="o">:</span> <span class="nx">toml</span><span class="p">.</span><span class="nx">parse</span><span class="p">.</span><span class="nx">bind</span><span class="p">(</span><span class="nx">toml</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">matter</span><span class="p">(</span><span class="nx">content</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 读取并更新 Markdown 文件的 front matter
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">updateFrontMatter</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">fileContent</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">parsedContent</span> <span class="o">=</span> <span class="nx">parseFrontMatter</span><span class="p">(</span><span class="nx">fileContent</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;parsedContent.data&#39;</span><span class="p">,</span> <span class="nx">parsedContent</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 使用配置文件更新 front matter 数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nb">Object</span><span class="p">.</span><span class="nx">assign</span><span class="p">(</span><span class="nx">parsedContent</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">newContent</span> <span class="o">=</span> <span class="nx">matter</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">parsedContent</span><span class="p">.</span><span class="nx">content</span><span class="p">,</span> <span class="nx">parsedContent</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">fs</span><span class="p">.</span><span class="nx">writeFileSync</span><span class="p">(</span><span class="nx">filePath</span><span class="p">,</span> <span class="nx">newContent</span><span class="p">,</span> <span class="s1">&#39;utf8&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Updated: </span><span class="si">${</span><span class="nx">filePath</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span> <span class="nx">newContent</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 遍历 front matter 配置目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">traverseFrontMatterConfigDir</span><span class="p">(</span><span class="nx">dir</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取所有文件和目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">const</span> <span class="nx">items</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readdirSync</span><span class="p">(</span><span class="nx">dir</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 先处理所有文件
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="sb">`处理 </span><span class="si">${</span><span class="nx">dir</span><span class="si">}</span><span class="sb"> 下的所有文件:`</span><span class="p">,</span> <span class="nx">items</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">item</span> <span class="p">=&gt;</span> <span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">item</span><span class="p">)).</span><span class="nx">isDirectory</span><span class="p">()));</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">items</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">item</span> <span class="p">=&gt;</span> <span class="o">!</span><span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">item</span><span class="p">)).</span><span class="nx">isDirectory</span><span class="p">()).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">file</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">fullPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">file</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">relativePath</span> <span class="o">=</span> <span class="nx">fullPath</span><span class="p">.</span><span class="nx">substring</span><span class="p">(</span><span class="nx">frontMatterDir</span><span class="p">.</span><span class="nx">length</span> <span class="o">+</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">contentPath</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">contentDir</span><span class="p">,</span> <span class="nx">relativePath</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 获取配置文件的内容
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">frontMatterConfig</span> <span class="o">=</span> <span class="nx">readFrontMatterConfig</span><span class="p">(</span><span class="nx">fullPath</span><span class="p">);</span> <span class="c1">// 读取失败
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 构建对应的内容目录路径
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">dirToUpdate</span> <span class="o">=</span> <span class="nx">contentPath</span><span class="p">.</span><span class="nx">replace</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">extname</span><span class="p">(</span><span class="nx">contentPath</span><span class="p">),</span> <span class="s1">&#39;&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">table</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">fullPath</span><span class="p">,</span> <span class="nx">relativePath</span><span class="p">,</span> <span class="nx">contentPath</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">frontMatterConfig</span><span class="o">:</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">frontMatterConfig</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">dirToUpdate</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">dirToUpdate</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">updateDirectoryFrontMatter</span><span class="p">(</span><span class="nx">dirToUpdate</span><span class="p">,</span> <span class="nx">frontMatterConfig</span><span class="p">);</span> <span class="c1">// 更新对应目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 然后递归处理所有目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">items</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">item</span> <span class="p">=&gt;</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">lstatSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">item</span><span class="p">)).</span><span class="nx">isDirectory</span><span class="p">()).</span><span class="nx">forEach</span><span class="p">(</span><span class="nx">subDir</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">traverseFrontMatterConfigDir</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dir</span><span class="p">,</span> <span class="nx">subDir</span><span class="p">));</span> <span class="c1">// 递归子目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 开始遍历 front matter 配置目录
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">traverseFrontMatterConfigDir</span><span class="p">(</span><span class="nx">frontMatterDir</span><span class="p">);</span>
+</span></span></code></pre></div><p>可以在Vercel 添加该文件的执行 <code>node update-front-matter.js &amp;&amp; git submodule update --init --recursive &amp;&amp; hugo --gc</code>，倒是也有npm相关依赖，不用install。优势可以作为忘记添加一些通用配置的保底行为，避免配置缺失。不足之处也很明显，开发环境如果不执行脚本，则与最终部署环境内容不一致，处理方式略显暴力。</p>
+<p>后续接触得更多，对于这个场景会找到更合适的解法。这个方式分享出来，也是希望从别的博客工具迁移到Hugo的，能够更平滑、更简单。</p>
+<p>也让我不禁思考，现有能简单达到效果的方案，有必要花更多更长时间，去研究合理一些的办法吗？不过，我想我应该会去。</p>
+<p>今天这五分钟，希望对您有帮助/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

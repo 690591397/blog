@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='（Created by AI）
+Figma MCP 工具数据类型详解 本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。
+工具概览 Figma MCP 提供以下核心工具：
+get_metadata - 获取节点元数据信息 get_code - 生成 UI 代码实现 get_variable_defs - 获取设计变量定义 get_code_connect_map - 获取代码连接映射（企业版功能） get_image - 生成节点图像 create_design_system_rules - 创建设计系统规则 示例分析 使用 Figma 设计稿：https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;amp;m=dev
+从 URL 中提取的 node-id: 12849-12248
+1. 元数据信息 (get_metadata) 元数据提供了节点的基本结构信息，包括：
+节点类型（frame、instance、symbol 等） 节点名称 位置坐标 (x, y) 尺寸信息 (width, height) 子节点层级结构 示例输出： &amp;lt;frame id=&amp;#34;12849:12248&amp;#34; name=&amp;#34;Frame 1739333131&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;60&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;676&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12249&amp;#34; name=&amp;#34;Filter Bar&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;symbol id=&amp;#34;13088:67609&amp;#34; name=&amp;#34;Frame 1739333044&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;52&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;572&amp;#34; /&amp;gt; &amp;lt;frame id=&amp;#34;12849:12627&amp;#34; name=&amp;#34;per page&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;644&amp;#34; width=&amp;#34;244&amp;#34; height=&amp;#34;32&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12628&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;1&amp;#34; width=&amp;#34;30&amp;#34; height=&amp;#34;30&amp;#34; /&amp;gt; &amp;lt;instance id=&amp;#34;12849:12629&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;34&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;32&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;!'>
+<title>Figma MCP 工具数据类型详解</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='Figma MCP 工具数据类型详解'>
+<meta property='og:description' content='（Created by AI）
+Figma MCP 工具数据类型详解 本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。
+工具概览 Figma MCP 提供以下核心工具：
+get_metadata - 获取节点元数据信息 get_code - 生成 UI 代码实现 get_variable_defs - 获取设计变量定义 get_code_connect_map - 获取代码连接映射（企业版功能） get_image - 生成节点图像 create_design_system_rules - 创建设计系统规则 示例分析 使用 Figma 设计稿：https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;amp;m=dev
+从 URL 中提取的 node-id: 12849-12248
+1. 元数据信息 (get_metadata) 元数据提供了节点的基本结构信息，包括：
+节点类型（frame、instance、symbol 等） 节点名称 位置坐标 (x, y) 尺寸信息 (width, height) 子节点层级结构 示例输出： &amp;lt;frame id=&amp;#34;12849:12248&amp;#34; name=&amp;#34;Frame 1739333131&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;60&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;676&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12249&amp;#34; name=&amp;#34;Filter Bar&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;symbol id=&amp;#34;13088:67609&amp;#34; name=&amp;#34;Frame 1739333044&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;52&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;572&amp;#34; /&amp;gt; &amp;lt;frame id=&amp;#34;12849:12627&amp;#34; name=&amp;#34;per page&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;644&amp;#34; width=&amp;#34;244&amp;#34; height=&amp;#34;32&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12628&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;1&amp;#34; width=&amp;#34;30&amp;#34; height=&amp;#34;30&amp;#34; /&amp;gt; &amp;lt;instance id=&amp;#34;12849:12629&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;34&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;32&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;!'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/figmamcpdatatypes/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='figma' /><meta property='article:tag' content='mcp' /><meta property='article:tag' content='design-to-code' /><meta property='article:published_time' content='2024-12-21T10:00:00&#43;08:00'/><meta property='article:modified_time' content='2024-12-21T10:00:00&#43;08:00'/>
+<meta name="twitter:title" content="Figma MCP 工具数据类型详解">
+<meta name="twitter:description" content="（Created by AI）
+Figma MCP 工具数据类型详解 本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。
+工具概览 Figma MCP 提供以下核心工具：
+get_metadata - 获取节点元数据信息 get_code - 生成 UI 代码实现 get_variable_defs - 获取设计变量定义 get_code_connect_map - 获取代码连接映射（企业版功能） get_image - 生成节点图像 create_design_system_rules - 创建设计系统规则 示例分析 使用 Figma 设计稿：https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;amp;m=dev
+从 URL 中提取的 node-id: 12849-12248
+1. 元数据信息 (get_metadata) 元数据提供了节点的基本结构信息，包括：
+节点类型（frame、instance、symbol 等） 节点名称 位置坐标 (x, y) 尺寸信息 (width, height) 子节点层级结构 示例输出： &amp;lt;frame id=&amp;#34;12849:12248&amp;#34; name=&amp;#34;Frame 1739333131&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;60&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;676&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12249&amp;#34; name=&amp;#34;Filter Bar&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;symbol id=&amp;#34;13088:67609&amp;#34; name=&amp;#34;Frame 1739333044&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;52&amp;#34; width=&amp;#34;952&amp;#34; height=&amp;#34;572&amp;#34; /&amp;gt; &amp;lt;frame id=&amp;#34;12849:12627&amp;#34; name=&amp;#34;per page&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;644&amp;#34; width=&amp;#34;244&amp;#34; height=&amp;#34;32&amp;#34;&amp;gt; &amp;lt;instance id=&amp;#34;12849:12628&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;0&amp;#34; y=&amp;#34;1&amp;#34; width=&amp;#34;30&amp;#34; height=&amp;#34;30&amp;#34; /&amp;gt; &amp;lt;instance id=&amp;#34;12849:12629&amp;#34; name=&amp;#34;Pagination&amp;#34; x=&amp;#34;34&amp;#34; y=&amp;#34;0&amp;#34; width=&amp;#34;32&amp;#34; height=&amp;#34;32&amp;#34; /&amp;gt; &amp;lt;!">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#工具概览">工具概览</a></li>
+    <li><a href="#示例分析">示例分析</a></li>
+    <li><a href="#1-元数据信息-get_metadata">1. 元数据信息 (get_metadata)</a>
+      <ul>
+        <li><a href="#示例输出">示例输出：</a></li>
+      </ul>
+    </li>
+    <li><a href="#2-代码实现-get_code">2. 代码实现 (get_code)</a>
+      <ul>
+        <li><a href="#主要特性">主要特性：</a></li>
+        <li><a href="#代码结构示例">代码结构示例：</a></li>
+        <li><a href="#重要特性">重要特性：</a></li>
+      </ul>
+    </li>
+    <li><a href="#3-设计变量定义-get_variable_defs">3. 设计变量定义 (get_variable_defs)</a>
+      <ul>
+        <li><a href="#变量类型">变量类型：</a></li>
+        <li><a href="#示例输出-1">示例输出：</a></li>
+      </ul>
+    </li>
+    <li><a href="#4-代码连接映射-get_code_connect_map">4. 代码连接映射 (get_code_connect_map)</a>
+      <ul>
+        <li><a href="#功能">功能：</a></li>
+        <li><a href="#预期输出格式">预期输出格式：</a></li>
+      </ul>
+    </li>
+    <li><a href="#5-图像生成-get_image">5. 图像生成 (get_image)</a></li>
+    <li><a href="#6-设计系统规则-create_design_system_rules">6. 设计系统规则 (create_design_system_rules)</a></li>
+    <li><a href="#使用流程">使用流程</a>
+      <ul>
+        <li><a href="#1-建立连接">1. 建立连接</a></li>
+        <li><a href="#2-数据获取顺序建议">2. 数据获取顺序建议</a></li>
+        <li><a href="#3-从-url-提取-node-id">3. 从 URL 提取 node-id</a></li>
+      </ul>
+    </li>
+    <li><a href="#实际应用场景">实际应用场景</a>
+      <ul>
+        <li><a href="#设计到代码的完整流程">设计到代码的完整流程：</a></li>
+        <li><a href="#优势">优势：</a></li>
+      </ul>
+    </li>
+    <li><a href="#注意事项">注意事项</a></li>
+    <li><a href="#总结">总结</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/figmamcpdatatypes/">Figma MCP 工具数据类型详解</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-21</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>（Created by AI）</p>
+<h1 id="figma-mcp-工具数据类型详解">Figma MCP 工具数据类型详解</h1>
+<p>本文将详细介绍 Figma MCP (Model Context Protocol) 工具可以获取的各种数据类型，以及如何建立连接和获取设计稿信息。</p>
+<h2 id="工具概览">工具概览</h2>
+<p>Figma MCP 提供以下核心工具：</p>
+<ol>
+<li><strong>get_metadata</strong> - 获取节点元数据信息</li>
+<li><strong>get_code</strong> - 生成 UI 代码实现</li>
+<li><strong>get_variable_defs</strong> - 获取设计变量定义</li>
+<li><strong>get_code_connect_map</strong> - 获取代码连接映射（企业版功能）</li>
+<li><strong>get_image</strong> - 生成节点图像</li>
+<li><strong>create_design_system_rules</strong> - 创建设计系统规则</li>
+</ol>
+<h2 id="示例分析">示例分析</h2>
+<p>使用 Figma 设计稿：<code>https://www.figma.com/design/k0mSHNH3VmapS9ZamxFkVl/PLAUD-AI-SDK?node-id=12849-12248&amp;m=dev</code></p>
+<p>从 URL 中提取的 node-id: <code>12849-12248</code></p>
+<h2 id="1-元数据信息-get_metadata">1. 元数据信息 (get_metadata)</h2>
+<p>元数据提供了节点的基本结构信息，包括：</p>
+<ul>
+<li>节点类型（frame、instance、symbol 等）</li>
+<li>节点名称</li>
+<li>位置坐标 (x, y)</li>
+<li>尺寸信息 (width, height)</li>
+<li>子节点层级结构</li>
+</ul>
+<h3 id="示例输出">示例输出：</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;frame</span> <span class="na">id=</span><span class="s">&#34;12849:12248&#34;</span> <span class="na">name=</span><span class="s">&#34;Frame 1739333131&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;60&#34;</span> <span class="na">width=</span><span class="s">&#34;952&#34;</span> <span class="na">height=</span><span class="s">&#34;676&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;instance</span> <span class="na">id=</span><span class="s">&#34;12849:12249&#34;</span> <span class="na">name=</span><span class="s">&#34;Filter Bar&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;0&#34;</span> <span class="na">width=</span><span class="s">&#34;952&#34;</span> <span class="na">height=</span><span class="s">&#34;32&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;symbol</span> <span class="na">id=</span><span class="s">&#34;13088:67609&#34;</span> <span class="na">name=</span><span class="s">&#34;Frame 1739333044&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;52&#34;</span> <span class="na">width=</span><span class="s">&#34;952&#34;</span> <span class="na">height=</span><span class="s">&#34;572&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;frame</span> <span class="na">id=</span><span class="s">&#34;12849:12627&#34;</span> <span class="na">name=</span><span class="s">&#34;per page&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;644&#34;</span> <span class="na">width=</span><span class="s">&#34;244&#34;</span> <span class="na">height=</span><span class="s">&#34;32&#34;</span><span class="nt">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;instance</span> <span class="na">id=</span><span class="s">&#34;12849:12628&#34;</span> <span class="na">name=</span><span class="s">&#34;Pagination&#34;</span> <span class="na">x=</span><span class="s">&#34;0&#34;</span> <span class="na">y=</span><span class="s">&#34;1&#34;</span> <span class="na">width=</span><span class="s">&#34;30&#34;</span> <span class="na">height=</span><span class="s">&#34;30&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;instance</span> <span class="na">id=</span><span class="s">&#34;12849:12629&#34;</span> <span class="na">name=</span><span class="s">&#34;Pagination&#34;</span> <span class="na">x=</span><span class="s">&#34;34&#34;</span> <span class="na">y=</span><span class="s">&#34;0&#34;</span> <span class="na">width=</span><span class="s">&#34;32&#34;</span> <span class="na">height=</span><span class="s">&#34;32&#34;</span> <span class="nt">/&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 更多子节点... --&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;/frame&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/frame&gt;</span>
+</span></span></code></pre></div><p><strong>用途：</strong> 快速了解设计稿的整体结构，适合在实现前进行架构规划。</p>
+<h2 id="2-代码实现-get_code">2. 代码实现 (get_code)</h2>
+<p>这是最核心的功能，将 Figma 设计直接转换为可运行的代码：</p>
+<h3 id="主要特性">主要特性：</h3>
+<ul>
+<li><strong>React + TypeScript</strong> 组件代码</li>
+<li><strong>Tailwind CSS</strong> 样式系统</li>
+<li><strong>完整的 Props 接口定义</strong></li>
+<li><strong>图片资源处理</strong></li>
+<li><strong>响应式设计支持</strong></li>
+</ul>
+<h3 id="代码结构示例">代码结构示例：</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-typescript" data-lang="typescript"><span class="line"><span class="cl"><span class="kr">interface</span> <span class="nx">FilterOptionProps</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">state</span><span class="o">?:</span> <span class="s2">&#34;Default&#34;</span> <span class="o">|</span> <span class="s2">&#34;Selected&#34;</span> <span class="o">|</span> <span class="s2">&#34;Active&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">FilterOption</span><span class="p">({</span> <span class="nx">state</span> <span class="o">=</span> <span class="s2">&#34;Default&#34;</span> <span class="p">}</span><span class="o">:</span> <span class="nx">FilterOptionProps</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&#34;bg-white relative rounded-[5px] size-full&#34;</span> 
+</span></span><span class="line"><span class="cl">         <span class="na">data</span><span class="err">-</span><span class="na">name</span><span class="o">=</span><span class="s">&#34;State=Default&#34;</span> 
+</span></span><span class="line"><span class="cl">         <span class="na">data</span><span class="err">-</span><span class="na">node</span><span class="err">-</span><span class="na">id</span><span class="o">=</span><span class="s">&#34;12555:10420&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&#34;box-border content-stretch flex items-center justify-between min-w-inherit overflow-clip px-2 py-1 relative size-full&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">&lt;</span><span class="nt">div</span> <span class="na">className</span><span class="o">=</span><span class="s">&#34;font-[&#39;Inter:Regular&#39;,_sans-serif] font-normal leading-[0] not-italic relative shrink-0 text-[#3d3d3d] text-[12px] text-nowrap&#34;</span> 
+</span></span><span class="line"><span class="cl">             <span class="na">data</span><span class="err">-</span><span class="na">node</span><span class="err">-</span><span class="na">id</span><span class="o">=</span><span class="s">&#34;12555:10397&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">          <span class="p">&lt;</span><span class="nt">p</span> <span class="na">className</span><span class="o">=</span><span class="s">&#34;leading-[18px] whitespace-pre&#34;</span><span class="p">&gt;</span><span class="nx">Last</span> <span class="mi">24</span> <span class="nx">hours</span><span class="p">&lt;/</span><span class="nt">p</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">{</span><span class="cm">/* 更多组件内容... */</span><span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">&lt;/</span><span class="nt">div</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="重要特性">重要特性：</h3>
+<ul>
+<li><strong>data-node-id 属性</strong>：每个元素都包含对应的 Figma 节点 ID</li>
+<li><strong>精确的样式还原</strong>：包括字体、颜色、间距、圆角等</li>
+<li><strong>组件化设计</strong>：自动识别重复元素并生成可复用组件</li>
+<li><strong>图片资源管理</strong>：自动处理 SVG 和位图资源</li>
+</ul>
+<h2 id="3-设计变量定义-get_variable_defs">3. 设计变量定义 (get_variable_defs)</h2>
+<p>获取设计系统中定义的所有变量，包括：</p>
+<h3 id="变量类型">变量类型：</h3>
+<ul>
+<li><strong>颜色变量</strong>：主色、辅助色、状态色等</li>
+<li><strong>字体变量</strong>：字体族、字重、字号、行高</li>
+<li><strong>间距变量</strong>：padding、margin、gap 等</li>
+<li><strong>圆角变量</strong>：border-radius 值</li>
+<li><strong>其他样式变量</strong></li>
+</ul>
+<h3 id="示例输出-1">示例输出：</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Labels/Primary&#34;</span><span class="p">:</span> <span class="s2">&#34;#000000&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Labels/Secondary&#34;</span><span class="p">:</span> <span class="s2">&#34;#3d3d3d&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Labels/Tertiary&#34;</span><span class="p">:</span> <span class="s2">&#34;#858c9b&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Labels/Quaternary&#34;</span><span class="p">:</span> <span class="s2">&#34;#a3a3a3&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Labels/White&#34;</span><span class="p">:</span> <span class="s2">&#34;#ffffff&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Font Family/Font&#34;</span><span class="p">:</span> <span class="s2">&#34;Inter&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Font Size/Body&#34;</span><span class="p">:</span> <span class="s2">&#34;14&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Font Size/Footnote&#34;</span><span class="p">:</span> <span class="s2">&#34;14&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Line Height/Body&#34;</span><span class="p">:</span> <span class="s2">&#34;22&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Line Height/Footnote&#34;</span><span class="p">:</span> <span class="s2">&#34;20&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Spacing_4&#34;</span><span class="p">:</span> <span class="s2">&#34;4&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Spacing_8&#34;</span><span class="p">:</span> <span class="s2">&#34;8&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Spacing_20&#34;</span><span class="p">:</span> <span class="s2">&#34;20&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Spacing_24&#34;</span><span class="p">:</span> <span class="s2">&#34;24&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Radius_5&#34;</span><span class="p">:</span> <span class="s2">&#34;5&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Status/Destructive&#34;</span><span class="p">:</span> <span class="s2">&#34;#ff503f&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Template Community/Icon/Moss&#34;</span><span class="p">:</span> <span class="s2">&#34;#4cbf69&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;Template Community/Icon/Ember&#34;</span><span class="p">:</span> <span class="s2">&#34;#cc7447&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p><strong>用途：</strong> 建立统一的设计系统，确保代码实现与设计保持一致。</p>
+<h2 id="4-代码连接映射-get_code_connect_map">4. 代码连接映射 (get_code_connect_map)</h2>
+<blockquote>
+<p><strong>注意：</strong> 此功能仅在 Figma Organization 和 Enterprise 计划中可用</p>
+</blockquote>
+<p>用于建立 Figma 组件与代码库中实际组件的映射关系：</p>
+<h3 id="功能">功能：</h3>
+<ul>
+<li>将 Figma 组件链接到代码库中的具体文件</li>
+<li>提供组件名称映射</li>
+<li>支持版本管理和同步</li>
+</ul>
+<h3 id="预期输出格式">预期输出格式：</h3>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;1:2&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;codeConnectSrc&#34;</span><span class="p">:</span> <span class="s2">&#34;https://github.com/foo/components/Button.tsx&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;codeConnectName&#34;</span><span class="p">:</span> <span class="s2">&#34;Button&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h2 id="5-图像生成-get_image">5. 图像生成 (get_image)</h2>
+<p>为指定节点生成图像文件，用于：</p>
+<ul>
+<li>设计稿预览</li>
+<li>文档展示</li>
+<li>设计评审</li>
+<li>开发参考</li>
+</ul>
+<h2 id="6-设计系统规则-create_design_system_rules">6. 设计系统规则 (create_design_system_rules)</h2>
+<p>生成适用于当前项目的设计系统规则和约束。</p>
+<h2 id="使用流程">使用流程</h2>
+<h3 id="1-建立连接">1. 建立连接</h3>
+<ul>
+<li>确保 Figma 桌面应用已打开</li>
+<li>选择要处理的节点或提供 node-id</li>
+</ul>
+<h3 id="2-数据获取顺序建议">2. 数据获取顺序建议</h3>
+<ol>
+<li><strong>get_metadata</strong> - 了解整体结构</li>
+<li><strong>get_variable_defs</strong> - 获取设计变量</li>
+<li><strong>get_code</strong> - 生成具体实现</li>
+<li><strong>get_image</strong> - 获取视觉参考（可选）</li>
+</ol>
+<h3 id="3-从-url-提取-node-id">3. 从 URL 提取 node-id</h3>
+<p>URL 格式：<code>https://figma.com/design/:fileKey/:fileName?node-id=1-2</code>
+提取的 node-id：<code>1:2</code>（将 <code>-</code> 替换为 <code>:</code>）</p>
+<h2 id="实际应用场景">实际应用场景</h2>
+<h3 id="设计到代码的完整流程">设计到代码的完整流程：</h3>
+<ol>
+<li><strong>设计师</strong> 在 Figma 中完成设计</li>
+<li><strong>开发者</strong> 使用 MCP 工具获取元数据了解结构</li>
+<li><strong>自动生成</strong> 基础组件代码</li>
+<li><strong>开发者</strong> 基于生成的代码进行业务逻辑开发</li>
+<li><strong>设计变量</strong> 确保样式一致性</li>
+</ol>
+<h3 id="优势">优势：</h3>
+<ul>
+<li><strong>高效率</strong>：大幅减少手动编写 UI 代码的时间</li>
+<li><strong>高精度</strong>：像素级别的设计还原</li>
+<li><strong>可维护</strong>：生成的代码结构清晰，易于维护</li>
+<li><strong>一致性</strong>：通过设计变量确保整个项目的视觉一致性</li>
+</ul>
+<h2 id="注意事项">注意事项</h2>
+<ol>
+<li><strong>图片资源</strong>：生成的代码中图片资源指向 localhost 服务器，实际使用时需要替换为项目中的资源路径</li>
+<li><strong>样式系统</strong>：工具会自动检测项目的样式方案（Tailwind CSS、CSS-in-JS 等）</li>
+<li><strong>组件复用</strong>：工具会自动识别重复设计模式并生成可复用组件</li>
+<li><strong>TypeScript 支持</strong>：生成的代码包含完整的类型定义</li>
+</ol>
+<h2 id="总结">总结</h2>
+<p>Figma MCP 工具提供了从设计到代码的完整解决方案，通过多种数据类型的获取，可以实现高效、精确的设计实现流程。合理使用这些工具，可以显著提升前端开发效率，并确保设计与实现的一致性。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/figma/">Figma</a>
+        
+            <a href="/blog/zh/tags/mcp/">Mcp</a>
+        
+            <a href="/blog/zh/tags/design-to-code/">Design-to-Code</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

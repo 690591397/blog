@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='对于当前互联网产品开发中，协调的颜色设计至关重要，甚至决定用户是否愿意主动使用产品。一些独立开发者、中小微企业，在没有设计师的时候，是否就无法拥有至少合理、方便使用的配色方案呢？当然不了。我们可以使用很多现成的组件库，解决方案等等，但是如果在不引入组件库的时候呢？material-color-utilities给我们提供了方案。
+什么是 Material Color Utilities Material Design 是 Google 的设计语言，旨在提供一致、直观和美观的用户界面设计。Material Color Utilities 特别关注颜色的动态和适应性，使得开发者和设计师能够更容易地为不同的用户界面元素和主题创建和调整颜色方案。material-color-utilities提供了颜色生成（整体色板）、颜色切换（亮暗色）、颜色协调和主题生成。
+从Readme的这个图片的介绍，简单直接。 获得颜色 可以从图片中获取主题颜色 或者从一个颜色的集合 生成内容 颜色主题（高抽象等级） 色板（自定义主题，通过色板中获取） HCT（低等级） 如何使用 Material Color Utilities（TypeScript） Readme中可以看到支持C&#43;&#43;、Dart、Java、Swift、TypeScript，基本覆盖大部分端开发语言。但是在使用上没有提供太多的Demo和文档，通过查阅代码类型、函数描述信息会更详细。
+Flutter部分 针对Dart语言，Flutter在开发的时候默认就引入了该工具，ColorScheme.fromSeed点开函数文件，就能看到import &#39;package:material_color_utilities/material_color_utilities.dart&#39;;的引入。
+TypeScript部分 npm address。
+描述内容给出了颜色生成主题，如何使用部分，没有给出获取颜色，这里稍作补充。 首先是Quantize获取颜色，依赖并导出了这么些方法。
+export * from &amp;#39;./quantize/quantizer_celebi.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_map.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wsmeans.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wu.js&amp;#39;; 入参需要包含ARGB格式化的Number类型数据，和最大可返回的颜色个数。阅读头部描述，其实就是将图片上的每个pixel，转成ARGB之后，使用K-Means算法（一种无监督学习的聚类算法）来聚合像素信息。
+返回Map，key是ARGB，value是个数。这里正好可以使用Score函数了。
+export declare class QuantizerCelebi { /** * @param pixels Colors in ARGB format. * @param maxColors The number of colors to divide the image into.'>
+<title>在没有设计师的时候，怎么拥有自己的颜色主题</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/mycolors/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='在没有设计师的时候，怎么拥有自己的颜色主题'>
+<meta property='og:description' content='对于当前互联网产品开发中，协调的颜色设计至关重要，甚至决定用户是否愿意主动使用产品。一些独立开发者、中小微企业，在没有设计师的时候，是否就无法拥有至少合理、方便使用的配色方案呢？当然不了。我们可以使用很多现成的组件库，解决方案等等，但是如果在不引入组件库的时候呢？material-color-utilities给我们提供了方案。
+什么是 Material Color Utilities Material Design 是 Google 的设计语言，旨在提供一致、直观和美观的用户界面设计。Material Color Utilities 特别关注颜色的动态和适应性，使得开发者和设计师能够更容易地为不同的用户界面元素和主题创建和调整颜色方案。material-color-utilities提供了颜色生成（整体色板）、颜色切换（亮暗色）、颜色协调和主题生成。
+从Readme的这个图片的介绍，简单直接。 获得颜色 可以从图片中获取主题颜色 或者从一个颜色的集合 生成内容 颜色主题（高抽象等级） 色板（自定义主题，通过色板中获取） HCT（低等级） 如何使用 Material Color Utilities（TypeScript） Readme中可以看到支持C&#43;&#43;、Dart、Java、Swift、TypeScript，基本覆盖大部分端开发语言。但是在使用上没有提供太多的Demo和文档，通过查阅代码类型、函数描述信息会更详细。
+Flutter部分 针对Dart语言，Flutter在开发的时候默认就引入了该工具，ColorScheme.fromSeed点开函数文件，就能看到import &#39;package:material_color_utilities/material_color_utilities.dart&#39;;的引入。
+TypeScript部分 npm address。
+描述内容给出了颜色生成主题，如何使用部分，没有给出获取颜色，这里稍作补充。 首先是Quantize获取颜色，依赖并导出了这么些方法。
+export * from &amp;#39;./quantize/quantizer_celebi.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_map.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wsmeans.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wu.js&amp;#39;; 入参需要包含ARGB格式化的Number类型数据，和最大可返回的颜色个数。阅读头部描述，其实就是将图片上的每个pixel，转成ARGB之后，使用K-Means算法（一种无监督学习的聚类算法）来聚合像素信息。
+返回Map，key是ARGB，value是个数。这里正好可以使用Score函数了。
+export declare class QuantizerCelebi { /** * @param pixels Colors in ARGB format. * @param maxColors The number of colors to divide the image into.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/mycolors/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-07-02T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-07-02T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="在没有设计师的时候，怎么拥有自己的颜色主题">
+<meta name="twitter:description" content="对于当前互联网产品开发中，协调的颜色设计至关重要，甚至决定用户是否愿意主动使用产品。一些独立开发者、中小微企业，在没有设计师的时候，是否就无法拥有至少合理、方便使用的配色方案呢？当然不了。我们可以使用很多现成的组件库，解决方案等等，但是如果在不引入组件库的时候呢？material-color-utilities给我们提供了方案。
+什么是 Material Color Utilities Material Design 是 Google 的设计语言，旨在提供一致、直观和美观的用户界面设计。Material Color Utilities 特别关注颜色的动态和适应性，使得开发者和设计师能够更容易地为不同的用户界面元素和主题创建和调整颜色方案。material-color-utilities提供了颜色生成（整体色板）、颜色切换（亮暗色）、颜色协调和主题生成。
+从Readme的这个图片的介绍，简单直接。 获得颜色 可以从图片中获取主题颜色 或者从一个颜色的集合 生成内容 颜色主题（高抽象等级） 色板（自定义主题，通过色板中获取） HCT（低等级） 如何使用 Material Color Utilities（TypeScript） Readme中可以看到支持C&#43;&#43;、Dart、Java、Swift、TypeScript，基本覆盖大部分端开发语言。但是在使用上没有提供太多的Demo和文档，通过查阅代码类型、函数描述信息会更详细。
+Flutter部分 针对Dart语言，Flutter在开发的时候默认就引入了该工具，ColorScheme.fromSeed点开函数文件，就能看到import &#39;package:material_color_utilities/material_color_utilities.dart&#39;;的引入。
+TypeScript部分 npm address。
+描述内容给出了颜色生成主题，如何使用部分，没有给出获取颜色，这里稍作补充。 首先是Quantize获取颜色，依赖并导出了这么些方法。
+export * from &amp;#39;./quantize/quantizer_celebi.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_map.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wsmeans.js&amp;#39;; export * from &amp;#39;./quantize/quantizer_wu.js&amp;#39;; 入参需要包含ARGB格式化的Number类型数据，和最大可返回的颜色个数。阅读头部描述，其实就是将图片上的每个pixel，转成ARGB之后，使用K-Means算法（一种无监督学习的聚类算法）来聚合像素信息。
+返回Map，key是ARGB，value是个数。这里正好可以使用Score函数了。
+export declare class QuantizerCelebi { /** * @param pixels Colors in ARGB format. * @param maxColors The number of colors to divide the image into.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#什么是-material-color-utilities">什么是 Material Color Utilities</a></li>
+        <li><a href="#如何使用-material-color-utilitiestypescript">如何使用 Material Color Utilities（TypeScript）</a>
+          <ul>
+            <li><a href="#flutter部分">Flutter部分</a></li>
+            <li><a href="#typescript部分">TypeScript部分</a></li>
+          </ul>
+        </li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/mycolors/">在没有设计师的时候，怎么拥有自己的颜色主题</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-07-02</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>对于当前互联网产品开发中，协调的颜色设计至关重要，甚至决定用户是否愿意主动使用产品。一些独立开发者、中小微企业，在没有设计师的时候，是否就无法拥有至少合理、方便使用的配色方案呢？当然不了。我们可以使用很多现成的组件库，解决方案等等，但是如果在不引入组件库的时候呢？<a class="link" href="https://github.com/material-foundation/material-color-utilities?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >material-color-utilities</a>给我们提供了方案。</p>
+<h3 id="什么是-material-color-utilities">什么是 Material Color Utilities</h3>
+<p>Material Design 是 Google 的设计语言，旨在提供一致、直观和美观的用户界面设计。Material Color Utilities 特别关注颜色的动态和适应性，使得开发者和设计师能够更容易地为不同的用户界面元素和主题创建和调整颜色方案。<a class="link" href="https://github.com/material-foundation/material-color-utilities?tab=readme-ov-file"  target="_blank" rel="noopener"
+    >material-color-utilities</a>提供了颜色生成（整体色板）、颜色切换（亮暗色）、颜色协调和主题生成。</p>
+<!-- ### 答案就是：[material-color-utilities](https://github.com/material-foundation/material-color-utilities?tab=readme-ov-file)
+支持的是 Material Design 3 颜色系统算法，可以从图像中选择主题颜色和创建色调。可以看到支持C++、Dart、Java、Swift、TypeScript，基本覆盖大部分的端开发。 -->
+<p>从Readme的这个图片的介绍，简单直接。
+<img src="https://github.com/material-foundation/material-color-utilities/raw/main/cheat_sheet.png"
+	
+	
+	
+	loading="lazy"
+	
+	
+></p>
+<ul>
+<li>获得颜色
+<ul>
+<li>可以从图片中获取主题颜色</li>
+<li>或者从一个颜色的集合</li>
+</ul>
+</li>
+<li>生成内容
+<ul>
+<li>颜色主题（高抽象等级）</li>
+<li>色板（自定义主题，通过色板中获取）</li>
+<li>HCT（低等级）</li>
+</ul>
+</li>
+</ul>
+<h3 id="如何使用-material-color-utilitiestypescript">如何使用 Material Color Utilities（TypeScript）</h3>
+<p>Readme中可以看到支持C++、Dart、Java、Swift、TypeScript，基本覆盖大部分端开发语言。但是在使用上没有提供太多的Demo和文档，通过查阅代码类型、函数描述信息会更详细。</p>
+<h4 id="flutter部分">Flutter部分</h4>
+<p>针对Dart语言，Flutter在开发的时候默认就引入了该工具，<code>ColorScheme.fromSeed</code>点开函数文件，就能看到<code>import 'package:material_color_utilities/material_color_utilities.dart';</code>的引入。</p>
+<h4 id="typescript部分">TypeScript部分</h4>
+<p><a class="link" href="https://www.npmjs.com/package/@material/material-color-utilities"  target="_blank" rel="noopener"
+    >npm address</a>。</p>
+<p>描述内容给出了颜色生成主题，如何使用部分，没有给出获取颜色，这里稍作补充。
+首先是Quantize获取颜色，依赖并导出了这么些方法。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s1">&#39;./quantize/quantizer_celebi.js&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s1">&#39;./quantize/quantizer_map.js&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s1">&#39;./quantize/quantizer_wsmeans.js&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="o">*</span> <span class="kr">from</span> <span class="s1">&#39;./quantize/quantizer_wu.js&#39;</span><span class="p">;</span>
+</span></span></code></pre></div><p>入参需要包含ARGB格式化的Number类型数据，和最大可返回的颜色个数。阅读头部描述，其实就是将图片上的每个pixel，转成ARGB之后，使用K-Means算法（一种无监督学习的聚类算法）来聚合像素信息。<br>
+返回Map，key是ARGB，value是个数。这里正好可以使用Score函数了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">declare</span> <span class="kr">class</span> <span class="nx">QuantizerCelebi</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param pixels Colors in ARGB format.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @param maxColors The number of colors to divide the image into. A lower
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *     number of colors may be returned.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     * @return Map with keys of colors in ARGB format, and values of number of
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *     pixels in the original image that correspond to the color in the
+</span></span></span><span class="line"><span class="cl"><span class="cm">     *     quantized image.
+</span></span></span><span class="line"><span class="cl"><span class="cm">     */</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">static</span> <span class="nx">quantize</span><span class="p">(</span><span class="nx">pixels</span>: <span class="kt">number</span><span class="p">[],</span> <span class="nx">maxColors</span>: <span class="kt">number</span><span class="p">)</span><span class="o">:</span> <span class="nx">Map</span><span class="p">&lt;</span><span class="nt">number</span><span class="err">,</span> <span class="na">number</span><span class="p">&gt;;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h5 id="获取图片的argb信息">获取图片的ARGB信息</h5>
+<p>这里给出获取图片ARGB Number[]的代码，省得去找了。格式转换的代码在<code>export * from './utils/image_utils.js';</code>基本都有。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="nx">imageElement</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">canvas</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;canvas&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">getContext</span><span class="p">(</span><span class="s1">&#39;2d&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">ctx</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">canvas</span><span class="p">.</span><span class="nx">width</span> <span class="o">=</span> <span class="nx">imageElement</span><span class="p">.</span><span class="nx">width</span><span class="p">;</span> <span class="nx">canvas</span><span class="p">.</span><span class="nx">height</span> <span class="o">=</span> <span class="nx">imageElement</span><span class="p">.</span><span class="nx">height</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="nx">ctx</span><span class="p">.</span><span class="nx">drawImage</span><span class="p">(</span><span class="nx">imageElement</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">imageData</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">getImageData</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">imageElement</span><span class="p">.</span><span class="nx">width</span><span class="p">,</span> <span class="nx">imageElement</span><span class="p">.</span><span class="nx">height</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">pixels</span> <span class="o">=</span> <span class="nx">imageData</span><span class="p">.</span><span class="nx">data</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">pixels</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">alpha</span> <span class="o">=</span> <span class="nx">pixels</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">3</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">red</span> <span class="o">=</span> <span class="nx">pixels</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">0</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">green</span> <span class="o">=</span> <span class="nx">pixels</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">blue</span> <span class="o">=</span> <span class="nx">pixels</span><span class="p">[</span><span class="nx">i</span> <span class="o">+</span> <span class="mi">2</span><span class="p">];</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">argbValue</span> <span class="o">=</span> <span class="p">(</span><span class="nx">alpha</span> <span class="o">&lt;&lt;</span> <span class="mi">24</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="nx">red</span> <span class="o">&lt;&lt;</span> <span class="mi">16</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="nx">green</span> <span class="o">&lt;&lt;</span> <span class="mi">8</span><span class="p">)</span> <span class="o">|</span> <span class="nx">blue</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// save argb value
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">};</span>
+</span></span></code></pre></div><h5 id="sourcecolorfromimage">sourceColorFromImage</h5>
+<p>再仔细看看代码，会发现直接就有提供<code>sourceColorFromImage</code>，ummm。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kd">let</span> <span class="nx">imageDom</span>: <span class="kt">HTMLImageElement</span> <span class="o">|</span> <span class="kc">null</span> <span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">element</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;vueIcon&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">element</span> <span class="k">instanceof</span> <span class="nx">HTMLImageElement</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">imageDom</span> <span class="o">=</span> <span class="nx">element</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">imageDom</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">res</span> <span class="o">=</span> <span class="k">await</span> <span class="nx">sourceColorFromImage</span><span class="p">(</span><span class="nx">imageDom</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Get the theme from a hex color
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kr">const</span> <span class="nx">theme</span> <span class="o">=</span> <span class="nx">themeFromSourceColor</span><span class="p">(</span><span class="nx">res</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// Print out the theme as JSON
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">theme</span><span class="p">,</span> <span class="kc">null</span><span class="p">,</span> <span class="mi">2</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// Check if the user has dark mode turned on
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kr">const</span> <span class="nx">systemDark</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">matchMedia</span><span class="p">(</span><span class="s2">&#34;(prefers-color-scheme: dark)&#34;</span><span class="p">).</span><span class="nx">matches</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// Apply the theme to the body by updating custom properties for material tokens
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">applyTheme</span><span class="p">(</span><span class="nx">theme</span><span class="p">,</span> <span class="p">{</span><span class="nx">target</span>: <span class="kt">document.body</span><span class="p">,</span> <span class="nx">dark</span>: <span class="kt">systemDark</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><h5 id="应用效果">应用效果</h5>
+<p>通过控制台能看到输出的主题颜色，打开Element，body(<code>target: document.body</code>)添加了非常多的变量，如：&ndash;md-sys-color-primary。</p>
+<!-- ![color-scheme.png](https://s2.loli.net/2024/07/02/giLPGQ7jJ1wrsyn.png) -->
+<a href="https://s2.loli.net/2024/07/02/giLPGQ7jJ1wrsyn.png" data-lightbox="image-preview" data-title="preview">
+  <img src="https://s2.loli.net/2024/07/02/giLPGQ7jJ1wrsyn.png" alt="preview">
+</a>
+同时满足了CSS 和JS的使用。同时也可以切换系统的深浅色模式，刷新后切换当前页面的颜色。
+<h3 id="最后">最后</h3>
+<p>可以看到我们仅提供了单个主题色，如果使用了这些主题变量，后续我们直接切换主题色，就能快速的切换整个系统的颜色了。如果再往后，团队里面有设计师加入了（这里就先恭喜啦），我们也可以降低生成的等级，去调整数据内容。当然如果有实践过程，也会更新到这里。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

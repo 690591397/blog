@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Series on Hawkeye-xb Blog</title>
+        <link>https://690591397.github.io/blog/en/series/</link>
+        <description>Recent content in Series on Hawkeye-xb Blog</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>en</language>
+        <lastBuildDate>Wed, 24 Apr 2024 06:47:40 +0000</lastBuildDate><atom:link href="https://690591397.github.io/blog/en/series/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Build a Personal Blog in Five Minutes</title>
+        <link>https://690591397.github.io/blog/en/series/build-a-personal-blog-in-five-minutes/</link>
+        <pubDate>Wed, 24 Apr 2024 06:47:40 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/en/series/build-a-personal-blog-in-five-minutes/</guid>
+        <description></description>
+        </item>
+        
+    </channel>
+</rss>

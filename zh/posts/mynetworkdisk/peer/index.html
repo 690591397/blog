@@ -1,0 +1,856 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='为了实现远端设备可访问，这里选用了 WebRTC 作为 P2P 数据传输方案。避免繁琐的内网穿透处理。Peer使用方式可以直接跳转
+什么是 NAT NAT（Network Address Translation，网络地址转换）是一种在计算机网络中广泛使用的技术，主要用于将私有网络中的IP地址转换为公共网络中的IP地址。NAT的主要目的是解决IPv4地址短缺的问题，并提供一定程度的网络安全。
+NAT在一定程度上隐藏了内部网络的IP地址，使得外部网络无法直接访问内部网络中的设备。相当于寄快递只填写到了合租的地址（公共地址），里面具体房间的地址是私有的，别人没法直接填写（访问）。
+所以我们需要一些方法（内网穿透），让外部网络能够访问到内部网络中的设备。
+什么是 STUN/TURN、ICE 点对点（P2P）通信的关键协议和机制。它们主要用于解决 NAT（网络地址转换）和防火墙等网络环境下的通信问题。
+STUN（Session Traversal Utilities for NAT）： 用于帮助客户端发现自己的公共 IP 地址和端口，以及了解 NAT 设备的类型。 客户端向 STUN 服务器发送请求。STUN 服务器返回客户端的公共 IP 地址和端口。客户端使用这些信息来建立与其他客户端的直接连接。 只能处理简单的 NAT 类型，复杂、对称NAT 类型可能无法穿透。
+TURN（Traversal Using Relays around NAT）： 用于在无法直接建立 P2P 连接的情况下，通过中继服务器转发数据。 数据都通过 TURN 服务器转发，从而绕过 NAT 和防火墙的限制。 相应的，数据经过服务器，会增加一定的延迟和带宽消耗。
+ICE（Interactive Connectivity Establishment，交互式连接建立）： 是一种框架，用于在复杂的网络环境中建立 P2P 连接。它结合了 STUN 和 TURN 的功能，并尝试使用多种候选地址（包括本地地址、STUN 提供的公共地址、TURN 中继地址）来建立最优的连接。
+什么是 WebRTC 简单了解了 NAT、STUN/TURN、ICE 这些内容，可以大致了解 WebRTC 的工作原理。不管是想要以什么方式传输(UDP, TCP)、传输什么数据(MediaStream, RTCDataChannel)，只要能建立连接，其他的都有很多的方式。'>
+<title>使用 peer 实现 WebRTC 数据传输</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/mynetworkdisk/peer/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='使用 peer 实现 WebRTC 数据传输'>
+<meta property='og:description' content='为了实现远端设备可访问，这里选用了 WebRTC 作为 P2P 数据传输方案。避免繁琐的内网穿透处理。Peer使用方式可以直接跳转
+什么是 NAT NAT（Network Address Translation，网络地址转换）是一种在计算机网络中广泛使用的技术，主要用于将私有网络中的IP地址转换为公共网络中的IP地址。NAT的主要目的是解决IPv4地址短缺的问题，并提供一定程度的网络安全。
+NAT在一定程度上隐藏了内部网络的IP地址，使得外部网络无法直接访问内部网络中的设备。相当于寄快递只填写到了合租的地址（公共地址），里面具体房间的地址是私有的，别人没法直接填写（访问）。
+所以我们需要一些方法（内网穿透），让外部网络能够访问到内部网络中的设备。
+什么是 STUN/TURN、ICE 点对点（P2P）通信的关键协议和机制。它们主要用于解决 NAT（网络地址转换）和防火墙等网络环境下的通信问题。
+STUN（Session Traversal Utilities for NAT）： 用于帮助客户端发现自己的公共 IP 地址和端口，以及了解 NAT 设备的类型。 客户端向 STUN 服务器发送请求。STUN 服务器返回客户端的公共 IP 地址和端口。客户端使用这些信息来建立与其他客户端的直接连接。 只能处理简单的 NAT 类型，复杂、对称NAT 类型可能无法穿透。
+TURN（Traversal Using Relays around NAT）： 用于在无法直接建立 P2P 连接的情况下，通过中继服务器转发数据。 数据都通过 TURN 服务器转发，从而绕过 NAT 和防火墙的限制。 相应的，数据经过服务器，会增加一定的延迟和带宽消耗。
+ICE（Interactive Connectivity Establishment，交互式连接建立）： 是一种框架，用于在复杂的网络环境中建立 P2P 连接。它结合了 STUN 和 TURN 的功能，并尝试使用多种候选地址（包括本地地址、STUN 提供的公共地址、TURN 中继地址）来建立最优的连接。
+什么是 WebRTC 简单了解了 NAT、STUN/TURN、ICE 这些内容，可以大致了解 WebRTC 的工作原理。不管是想要以什么方式传输(UDP, TCP)、传输什么数据(MediaStream, RTCDataChannel)，只要能建立连接，其他的都有很多的方式。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/mynetworkdisk/peer/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='WebRTC' /><meta property='article:tag' content='Peer' /><meta property='article:published_time' content='2024-11-25T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-11-25T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="使用 peer 实现 WebRTC 数据传输">
+<meta name="twitter:description" content="为了实现远端设备可访问，这里选用了 WebRTC 作为 P2P 数据传输方案。避免繁琐的内网穿透处理。Peer使用方式可以直接跳转
+什么是 NAT NAT（Network Address Translation，网络地址转换）是一种在计算机网络中广泛使用的技术，主要用于将私有网络中的IP地址转换为公共网络中的IP地址。NAT的主要目的是解决IPv4地址短缺的问题，并提供一定程度的网络安全。
+NAT在一定程度上隐藏了内部网络的IP地址，使得外部网络无法直接访问内部网络中的设备。相当于寄快递只填写到了合租的地址（公共地址），里面具体房间的地址是私有的，别人没法直接填写（访问）。
+所以我们需要一些方法（内网穿透），让外部网络能够访问到内部网络中的设备。
+什么是 STUN/TURN、ICE 点对点（P2P）通信的关键协议和机制。它们主要用于解决 NAT（网络地址转换）和防火墙等网络环境下的通信问题。
+STUN（Session Traversal Utilities for NAT）： 用于帮助客户端发现自己的公共 IP 地址和端口，以及了解 NAT 设备的类型。 客户端向 STUN 服务器发送请求。STUN 服务器返回客户端的公共 IP 地址和端口。客户端使用这些信息来建立与其他客户端的直接连接。 只能处理简单的 NAT 类型，复杂、对称NAT 类型可能无法穿透。
+TURN（Traversal Using Relays around NAT）： 用于在无法直接建立 P2P 连接的情况下，通过中继服务器转发数据。 数据都通过 TURN 服务器转发，从而绕过 NAT 和防火墙的限制。 相应的，数据经过服务器，会增加一定的延迟和带宽消耗。
+ICE（Interactive Connectivity Establishment，交互式连接建立）： 是一种框架，用于在复杂的网络环境中建立 P2P 连接。它结合了 STUN 和 TURN 的功能，并尝试使用多种候选地址（包括本地地址、STUN 提供的公共地址、TURN 中继地址）来建立最优的连接。
+什么是 WebRTC 简单了解了 NAT、STUN/TURN、ICE 这些内容，可以大致了解 WebRTC 的工作原理。不管是想要以什么方式传输(UDP, TCP)、传输什么数据(MediaStream, RTCDataChannel)，只要能建立连接，其他的都有很多的方式。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#什么是-nat">什么是 NAT</a></li>
+        <li><a href="#什么是-stunturnice">什么是 STUN/TURN、ICE</a>
+          <ul>
+            <li><a href="#stunsession-traversal-utilities-for-nat">STUN（Session Traversal Utilities for NAT）：</a></li>
+            <li><a href="#turntraversal-using-relays-around-nat">TURN（Traversal Using Relays around NAT）：</a></li>
+            <li><a href="#iceinteractive-connectivity-establishment交互式连接建立">ICE（Interactive Connectivity Establishment，交互式连接建立）：</a></li>
+          </ul>
+        </li>
+        <li><a href="#什么是-webrtchttpsdevelopermozillaorgzh-cndocswebapiwebrtc_api">什么是 <a href="https://developer.mozilla.org/zh-CN/docs/Web/API/WebRTC_API">WebRTC</a></a></li>
+        <li><a href="#peer-使用">Peer 使用</a></li>
+        <li><a href="#再封装">再封装</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/mynetworkdisk/peer/">使用 peer 实现 WebRTC 数据传输</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-25</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>为了实现远端设备可访问，这里选用了 WebRTC 作为 P2P 数据传输方案。避免繁琐的内网穿透处理。<a class="link" href="#peer-%e4%bd%bf%e7%94%a8" >Peer使用方式可以直接跳转</a></p>
+<h3 id="什么是-nat">什么是 NAT</h3>
+<p>NAT（Network Address Translation，网络地址转换）是一种在计算机网络中广泛使用的技术，主要用于将私有网络中的IP地址转换为公共网络中的IP地址。NAT的主要目的是解决IPv4地址短缺的问题，并提供一定程度的网络安全。</p>
+<p>NAT在一定程度上隐藏了内部网络的IP地址，使得外部网络无法直接访问内部网络中的设备。相当于寄快递只填写到了合租的地址（公共地址），里面具体房间的地址是私有的，别人没法直接填写（访问）。</p>
+<p>所以我们需要一些方法（内网穿透），让外部网络能够访问到内部网络中的设备。</p>
+<h3 id="什么是-stunturnice">什么是 STUN/TURN、ICE</h3>
+<p>点对点（P2P）通信的关键协议和机制。它们主要用于解决 NAT（网络地址转换）和防火墙等网络环境下的通信问题。</p>
+<h4 id="stunsession-traversal-utilities-for-nat">STUN（Session Traversal Utilities for NAT）：</h4>
+<p>用于帮助客户端发现自己的公共 IP 地址和端口，以及了解 NAT 设备的类型。 <br>
+客户端向 STUN 服务器发送请求。STUN 服务器返回客户端的公共 IP 地址和端口。客户端使用这些信息来建立与其他客户端的直接连接。 <br>
+只能处理简单的 NAT 类型，复杂、对称NAT 类型可能无法穿透。</p>
+<h4 id="turntraversal-using-relays-around-nat">TURN（Traversal Using Relays around NAT）：</h4>
+<p>用于在无法直接建立 P2P 连接的情况下，通过中继服务器转发数据。 <br>
+数据都通过 TURN 服务器转发，从而绕过 NAT 和防火墙的限制。
+相应的，数据经过服务器，会增加一定的延迟和带宽消耗。</p>
+<h4 id="iceinteractive-connectivity-establishment交互式连接建立">ICE（Interactive Connectivity Establishment，交互式连接建立）：</h4>
+<p>是一种框架，用于在复杂的网络环境中建立 P2P 连接。它结合了 STUN 和 TURN 的功能，并尝试使用多种候选地址（包括本地地址、STUN 提供的公共地址、TURN 中继地址）来建立最优的连接。</p>
+<h3 id="什么是-webrtchttpsdevelopermozillaorgzh-cndocswebapiwebrtc_api">什么是 <a class="link" href="https://developer.mozilla.org/zh-CN/docs/Web/API/WebRTC_API"  target="_blank" rel="noopener"
+    >WebRTC</a></h3>
+<p>简单了解了 NAT、STUN/TURN、ICE 这些内容，可以大致了解 WebRTC 的工作原理。不管是想要以什么方式传输(UDP, TCP)、传输什么数据(MediaStream, RTCDataChannel)，只要能建立连接，其他的都有很多的方式。</p>
+<p>这里就不过多介绍了，更多可以去 <a class="link" href="https://developer.mozilla.org/zh-CN/docs/Web/API/WebRTC_API/Protocols"  target="_blank" rel="noopener"
+    >Mdn Web docs</a> 查阅。概要说连接流程就是，我把本地对应的端口（不管以什么方式，正常以 WS 的方式连接信令服务，交互双方信息）告诉给对方，对方收到之后，和我沟通建立连接。</p>
+<h3 id="peer-使用">Peer 使用</h3>
+<p>peerJs 默认连接 peer serve(免费的信令服务)</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// client A
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;module&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">import</span> <span class="p">{</span><span class="nx">Peer</span><span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;https://esm.sh/peerjs@1.5.4?bundle-deps&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Peer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="nx">peer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;My peer ID is: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">	<span class="p">});</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">peer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 接收到别的连接邀请
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="nx">conn</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Received&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">			<span class="c1">// 发送数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;hello&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">});</span>
+</span></span><span class="line"><span class="cl">	<span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// client B
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">&lt;</span><span class="nt">script</span> <span class="na">type</span><span class="o">=</span><span class="s">&#34;module&#34;</span><span class="p">&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="kr">import</span> <span class="p">{</span><span class="nx">Peer</span><span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;https://esm.sh/peerjs@1.5.4?bundle-deps&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="kd">var</span> <span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Peer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">	<span class="c1">// 与信令服务建立连接，可以通过 peer 属性获取连接状态。主动 disconnect 断开（建议退出时候销毁和断连）
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="nx">peer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;My peer ID is: &#39;</span> <span class="o">+</span> <span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// 如果需要主动发起邀请，需要在这个阶段之后再发起
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>		<span class="kr">const</span> <span class="nx">conn</span> <span class="o">=</span> <span class="nx">peer</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="s1">&#39;peer A id&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// 发送数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="s1">&#39;hello im B client&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">});</span>
+</span></span><span class="line"><span class="cl">		<span class="nx">conn</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">			<span class="c1">// 接收到数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>			<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;Received&#39;</span><span class="p">,</span> <span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">		<span class="p">});</span>
+</span></span><span class="line"><span class="cl">	<span class="p">});</span>
+</span></span><span class="line"><span class="cl">	<span class="nx">peer</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>	<span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">&lt;/</span><span class="nt">script</span><span class="p">&gt;</span>
+</span></span></code></pre></div><h3 id="再封装">再封装</h3>
+<p>基本使用也没太多的内容了，可以封装一下数据传输与初始化上，减少重复连接和管理 Connection，peer Connection 使用 Map 和 Object管理，但是属性废除了，获取不稳定（如有新的内容望大佬告知下），所以需要自己管理。</p>
+<p>这里给出监听和请求两侧的封装。希望对大家有帮助。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="kr">import</span> <span class="nx">Peer</span><span class="p">,</span> <span class="p">{</span> <span class="kr">type</span> <span class="nx">DataConnection</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;peerjs&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">ActionType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">type</span> <span class="nx">WebRTCContextType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">type</span> <span class="nx">ConnectionFunctionType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;./type&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">getRequest</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">setRequest</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">deleteRequest</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">generateWebRTCContext</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;./requestManager&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">on</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">emit</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">off</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;./listeners&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">peerConfig</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// debug: 3,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">config</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">iceServers</span><span class="o">:</span> <span class="p">[</span>
+</span></span><span class="line"><span class="cl">      <span class="p">{</span> <span class="nx">urls</span><span class="o">:</span> <span class="s1">&#39;stun:stun.l.google.com:19302&#39;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">]</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">type</span> <span class="nx">InitPeerConfigType</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">deviceId</span>: <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onPeerOpen</span><span class="o">?:</span> <span class="p">(</span><span class="nx">p</span>: <span class="kt">Peer</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onPeerClosed</span><span class="o">?:</span> <span class="p">(</span><span class="nx">p</span>: <span class="kt">Peer</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onPeerError</span><span class="o">?:</span> <span class="p">(</span><span class="nx">p</span>: <span class="kt">Peer</span><span class="p">,</span> <span class="nx">err</span>: <span class="kt">Error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onPeerReceivedConn</span><span class="o">?:</span> <span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">type</span> <span class="nx">InitUniConnConfigType</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">connDeviceId</span>: <span class="kt">string</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onConnOpen</span><span class="o">?:</span> <span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onConnClose</span><span class="o">?:</span> <span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onConnError</span><span class="o">?:</span> <span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">,</span> <span class="nx">err</span>: <span class="kt">Error</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">onConnData</span><span class="o">?:</span> <span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">,</span> <span class="nx">d</span>: <span class="kt">unknown</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">class</span> <span class="nx">PeerInstance</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 静态属性，用于存储单例实例
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">private</span> <span class="kr">static</span> <span class="nx">instance</span>: <span class="kt">PeerInstance</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">peer</span>: <span class="kt">Peer</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">uniConn</span>: <span class="kt">DataConnection</span> <span class="o">|</span> <span class="kc">undefined</span><span class="p">;</span> <span class="c1">// 为使用侧保留，连接到存储侧的conn
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">private</span> <span class="nx">uniConnInitBackup</span><span class="o">?:</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="k">void</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">connectionsMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">&lt;</span><span class="nt">string</span><span class="err">,</span> <span class="na">DataConnection</span><span class="p">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">chunkMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">&lt;</span><span class="nt">string</span><span class="err">,</span> <span class="na">Uint8Array</span><span class="err">[]</span><span class="p">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">constructor</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;Dont new instance, use PeerInstance.getInstance()&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="kr">static</span> <span class="nx">getInstance</span><span class="p">()</span><span class="o">:</span> <span class="nx">PeerInstance</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">PeerInstance</span><span class="p">.</span><span class="nx">instance</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">PeerInstance</span><span class="p">.</span><span class="nx">instance</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PeerInstance</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">PeerInstance</span><span class="p">.</span><span class="nx">instance</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">init</span><span class="p">(</span><span class="nx">config</span>: <span class="kt">InitPeerConfigType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;peer already init&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="p">.</span><span class="nx">peer</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Peer</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">deviceId</span><span class="p">,</span> <span class="nx">peerConfig</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// @ts-ignore
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nb">window</span><span class="p">.</span><span class="nx">peer</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="p">.</span><span class="nx">handlePeerListeners</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">destroy() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// todo: 改 Promise，全部处理了再destroy
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="k">this</span><span class="p">.</span><span class="nx">connections</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">conn</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">conn</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">conn</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;connection close&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">          <span class="p">})</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">.</span><span class="nx">once</span><span class="p">(</span><span class="s1">&#39;disconnected&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;peer disconnected&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="o">?</span><span class="p">.</span><span class="nx">destroy</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">peer</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">handlePeerListeners</span><span class="p">(</span><span class="nx">config</span>: <span class="kt">InitPeerConfigType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">p</span> <span class="o">!==</span> <span class="kc">undefined</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerOpen</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerOpen</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uniConnInitBackup</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">this</span><span class="p">.</span><span class="nx">uniConnInitBackup</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerClosed</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerClosed</span><span class="p">(</span><span class="nx">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">p</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerError</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerError</span><span class="p">(</span><span class="nx">p</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 存储侧接受到的连接邀请
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">p</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;connection&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">conn</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerReceivedConn</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onPeerReceivedConn</span><span class="p">(</span><span class="nx">conn</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="k">this</span><span class="p">.</span><span class="nx">connectionsMap</span><span class="p">.</span><span class="kr">set</span><span class="p">(</span><span class="nx">conn</span><span class="p">.</span><span class="nx">peer</span><span class="p">,</span> <span class="nx">conn</span><span class="p">);</span> <span class="c1">// 不用删除
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">d</span>: <span class="kt">unknown</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;存储端 route 接收到的数据:&#39;</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 这里不用处理响应数据吧，只需要当成router来处理就好了
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// this.handleConnResponse(d)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">this</span><span class="p">.</span><span class="nx">handleReceived</span><span class="p">(</span><span class="nx">conn</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">})</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ---- 存储侧注册的类似router事件，有handleReceived处理 ----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">public</span> <span class="nx">register</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">,</span> <span class="nx">fn</span>: <span class="kt">ConnectionFunctionType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">on</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">unregister</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">off</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="kr">async</span> <span class="nx">handleReceived</span><span class="p">(</span><span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">,</span> <span class="nx">d</span>: <span class="kt">unknown</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">d</span> <span class="kr">as</span> <span class="nx">WebRTCContextType</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">await</span> <span class="nx">emit</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">action</span><span class="p">,</span> <span class="nx">data</span><span class="p">,</span> <span class="nx">conn</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="c1">// 本侧发送数据 - 与接收返回数据的处理
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">public</span> <span class="nx">connect</span><span class="p">(</span><span class="nx">config</span>: <span class="kt">InitUniConnConfigType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uniConn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="s1">&#39;uniConn already init&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">.</span><span class="nx">open</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">handleUniConnListeners</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">this</span><span class="p">.</span><span class="nx">uniConnInitBackup</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">this</span><span class="p">.</span><span class="nx">handleUniConnListeners</span><span class="p">(</span><span class="nx">config</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">handleUniConnListeners</span><span class="p">(</span><span class="nx">config</span>: <span class="kt">InitUniConnConfigType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">p</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">uniConn</span><span class="p">)</span> <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">uc</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">config</span><span class="p">.</span><span class="nx">connDeviceId</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="p">.</span><span class="nx">uniConn</span> <span class="o">=</span> <span class="nx">uc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="p">.</span><span class="nx">uniConnInitBackup</span> <span class="o">=</span> <span class="kc">undefined</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">uc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;open&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">config</span><span class="p">.</span><span class="nx">onConnOpen</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onConnOpen</span><span class="p">(</span><span class="nx">uc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">uc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;close&#39;</span><span class="p">,</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">config</span><span class="p">.</span><span class="nx">onConnClose</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onConnClose</span><span class="p">(</span><span class="nx">uc</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">uc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;error&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">config</span><span class="p">.</span><span class="nx">onConnError</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onConnError</span><span class="p">(</span><span class="nx">uc</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">uc</span><span class="p">.</span><span class="nx">on</span><span class="p">(</span><span class="s1">&#39;data&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">d</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">config</span><span class="p">.</span><span class="nx">onConnData</span> <span class="o">&amp;&amp;</span> <span class="nx">config</span><span class="p">.</span><span class="nx">onConnData</span><span class="p">(</span><span class="nx">uc</span><span class="p">,</span> <span class="nx">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 处理返回数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;使用侧 接收到 存储侧 的数据:&#39;</span><span class="p">,</span> <span class="nx">d</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">this</span><span class="p">.</span><span class="nx">handleConnResponse</span><span class="p">(</span><span class="nx">d</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// @ts-ignore
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nb">window</span><span class="p">.</span><span class="nx">uniConn</span> <span class="o">=</span> <span class="nx">uc</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">request</span><span class="p">&lt;</span><span class="nt">T</span><span class="p">&gt;(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">,</span> <span class="nx">body</span>: <span class="kt">unknown</span><span class="p">,</span> <span class="nx">config</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">target?</span>: <span class="kt">DataConnection</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">request</span><span class="o">?:</span> <span class="p">{}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">})</span><span class="o">:</span> <span class="nx">Promise</span><span class="p">&lt;</span><span class="nt">T</span><span class="p">&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">new</span> <span class="nx">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">,</span> <span class="nx">reject</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">context</span> <span class="o">=</span> <span class="nx">generateWebRTCContext</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">body</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="nx">context</span><span class="p">.</span><span class="nx">request</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span><span class="nx">context</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">...</span><span class="nx">config</span><span class="p">.</span><span class="nx">request</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="nx">setRequest</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">resolve</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">reject</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">context</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">})</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">conn</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">target</span> <span class="o">||</span> <span class="k">this</span><span class="p">.</span><span class="nx">getUniConn</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nx">conn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">conn</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">context</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">reject</span><span class="p">(</span><span class="s1">&#39;conn not init&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">})</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="kr">private</span> <span class="nx">handleConnResponse</span><span class="p">(</span><span class="nx">d</span>: <span class="kt">unknown</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">ctx</span> <span class="o">=</span> <span class="nx">d</span> <span class="kr">as</span> <span class="nx">WebRTCContextType</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// todo: reject handle?
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">if</span> <span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="o">?</span><span class="p">.</span><span class="nx">contentType</span> <span class="o">===</span> <span class="s1">&#39;application/octet-stream&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">body</span> <span class="o">=</span> <span class="nx">ctx</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">data</span> <span class="kr">as</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="kr">type</span><span class="o">:</span> <span class="s1">&#39;start&#39;</span> <span class="o">|</span> <span class="s1">&#39;chunk&#39;</span> <span class="o">|</span> <span class="s1">&#39;end&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">chunk</span>: <span class="kt">Uint8Array</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">};</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="kr">type</span> <span class="o">===</span> <span class="s1">&#39;start&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="k">this</span><span class="p">.</span><span class="nx">chunkMap</span><span class="p">.</span><span class="kr">set</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">,</span> <span class="p">[</span><span class="nx">body</span><span class="p">.</span><span class="nx">chunk</span><span class="p">]);</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="kr">type</span> <span class="o">===</span> <span class="s1">&#39;chunk&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="kr">const</span> <span class="nx">chunks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">chunkMap</span><span class="p">.</span><span class="kr">get</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">chunks</span><span class="o">?</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="nx">chunk</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="p">(</span><span class="nx">body</span><span class="p">.</span><span class="kr">type</span> <span class="o">===</span> <span class="s1">&#39;end&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="kr">const</span> <span class="nx">chunks</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">chunkMap</span><span class="p">.</span><span class="kr">get</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="c1">// chunks 转成reader
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReadableStream</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">start</span><span class="p">(</span><span class="nx">controller</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">chunks</span><span class="o">?</span><span class="p">.</span><span class="nx">forEach</span><span class="p">((</span><span class="nx">chunk</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">controller</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="nx">chunk</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">              <span class="p">})</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">controller</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">},</span>
+</span></span><span class="line"><span class="cl">          <span class="p">}).</span><span class="nx">getReader</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="nx">ctx</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="p">...</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">data</span>: <span class="kt">reader</span>
+</span></span><span class="line"><span class="cl">          <span class="p">};</span>
+</span></span><span class="line"><span class="cl">          <span class="k">this</span><span class="p">.</span><span class="nx">chunkMap</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="kr">const</span> <span class="nx">target</span> <span class="o">=</span> <span class="nx">getRequest</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="p">(</span><span class="nx">target</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">target</span><span class="p">.</span><span class="nx">resolve</span><span class="p">(</span><span class="nx">ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">deleteRequest</span><span class="p">(</span><span class="nx">ctx</span><span class="p">.</span><span class="nx">request</span><span class="p">.</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">console</span><span class="p">.</span><span class="nx">warn</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ---- peer ----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">public</span> <span class="nx">getPeer() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">peer</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// ---- connections ----
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">public</span> <span class="nx">getConnectionsMap() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">connectionsMap</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">public</span> <span class="nx">getUniConn() {</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">this</span><span class="p">.</span><span class="nx">uniConn</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// requestManager.ts
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 被peer模块依赖
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">import</span> <span class="p">{</span> <span class="nx">v4</span> <span class="kr">as</span> <span class="nx">uuidv4</span> <span class="p">}</span> <span class="kr">from</span> <span class="s2">&#34;uuid&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="kr">type</span> <span class="nx">ActionType</span><span class="p">,</span> <span class="kr">type</span> <span class="nx">WebRTCContextType</span><span class="p">,</span> <span class="kr">type</span> <span class="nx">RequestManagerType</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;./type&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">requestMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">setRequest</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span>: <span class="kt">string</span><span class="p">,</span> <span class="nx">ctx</span>: <span class="kt">RequestManagerType</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">requestMap</span><span class="p">.</span><span class="kr">set</span><span class="p">(</span><span class="nx">id</span><span class="p">,</span> <span class="nx">ctx</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">getRequest</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">requestMap</span><span class="p">.</span><span class="kr">get</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">const</span> <span class="nx">deleteRequest</span> <span class="o">=</span> <span class="p">(</span><span class="nx">id</span>: <span class="kt">string</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">requestMap</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">generateWebRTCContext</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">,</span> <span class="nx">body</span>: <span class="kt">unknown</span><span class="p">)</span><span class="o">:</span> <span class="nx">WebRTCContextType</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">action</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">request</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">id</span>: <span class="kt">uuidv4</span><span class="p">(),</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">body</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">response</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">body</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">code</span>: <span class="kt">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">data</span>: <span class="kt">undefined</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">message</span><span class="o">:</span> <span class="s1">&#39;&#39;</span>
+</span></span><span class="line"><span class="cl">      <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-ts" data-lang="ts"><span class="line"><span class="cl"><span class="c1">// listeners.ts
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">import</span> <span class="kr">type</span> <span class="p">{</span> <span class="nx">DataConnection</span> <span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;peerjs&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">type</span> <span class="nx">ActionType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">type</span> <span class="nx">WebRTCContextType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">type</span> <span class="nx">ConnectionFunctionType</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span> <span class="kr">from</span> <span class="s1">&#39;./type&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">functionMap</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Map</span><span class="p">&lt;</span><span class="nt">ActionType</span><span class="err">,</span> <span class="na">ConnectionFunctionType</span><span class="p">&gt;();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">on</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">,</span> <span class="nx">fn</span>: <span class="kt">ConnectionFunctionType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 使用set可以重复注册
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">functionMap</span><span class="p">.</span><span class="kr">set</span><span class="p">(</span><span class="nx">action</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kr">async</span> <span class="kd">function</span> <span class="nx">emit</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">,</span> <span class="nx">ctx</span>: <span class="kt">WebRTCContextType</span><span class="p">,</span> <span class="nx">conn</span>: <span class="kt">DataConnection</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">fn</span> <span class="o">=</span> <span class="nx">functionMap</span><span class="p">.</span><span class="kr">get</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">await</span> <span class="nx">fn</span><span class="p">(</span><span class="nx">ctx</span><span class="p">,</span> <span class="nx">conn</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="kd">function</span> <span class="nx">off</span><span class="p">(</span><span class="nx">action</span>: <span class="kt">ActionType</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">functionMap</span><span class="p">.</span><span class="k">delete</span><span class="p">(</span><span class="nx">action</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/webrtc/">WebRTC</a>
+        
+            <a href="/blog/zh/tags/peer/">Peer</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

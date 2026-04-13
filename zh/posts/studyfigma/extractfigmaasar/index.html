@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='大家好呀，时隔两月，今天又来学习和研究figma客户端了。不管是从什么角度去揣测，分析，今天不如更直接一些，看代码！虽然是压缩混淆过的。 过程'>
+<title>学习和研究Figma：直接看代码(Extract Asar)</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/studyfigma/extractfigmaasar/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='学习和研究Figma：直接看代码(Extract Asar)'>
+<meta property='og:description' content='大家好呀，时隔两月，今天又来学习和研究figma客户端了。不管是从什么角度去揣测，分析，今天不如更直接一些，看代码！虽然是压缩混淆过的。 过程'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/studyfigma/extractfigmaasar/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Asar' /><meta property='article:tag' content='Figma' /><meta property='article:published_time' content='2024-07-03T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2024-07-03T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="学习和研究Figma：直接看代码(Extract Asar)">
+<meta name="twitter:description" content="大家好呀，时隔两月，今天又来学习和研究figma客户端了。不管是从什么角度去揣测，分析，今天不如更直接一些，看代码！虽然是压缩混淆过的。 过程">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#项目结构">项目结构</a></li>
+        <li><a href="#asar是什么">asar是什么？</a></li>
+        <li><a href="#解压asar">解压asar</a>
+          <ul>
+            <li><a href="#不出意外就会有意外报错了">不出意外，就会有意外。报错了</a></li>
+            <li><a href="#其它项目尝试">其它项目尝试</a></li>
+          </ul>
+        </li>
+        <li><a href="#修改-asar-包代码">修改 asar 包代码</a></li>
+        <li><a href="#最后">最后</a></li>
+        <li><a href="#更多一点儿">更多一点儿</a>
+          <ul>
+            <li><a href="#codesign-真实-size-有多大">.codesign 真实 size 有多大？</a></li>
+          </ul>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/%E5%AD%A6%E4%B9%A0/" >
+                学习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/studyfigma/extractfigmaasar/">学习和研究Figma：直接看代码(Extract Asar)</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-07-03</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好呀，时隔两月，今天又来学习和研究figma客户端了。不管是从什么角度去揣测，分析，今天不如更直接一些，看代码！虽然是压缩混淆过的。  <br>
+<strong>过程仅供交流学习</strong> <br>
+<strong>过程仅供交流学习</strong> <br>
+<strong>过程仅供交流学习</strong></p>
+<p>那么，我们需要做些什么呢？</p>
+<h3 id="项目结构">项目结构</h3>
+<p>在Window系统中，右键跳转到文件所在目录，就可以很清晰的看到应用的结构，有exe入口执行文件，依赖的资源和动态链接库等等，可是在MacOS呢？ <br>
+<strong>打开访达（finder）—— 左侧选中应用程序 —— 右键对应的应用（如Figma）—— 显示包内容</strong> <br>
+就可以看到应用的构成了，接着打开终端，把Content拖到终端里面，可以看到类似<code>/Applications/Figma.app/Contents</code>的路径，也就是说，通过移动到<code>Applications</code>的安装方式，会出现在这里，使用.app后缀的目录。 <br>
+用<code>tree</code>指令输出下<code>Content</code></p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── CodeResources
+</span></span><span class="line"><span class="cl">├── Info.plist
+</span></span><span class="line"><span class="cl">├── MacOS
+</span></span><span class="line"><span class="cl">│   └── DynamicUniversalApp
+</span></span><span class="line"><span class="cl">├── PkgInfo
+</span></span><span class="line"><span class="cl">├── Resources
+</span></span><span class="line"><span class="cl">│   ├── App.nib
+</span></span><span class="line"><span class="cl">│   ├── en.lproj
+</span></span><span class="line"><span class="cl">│   ├── icon.icns
+</span></span><span class="line"><span class="cl">│   └── ja.lproj
+</span></span><span class="line"><span class="cl">└── _CodeSignature
+</span></span><span class="line"><span class="cl">    └── CodeResources
+</span></span></code></pre></div><p>(这里是还未第一次启动的figma，在启动 DynamicUniversalApp 之后，才会真正的去下载客户端的应用。猜测是为了避免用户安装到其它的文件目录，导致持久化信息、目录访问受限、FigmaAgent无法安装等问题。毕竟在应用拖往Application的弹窗中直接双击启动，对应的根目录和正常启动的是不一致的) <br>
+安装好之后的tree结构如下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">.
+</span></span><span class="line"><span class="cl">├── CodeResources
+</span></span><span class="line"><span class="cl">├── Frameworks
+</span></span><span class="line"><span class="cl">│   ├── Electron Framework.framework
+</span></span><span class="line"><span class="cl">│   ├── Figma Helper <span class="o">(</span>GPU<span class="o">)</span>.app
+</span></span><span class="line"><span class="cl">│   ├── Figma Helper <span class="o">(</span>Plugin<span class="o">)</span>.app
+</span></span><span class="line"><span class="cl">│   ├── Figma Helper <span class="o">(</span>Renderer<span class="o">)</span>.app
+</span></span><span class="line"><span class="cl">│   ├── Figma Helper.app
+</span></span><span class="line"><span class="cl">│   ├── Mantle.framework
+</span></span><span class="line"><span class="cl">│   ├── ReactiveObjC.framework
+</span></span><span class="line"><span class="cl">│   └── Squirrel.framework
+</span></span><span class="line"><span class="cl">├── Info.plist
+</span></span><span class="line"><span class="cl">├── Library
+</span></span><span class="line"><span class="cl">│   ├── FigmaAgent.app
+</span></span><span class="line"><span class="cl">│   └── QuickLook
+</span></span><span class="line"><span class="cl">├── MacOS
+</span></span><span class="line"><span class="cl">│   ├── DynamicUniversalApp
+</span></span><span class="line"><span class="cl">│   └── Figma
+</span></span><span class="line"><span class="cl">├── PkgInfo
+</span></span><span class="line"><span class="cl">├── Resources
+</span></span><span class="line"><span class="cl">│   ├── App.nib
+</span></span><span class="line"><span class="cl">│   ├── af.lproj
+</span></span><span class="line"><span class="cl">│   ├── ...
+</span></span><span class="line"><span class="cl">│   ├── app.asar
+</span></span><span class="line"><span class="cl">│   ├── app.asar.unpacked
+</span></span><span class="line"><span class="cl">│   ├── ...
+</span></span><span class="line"><span class="cl">└── _CodeSignature
+</span></span><span class="line"><span class="cl">    └── CodeResources
+</span></span></code></pre></div><p>可以看到在MacOS下增加了客户端的入口文件，Resource多出了<code>app.asar</code>、<code>app.asar.unpacked</code>文件和目录。</p>
+<h3 id="asar是什么">asar是什么？</h3>
+<p>简单来说，是在 Electron 里用来打包应用资源文件的一种特殊格式。它能把好多文件和文件夹合成一个文件，这样能让应用的资源分发和加载更便捷高效。而且它能保持原来文件系统的结构和内容，既能减少文件数量，又能在使用时快速读取文件，<del>还能增加应用资源的安全性</del>。</p>
+<p>其实就是业务逻辑代码，会集中在这里，也就是今天讨论的重点。</p>
+<p>既然在运行时候需要获取app.asar的内容，那么Electron是怎么做到的呢？找到<a class="link" href="https://github.com/electron/electron/blob/main/package.json"  target="_blank" rel="noopener"
+    >Electron package.json</a>，devDependencies依赖了<code>&quot;@electron/asar&quot;: &quot;^3.2.1&quot;</code>这个包，再去<a class="link" href="https://www.npmjs.com/package/@electron/asar"  target="_blank" rel="noopener"
+    >npm搜索</a>，对应的是<a class="link" href="https://github.com/electron/asar"  target="_blank" rel="noopener"
+    >github.com/electron/asar</a>远端项目。</p>
+<p>当然，现在需要单独的处理asar，而不是在Electron下。找了下社区，就有方案，使用<code>asar</code>这个包即可，去<a class="link" href="https://www.npmjs.com/package/asar"  target="_blank" rel="noopener"
+    >npm查看</a>，对应的同一个远端项目。这里就没问题，直接全局安装<code>npm install asar -g</code>。</p>
+<p><img src="https://s2.loli.net/2024/07/04/KjuQPeSpwWfiBDX.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="asar npm address.png"
+	
+	
+></p>
+<h3 id="解压asar">解压asar</h3>
+<p>这样我们就可以参照文档，尝试解压figma的asar了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 进入目录</span>
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> /Applications/Figma.app/Contents/Resources
+</span></span><span class="line"><span class="cl"><span class="c1"># 解压</span>
+</span></span><span class="line"><span class="cl">asar extract app.asar ./app
+</span></span></code></pre></div><h4 id="不出意外就会有意外报错了">不出意外，就会有意外。报错了</h4>
+<h5 id="error-eperm-operation-not-permitted-mkdir-app">Error: EPERM: operation not permitted, mkdir &lsquo;./app&rsquo;</h5>
+<p>这个是没有授权终端创建目录。在【隐私与安全性】的【APP管理】，允许更新删除就好</p>
+<h5 id="the-value-of-size-is-out-of-range">The value of &ldquo;size&rdquo; is out of range</h5>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">node:internal/errors:541
+</span></span><span class="line"><span class="cl">      throw error<span class="p">;</span>
+</span></span><span class="line"><span class="cl">      ^
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">RangeError <span class="o">[</span>ERR_OUT_OF_RANGE<span class="o">]</span>: The value of <span class="s2">&#34;size&#34;</span> is out of range. It must be &gt;<span class="o">=</span> <span class="m">0</span> <span class="o">&amp;&amp;</span> &lt;<span class="o">=</span> 4294967296. Received -1000
+</span></span><span class="line"><span class="cl">    at Function.alloc <span class="o">(</span>node:buffer:389:3<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    at module.exports.readFileSync <span class="o">(</span>/xxx/.nvm/versions/node/v20.12.2/lib/node_modules/asar/lib/disk.js:106:23<span class="o">)</span>
+</span></span><span class="line"><span class="cl">    at module.exports.extractAll <span class="o">(</span>/xxx/.nvm/versions/node/v20.12.2/lib/node_modules/asar/lib/asar.js:204:28<span class="o">)</span>
+</span></span></code></pre></div><p>直接就被硬控了，难道包出问题了？！</p>
+<h4 id="其它项目尝试">其它项目尝试</h4>
+<p>拿了个其它项目来尝试</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 解压</span>
+</span></span><span class="line"><span class="cl">asar extract app.asar ./app
+</span></span><span class="line"><span class="cl"><span class="c1"># 备份</span>
+</span></span><span class="line"><span class="cl">mv app.asar app-backup.asar 
+</span></span><span class="line"><span class="cl"><span class="c1"># 压缩</span>
+</span></span><span class="line"><span class="cl">asar pack ./app ./app.asar
+</span></span></code></pre></div><p>执行这个过程没有任何报错，执行MacOS的入口文件也都能正常的运行。只是app.asar比原有的包更大了（有app.asar.unpacked），原因是解压的目录会包含unpack，重新打包的时候包含进去。</p>
+<h3 id="修改-asar-包代码">修改 asar 包代码</h3>
+<p>没办法，只好去查看报错的代码了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">readFileSync</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">filesystem</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">info</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kd">let</span> <span class="nx">buffer</span> <span class="o">=</span> <span class="nx">Buffer</span><span class="p">.</span><span class="nx">alloc</span><span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">size</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="nx">info</span><span class="p">.</span><span class="nx">size</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span> <span class="k">return</span> <span class="nx">buffer</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">return</span> <span class="nx">buffer</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>申请buffer时候超出范围了。<code>info.size</code>是传入的参数，继续往下</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">const</span> <span class="nx">filesystem</span> <span class="o">=</span> <span class="nx">disk</span><span class="p">.</span><span class="nx">readFilesystemSync</span><span class="p">(</span><span class="nx">archive</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="k">for</span> <span class="p">(</span><span class="kr">const</span> <span class="nx">fullPath</span> <span class="k">of</span> <span class="nx">filenames</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Remove leading slash
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">filename</span> <span class="o">=</span> <span class="nx">fullPath</span><span class="p">.</span><span class="nx">substr</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">destFilename</span> <span class="o">=</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">dest</span><span class="p">,</span> <span class="nx">filename</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">file</span> <span class="o">=</span> <span class="nx">filesystem</span><span class="p">.</span><span class="nx">getFile</span><span class="p">(</span><span class="nx">filename</span><span class="p">,</span> <span class="nx">followLinks</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">file</span><span class="p">.</span><span class="nx">files</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// it&#39;s a file, extract it
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kr">const</span> <span class="nx">content</span> <span class="o">=</span> <span class="nx">disk</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">filesystem</span><span class="p">,</span> <span class="nx">filename</span><span class="p">,</span> <span class="nx">file</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span></code></pre></div><p>file信息是通过<code>filesystem.getFile(filename, followLinks)</code>到的，filesystem又是通过<code>const filesystem = disk.readFilesystemSync(archive)</code>得到的。
+这下好好看看，这一步到底做了什么事情。 <br>
+几次console调整之后。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">module</span><span class="p">.</span><span class="nx">exports</span><span class="p">.</span><span class="nx">readFilesystemSync</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">archive</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">filesystemCache</span><span class="p">[</span><span class="nx">archive</span><span class="p">])</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">header</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">readArchiveHeaderSync</span><span class="p">(</span><span class="nx">archive</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="s1">&#39;获取到的header元数据:&#39;</span><span class="p">,</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">header</span><span class="p">.</span><span class="nx">headerString</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">filesystem</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Filesystem</span><span class="p">(</span><span class="nx">archive</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="k">return</span> <span class="nx">filesystemCache</span><span class="p">[</span><span class="nx">archive</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// 重新跑 asar extract app.asar ./app ，得到输出
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 获取到的header元数据: {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//   files: {
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;.codesign&#39;: { size: -1000, offset: &#39;0&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     assets: { files: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;bindings.node&#39;: { size: 139808, unpacked: true, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;build.json&#39;: { size: 26, offset: &#39;477349&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;desktop_rust.node&#39;: { size: 2280008, unpacked: true, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;desktop_shell.css&#39;: { size: 323004, offset: &#39;477375&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;desktop_shell.js&#39;: { size: 373725, offset: &#39;800379&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     i18n: { files: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     loading_screen: { files: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;main.js&#39;: { size: 467065, offset: &#39;1200404&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     node_modules: { files: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;package-lock.json&#39;: { size: 16134, offset: &#39;2069716&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;package.json&#39;: { size: 536, offset: &#39;2085850&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;shell_app_binding_renderer.js&#39;: { size: 2180, offset: &#39;2086386&#39;, integrity: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     tray: { files: [Object] },
+</span></span></span><span class="line"><span class="cl"><span class="c1">//     &#39;web_app_binding_renderer.js&#39;: { size: 16626, offset: &#39;2089567&#39;, integrity: [Object] }
+</span></span></span><span class="line"><span class="cl"><span class="c1">//   }
+</span></span></span><span class="line"><span class="cl"><span class="c1">// }
+</span></span></span></code></pre></div><p>好你个浓眉大眼的.codesign，还是个隐藏文件。看偏移量<code>offset: '0'</code>，打头的就是size出错的数据。 <br>
+为避免其它情况下使用asar出错，判断下这个filename，直接给你丫跳过。 <br>
+这样就可以解压出来内容了，虽然是压缩混淆的，有需要的硬翻也可以翻出来不少东西，后续怎么处理？<strong>过程仅供交流学习</strong>。</p>
+<p>到这里，过程就结束了，也就是为啥前面描述asar的时候，我把安全这个给划掉了，安全不了一点儿啊。但是figma的这个做法，确实也能增加一道门槛，文件名都非常直白了。</p>
+<h3 id="最后">最后</h3>
+<p>总的来说，就是用了个asar工具去解压包，碰到了个小错误，改完之后就能解压了。 <br>
+今天研究asar代码就到这儿，希望对你有帮助😉</p>
+<h3 id="更多一点儿">更多一点儿</h3>
+<h4 id="codesign-真实-size-有多大">.codesign 真实 size 有多大？</h4>
+<p>很简单，offset从0开始，只要找到了第二个文件的起始点，那它就是这个文件的大小。 <br>
+通过上面获取到的元数据信息，发现有的包含了offset，而有的没有。没有的是因为unpack了，没有存在app.asar这个包。<br>
+但是，这第二个<code>assets</code>是个目录！刚想递归遍历，但是直接输出下这个详情就好了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># console</span>
+</span></span><span class="line"><span class="cl">  <span class="s1">&#39;Inter.var.woff2&#39;</span>: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    size: 319784,
+</span></span><span class="line"><span class="cl">    offset: <span class="s1">&#39;0&#39;</span>,
+</span></span><span class="line"><span class="cl">    integrity: <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      algorithm: <span class="s1">&#39;SHA256&#39;</span>,
+</span></span><span class="line"><span class="cl">      hash: <span class="s1">&#39;0f409d1d652d526bcfd7fd0c2cae003cd1b32a009e71f7f9e614f644bd1d8f52&#39;</span>,
+</span></span><span class="line"><span class="cl">      blockSize: 4194304,
+</span></span><span class="line"><span class="cl">      blocks: <span class="o">[</span>Array<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>,
+</span></span></code></pre></div><p>offset依旧是0，惊不惊喜意不意外~。</p>
+<!-- xattr相关 -->
+<hr>
+<p><strong>过程仅供交流学习</strong> <br>
+<strong>过程仅供交流学习</strong> <br>
+<strong>过程仅供交流学习</strong></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/asar/">Asar</a>
+        
+            <a href="/blog/zh/tags/figma/">Figma</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title"></h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/login/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：登录功能</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/background/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：背景</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

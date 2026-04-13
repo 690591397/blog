@@ -1,0 +1,621 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='大家好呀。
+因为之前有过字体解析的相关代码开发，一直想把这个过程记录下来，总觉得这个并不是很难，自认为了解得不算全面，就一拖再拖了。今天仅做简单的抛砖引玉，通过本篇文章，可以知道Opentype.js是如何解析字体的。在遇到对应问题的时候，可以有其它的思路去解决。比如：.ttc的解析。又或者好奇我们开发软件过程中字体是如何解析的。
+Opentype.js 使用 看官方readme也可以，这里直接将github代码下载，使用自动化测试目录里的字体文件。
+需要注意的是load方法已经被废弃。
+function load() { console.error(&amp;#39;DEPRECATED! migrate to: opentype.parse(buffer, opt) See: https://github.com/opentypejs/opentype.js/issues/675&amp;#39;); } 将package.json设置为type: module，然后就可以直接使用import了。
+import { parse } from &amp;#39;./src/opentype.mjs&amp;#39;; import fs from &amp;#39;fs&amp;#39;; // test/fonts/AbrilFatface-Regular.otf const buffer = fs.promises.readFile(&amp;#39;./test/fonts/AbrilFatface-Regular.otf&amp;#39;); // if not running in async context: buffer.then(data =&amp;gt; { const font = parse(data); console.log(font.tables); }) Opentype源码阅读 parseBuffer：解析的入口 通过简单的调用入口，我们可以反查源码。传入文件的ArrayBuffer并返回Font结构的对象，当不清楚会有什么结构的时候，可以通过Font查看，当然了，直接console.log查看更方便。
+// Public API /////////////////////////////////////////////////////////// /** * Parse the OpenType file data (as an ArrayBuffer) and return a Font object.'>
+<title>用了这么多年的字体，你知道它是怎么解析的吗？</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/fontparse/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='用了这么多年的字体，你知道它是怎么解析的吗？'>
+<meta property='og:description' content='大家好呀。
+因为之前有过字体解析的相关代码开发，一直想把这个过程记录下来，总觉得这个并不是很难，自认为了解得不算全面，就一拖再拖了。今天仅做简单的抛砖引玉，通过本篇文章，可以知道Opentype.js是如何解析字体的。在遇到对应问题的时候，可以有其它的思路去解决。比如：.ttc的解析。又或者好奇我们开发软件过程中字体是如何解析的。
+Opentype.js 使用 看官方readme也可以，这里直接将github代码下载，使用自动化测试目录里的字体文件。
+需要注意的是load方法已经被废弃。
+function load() { console.error(&amp;#39;DEPRECATED! migrate to: opentype.parse(buffer, opt) See: https://github.com/opentypejs/opentype.js/issues/675&amp;#39;); } 将package.json设置为type: module，然后就可以直接使用import了。
+import { parse } from &amp;#39;./src/opentype.mjs&amp;#39;; import fs from &amp;#39;fs&amp;#39;; // test/fonts/AbrilFatface-Regular.otf const buffer = fs.promises.readFile(&amp;#39;./test/fonts/AbrilFatface-Regular.otf&amp;#39;); // if not running in async context: buffer.then(data =&amp;gt; { const font = parse(data); console.log(font.tables); }) Opentype源码阅读 parseBuffer：解析的入口 通过简单的调用入口，我们可以反查源码。传入文件的ArrayBuffer并返回Font结构的对象，当不清楚会有什么结构的时候，可以通过Font查看，当然了，直接console.log查看更方便。
+// Public API /////////////////////////////////////////////////////////// /** * Parse the OpenType file data (as an ArrayBuffer) and return a Font object.'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/fontparse/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-08-06T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-08-06T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="用了这么多年的字体，你知道它是怎么解析的吗？">
+<meta name="twitter:description" content="大家好呀。
+因为之前有过字体解析的相关代码开发，一直想把这个过程记录下来，总觉得这个并不是很难，自认为了解得不算全面，就一拖再拖了。今天仅做简单的抛砖引玉，通过本篇文章，可以知道Opentype.js是如何解析字体的。在遇到对应问题的时候，可以有其它的思路去解决。比如：.ttc的解析。又或者好奇我们开发软件过程中字体是如何解析的。
+Opentype.js 使用 看官方readme也可以，这里直接将github代码下载，使用自动化测试目录里的字体文件。
+需要注意的是load方法已经被废弃。
+function load() { console.error(&amp;#39;DEPRECATED! migrate to: opentype.parse(buffer, opt) See: https://github.com/opentypejs/opentype.js/issues/675&amp;#39;); } 将package.json设置为type: module，然后就可以直接使用import了。
+import { parse } from &amp;#39;./src/opentype.mjs&amp;#39;; import fs from &amp;#39;fs&amp;#39;; // test/fonts/AbrilFatface-Regular.otf const buffer = fs.promises.readFile(&amp;#39;./test/fonts/AbrilFatface-Regular.otf&amp;#39;); // if not running in async context: buffer.then(data =&amp;gt; { const font = parse(data); console.log(font.tables); }) Opentype源码阅读 parseBuffer：解析的入口 通过简单的调用入口，我们可以反查源码。传入文件的ArrayBuffer并返回Font结构的对象，当不清楚会有什么结构的时候，可以通过Font查看，当然了，直接console.log查看更方便。
+// Public API /////////////////////////////////////////////////////////// /** * Parse the OpenType file data (as an ArrayBuffer) and return a Font object.">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#opentypejs-使用">Opentype.js 使用</a></li>
+        <li><a href="#opentype源码阅读">Opentype源码阅读</a>
+          <ul>
+            <li><a href="#parsebuffer解析的入口">parseBuffer：解析的入口</a></li>
+            <li><a href="#字体类型判断">字体类型判断</a></li>
+            <li><a href="#表入口信息获取">表入口信息获取</a></li>
+            <li><a href="#表信息标准描述">表信息标准描述</a></li>
+            <li><a href="#表入口数据">表入口数据</a></li>
+            <li><a href="#表数据解析">表数据解析</a></li>
+            <li><a href="#ltag表的解析">ltag表的解析</a></li>
+            <li><a href="#解析小结">解析小结</a></li>
+          </ul>
+        </li>
+        <li><a href="#ttc字体集合的解析">TTC字体集合的解析</a></li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/fontparse/">用了这么多年的字体，你知道它是怎么解析的吗？</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-08-06</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好呀。</p>
+<p>因为之前有过字体解析的相关代码开发，一直想把这个过程记录下来，总觉得这个并不是很难，自认为了解得不算全面，就一拖再拖了。今天仅做简单的抛砖引玉，通过本篇文章，可以知道<a class="link" href="https://opentype.js.org/"  target="_blank" rel="noopener"
+    >Opentype.js</a>是如何解析字体的。在遇到对应问题的时候，可以有其它的思路去解决。比如：.ttc的解析。又或者好奇我们开发软件过程中字体是如何解析的。</p>
+<h3 id="opentypejs-使用">Opentype.js 使用</h3>
+<p>看官方<a class="link" href="https://github.com/opentypejs/opentype.js"  target="_blank" rel="noopener"
+    >readme</a>也可以，这里直接将github代码下载，使用自动化测试目录里的字体文件。</p>
+<p>需要注意的是load方法已经被废弃。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">load</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;DEPRECATED! migrate to: opentype.parse(buffer, opt) See: https://github.com/opentypejs/opentype.js/issues/675&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>将<code>package.json</code>设置为<code>type: module</code>，然后就可以直接使用<code>import</code>了。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">import</span> <span class="p">{</span> <span class="nx">parse</span> <span class="p">}</span> <span class="nx">from</span> <span class="s1">&#39;./src/opentype.mjs&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="kr">import</span> <span class="nx">fs</span> <span class="nx">from</span> <span class="s1">&#39;fs&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// test/fonts/AbrilFatface-Regular.otf
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kr">const</span> <span class="nx">buffer</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">promises</span><span class="p">.</span><span class="nx">readFile</span><span class="p">(</span><span class="s1">&#39;./test/fonts/AbrilFatface-Regular.otf&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// if not running in async context:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">buffer</span><span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="nx">data</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">font</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">(</span><span class="nx">data</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">font</span><span class="p">.</span><span class="nx">tables</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></div><h3 id="opentype源码阅读">Opentype源码阅读</h3>
+<h4 id="parsebuffer解析的入口">parseBuffer：解析的入口</h4>
+<p>通过简单的调用入口，我们可以反查源码。传入文件的ArrayBuffer并返回Font结构的对象，当不清楚会有什么结构的时候，可以通过Font查看，当然了，直接console.log查看更方便。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// Public API ///////////////////////////////////////////////////////////
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Parse the OpenType file data (as an ArrayBuffer) and return a Font object.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Throws an error if the font could not be parsed.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param  {ArrayBuffer}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param  {Object} opt - options for parsing
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return {opentype.Font}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">parseBuffer</span><span class="p">(</span><span class="nx">buffer</span><span class="p">,</span> <span class="nx">opt</span><span class="o">=</span><span class="p">{})</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// should be an empty font that we&#39;ll fill with our own data.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">font</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">Font</span><span class="p">({</span><span class="nx">empty</span><span class="o">:</span> <span class="kc">true</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="kr">export</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">parseBuffer</span> <span class="nx">as</span> <span class="nx">parse</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="p">};</span>
+</span></span></code></pre></div><h4 id="字体类型判断">字体类型判断</h4>
+<p>接着往下阅读。 <br>
+根据<code>signature</code>的值，去确认字体类型。粗略看来，这里仅支持了<code>TrueType</code>(.ttf)、<code>CFF</code>(.otf)、<code>WOFF</code>、<code>WOFF2</code>。并不支持<code>.ttc</code>、<code>.otc</code>字体集合。</p>
+<blockquote>
+<p>TrueType 为苹果和微软共同定制的，使用 二次贝塞尔曲线 来定义字形轮廓，高效兼容。CFF 分为版本1、2，最初用于 Adobe PostScript 打印机行业；sfntVersion 都是 OTTO；采用 三次贝塞尔曲线；可以封装 TrueType，压缩性更好的格式；CFF2 引入对可变字体字重、字宽、斜率的支持。如果 TrueType 和 CFF1 需要包含多字重等字体，通常可以打包成为 .ttc 和 .otc 字体集合的格式</p>
+</blockquote>
+<blockquote>
+<p>简单的说，TTF 会使用 glyf 表存完整的字形，CFF1 则会有局部表存类似偏旁部首，以达到共享，CFF2 最直观的就是多个字重的单独字体，通过变量轴合并成一个字体。</p>
+</blockquote>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">signature</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getTag</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="mi">0</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">signature</span> <span class="o">===</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="o">||</span> <span class="nx">signature</span> <span class="o">===</span> <span class="s1">&#39;true&#39;</span> <span class="o">||</span> <span class="nx">signature</span> <span class="o">===</span> <span class="s1">&#39;typ1&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">signature</span> <span class="o">===</span> <span class="s1">&#39;OTTO&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">signature</span> <span class="o">===</span> <span class="s1">&#39;wOFF&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="k">if</span> <span class="p">(</span><span class="nx">signature</span> <span class="o">===</span> <span class="s1">&#39;wOF2&#39;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">throw</span> <span class="k">new</span> <span class="nb">Error</span><span class="p">(</span><span class="s1">&#39;Unsupported OpenType signature &#39;</span> <span class="o">+</span> <span class="nx">signature</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span></code></pre></div><p>值得一提的是，<code>signature</code> 的值获取的方式 <code>getTag</code>。从指定偏移位置开始，读取4个字节的数据，并将每个字节转换为字符，最终返回一个4字符的字符串标签。后续获取字段信息大部分都是通过类似的方式。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// Retrieve a 4-character tag from the DataView.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// Tags are used to identify tables.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">getTag</span><span class="p">(</span><span class="nx">dataView</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">let</span> <span class="nx">tag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="nx">offset</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">offset</span> <span class="o">+</span> <span class="mi">4</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">tag</span> <span class="o">+=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span><span class="nx">dataView</span><span class="p">.</span><span class="nx">getInt8</span><span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">tag</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>拿 OTTO 举例，二进制文件存储的其实是<code>01001111 01010100 01010100 01001111</code> 这样的 8bit = 1byte 的数据。</p>
+<h4 id="表入口信息获取">表入口信息获取</h4>
+<p>进入 if else 看<code>TrueType</code>和<code>CFF</code>字体的处理，对<code>font.outlinesFormat</code>属性的设置设置为不同的字体类型之后。接下来都是获取表的个数<code>numTables</code>，再获取表数据的入口偏移信息。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="nx">numTables</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getUShort</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="nx">tableEntries</span> <span class="o">=</span> <span class="nx">parseOpenTypeTableEntries</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">numTables</span><span class="p">);</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="c1">// Table Directory Entries //////////////////////////////////////////////
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * Parses OpenType table entries.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param  {DataView}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @param  {Number}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @return {Object[]}
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">parseOpenTypeTableEntries</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">numTables</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">tableEntries</span> <span class="o">=</span> <span class="p">[];</span>
+</span></span><span class="line"><span class="cl">    <span class="kd">let</span> <span class="nx">p</span> <span class="o">=</span> <span class="mi">12</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">numTables</span><span class="p">;</span> <span class="nx">i</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">tag</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getTag</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">p</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">checksum</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getULong</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">p</span> <span class="o">+</span> <span class="mi">4</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">offset</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getULong</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">p</span> <span class="o">+</span> <span class="mi">8</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">getULong</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">p</span> <span class="o">+</span> <span class="mi">12</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">tableEntries</span><span class="p">.</span><span class="nx">push</span><span class="p">({</span><span class="nx">tag</span><span class="o">:</span> <span class="nx">tag</span><span class="p">,</span> <span class="nx">checksum</span><span class="o">:</span> <span class="nx">checksum</span><span class="p">,</span> <span class="nx">offset</span><span class="o">:</span> <span class="nx">offset</span><span class="p">,</span> <span class="nx">length</span><span class="o">:</span> <span class="nx">length</span><span class="p">,</span> <span class="nx">compression</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">p</span> <span class="o">+=</span> <span class="mi">16</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">tableEntries</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">getUShort</span><span class="p">(</span><span class="nx">dataView</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">dataView</span><span class="p">.</span><span class="nx">getUint16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="c1">// Retrieve an unsigned 32-bit long from the DataView.
+</span></span></span><span class="line"><span class="cl"><span class="c1">// The value is stored in big endian.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="kd">function</span> <span class="nx">getULong</span><span class="p">(</span><span class="nx">dataView</span><span class="p">,</span> <span class="nx">offset</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">dataView</span><span class="p">.</span><span class="nx">getUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>留意到<code>tableEntries</code>获取的 offset 是从 第12个字节开始的，而获取<code>numTables</code>是从第4第5两个字节（getUnit16），也就是说6-12之间还包含了别的信息。</p>
+<h4 id="表信息标准描述">表信息标准描述</h4>
+<p>这时候只能通过查看微软排版文档描述，<a class="link" href="https://learn.microsoft.com/en-us/typography/opentype/otspec181/otff#organization-of-an-opentype-font"  target="_blank" rel="noopener"
+    >Microsoft Typography documentation: Organization of an OpenType Font</a>。
+<img src="https://s2.loli.net/2024/08/07/VhS8GrNTDQ3Aenw.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="Organization of an Opentype Font.png"
+	
+	
+>
+按照8bit计算，这些信息之后，刚好是在12个字节开始。</p>
+<blockquote>
+<p>searchRange、entrySelector 和 rangeShift 是用于在字体文件中查找特定表的索引。依赖表的有序排列，不管有多少个表，使用二分都能比通过tableEntries 数组逐个查找快。</p>
+</blockquote>
+<p>后续的描述就是<code>parseOpenTypeTableEntries</code>的结构信息了。</p>
+<h4 id="表入口数据">表入口数据</h4>
+<p>以选择的 AbrilFatface-Regular.otf 为例。我们可以打断点看看，这两步骤得到的结果，这里Opentype提供了网址，就直接在上面断点了。
+<a href="https://s2.loli.net/2024/08/07/HzeZS4gYq52sbOK.png" data-lightbox="image-preview" data-title="preview">
+<img src="https://s2.loli.net/2024/08/07/HzeZS4gYq52sbOK.png" alt="preview">
+</a></p>
+<!-- ![parse opentype.png](https://s2.loli.net/2024/08/07/HzeZS4gYq52sbOK.png) -->
+<p>这里有11个表，在入口分别有对应的名称、偏移量、长度、校验和。</p>
+<h4 id="表数据解析">表数据解析</h4>
+<p>有了表入口信息，就可以通过<code>tableEntries</code>获取表的数据了。接下来的代码就是通过对应的<code>tag(name)</code>去选择对应的解析方式。有些表的信息需要依赖于别的表，则先暂时存起来。比如: name表需要依赖language表。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl">    <span class="k">case</span> <span class="s1">&#39;ltag&#39;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">table</span> <span class="o">=</span> <span class="nx">uncompressTable</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">tableEntry</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">ltagTable</span> <span class="o">=</span> <span class="nx">ltag</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">table</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">table</span><span class="p">.</span><span class="nx">offset</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">case</span> <span class="s1">&#39;name&#39;</span><span class="o">:</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">nameTableEntry</span> <span class="o">=</span> <span class="nx">tableEntry</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">break</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">		<span class="c1">// ...
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">nameTable</span> <span class="o">=</span> <span class="nx">uncompressTable</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">nameTableEntry</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">font</span><span class="p">.</span><span class="nx">tables</span><span class="p">.</span><span class="nx">name</span> <span class="o">=</span> <span class="nx">_name</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">nameTable</span><span class="p">.</span><span class="nx">data</span><span class="p">,</span> <span class="nx">nameTable</span><span class="p">.</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">ltagTable</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">font</span><span class="p">.</span><span class="nx">names</span> <span class="o">=</span> <span class="nx">font</span><span class="p">.</span><span class="nx">tables</span><span class="p">.</span><span class="nx">name</span><span class="p">;</span>
+</span></span></code></pre></div><p>这里就简单看下<code>ltag</code>表的解析，<code>table = uncompressTable(data, tableEntry);</code>判断是否有压缩，比如WOFF压缩字体，这里没有entry数据就还是原来的。</p>
+<h4 id="ltag表的解析">ltag表的解析</h4>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kd">function</span> <span class="nx">parseLtagTable</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">start</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">p</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">parse</span><span class="p">.</span><span class="nx">Parser</span><span class="p">(</span><span class="nx">data</span><span class="p">,</span> <span class="nx">start</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">tableVersion</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">parseULong</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">check</span><span class="p">.</span><span class="nx">argument</span><span class="p">(</span><span class="nx">tableVersion</span> <span class="o">===</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;Unsupported ltag table version.&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// The &#39;ltag&#39; specification does not define any flags; skip the field.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="nx">p</span><span class="p">.</span><span class="nx">skip</span><span class="p">(</span><span class="s1">&#39;uLong&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">numTags</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">parseULong</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="kr">const</span> <span class="nx">tags</span> <span class="o">=</span> <span class="p">[];</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">numTags</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="kd">let</span> <span class="nx">tag</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">offset</span> <span class="o">=</span> <span class="nx">start</span> <span class="o">+</span> <span class="nx">p</span><span class="p">.</span><span class="nx">parseUShort</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="kr">const</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">p</span><span class="p">.</span><span class="nx">parseUShort</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="p">(</span><span class="kd">let</span> <span class="nx">j</span> <span class="o">=</span> <span class="nx">offset</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">offset</span> <span class="o">+</span> <span class="nx">length</span><span class="p">;</span> <span class="o">++</span><span class="nx">j</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">tag</span> <span class="o">+=</span> <span class="nb">String</span><span class="p">.</span><span class="nx">fromCharCode</span><span class="p">(</span><span class="nx">data</span><span class="p">.</span><span class="nx">getInt8</span><span class="p">(</span><span class="nx">j</span><span class="p">));</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="nx">tags</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">tag</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="nx">tags</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>创了<code>p</code>这个<code>Parser</code>实例，包含各种长度<code>parseShort</code>、<code>parseULong</code>等。自动移动offset，避免每次手动传入位置。获取了table的version信息，而后就是循环的获取表内容了。</p>
+<p>不同表的具体信息，可以查阅<a class="link" href="https://learn.microsoft.com/en-us/typography/opentype/otspec181/otff#opentype-tables"  target="_blank" rel="noopener"
+    >文档</a>。</p>
+<h4 id="解析小结">解析小结</h4>
+<p>通过上述分析，我们可以初步了解字体的解析过程：它遵循 OpenType 规范的固定结构，从 Offset Table 开始，逐步解析表入口和表数据，像“剥洋葱”一样层层深入，最终提取所需信息。</p>
+<p>例如，要获取某个字的 SVG 路径，就可以通过 cmap 表（unicode）获取字符对应的字形索引，在 glyf、CFF 表获取贝塞尔曲线点的数据，转换为 SVG。印象中 opentype.js 提供了 getPath 转 SVG 的方法，可以断点尝试看看~</p>
+<h3 id="ttc字体集合的解析">TTC字体集合的解析</h3>
+<p>回到前面提出的，ttc字体集合，应该怎么解析呢？参照文档对字体集合的处理 <a class="link" href="https://learn.microsoft.com/en-us/typography/opentype/otspec181/otff#font-collections"  target="_blank" rel="noopener"
+    >Font Collections</a>，相信大家已经有办法解析了。
+<img src="https://s2.loli.net/2024/08/07/AgdC4a6HYp3ZlJ9.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="TTC header.png"
+	
+	
+>
+<strong>注意：这里截图给出的是1.0的结构，更多的查看文档。</strong></p>
+<h3 id="最后">最后</h3>
+<p>这次的分享就到这里了，对一些有按需解析，自定义解析的场景下，希望对大家有帮助。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

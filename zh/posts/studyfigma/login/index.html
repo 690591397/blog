@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' 在探索Figma登录功能的过程中，我们深入了解了其登录页面的远程加载机制、登录请求的发起、Web授权流程以及最终的登录过程。Figma的登录设计巧妙地利用了Web端的能力，通过授权页面将客户端与第三方登录系统隔离，确保了安全性和灵活性。整个流程涉及多个授权码的设计，以保障用户信息的安全传输。通过这一系列的分析，我们不仅学习了Figma的登录机制，还对Electron框架下的应用唤起和交互有了更深的理解。希望这篇文章能为您在理解和实现类似功能时提供帮助。'>
+<title>学习和研究Figma：登录功能</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/studyfigma/login/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='学习和研究Figma：登录功能'>
+<meta property='og:description' content=' 在探索Figma登录功能的过程中，我们深入了解了其登录页面的远程加载机制、登录请求的发起、Web授权流程以及最终的登录过程。Figma的登录设计巧妙地利用了Web端的能力，通过授权页面将客户端与第三方登录系统隔离，确保了安全性和灵活性。整个流程涉及多个授权码的设计，以保障用户信息的安全传输。通过这一系列的分析，我们不仅学习了Figma的登录机制，还对Electron框架下的应用唤起和交互有了更深的理解。希望这篇文章能为您在理解和实现类似功能时提供帮助。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/studyfigma/login/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Electron' /><meta property='article:tag' content='Figma' /><meta property='article:published_time' content='2024-04-30T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2024-04-30T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="学习和研究Figma：登录功能">
+<meta name="twitter:description" content=" 在探索Figma登录功能的过程中，我们深入了解了其登录页面的远程加载机制、登录请求的发起、Web授权流程以及最终的登录过程。Figma的登录设计巧妙地利用了Web端的能力，通过授权页面将客户端与第三方登录系统隔离，确保了安全性和灵活性。整个流程涉及多个授权码的设计，以保障用户信息的安全传输。通过这一系列的分析，我们不仅学习了Figma的登录机制，还对Electron框架下的应用唤起和交互有了更深的理解。希望这篇文章能为您在理解和实现类似功能时提供帮助。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#加载远端登录页">加载远端登录页</a>
+          <ul>
+            <li><a href="#白屏">白屏</a></li>
+          </ul>
+        </li>
+        <li><a href="#发起登录请求">发起登录请求</a></li>
+        <li><a href="#web授权">Web授权</a>
+          <ul>
+            <li><a href="#electron唤起默认浏览器打开url">electron唤起默认浏览器打开URL</a></li>
+            <li><a href="#授权登录">授权登录</a></li>
+            <li><a href="#同意授权">同意授权</a></li>
+            <li><a href="#url-scheme浏览器唤起electron客户端">URL Scheme，浏览器唤起electron客户端</a></li>
+          </ul>
+        </li>
+        <li><a href="#登录">登录</a></li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/%E5%AD%A6%E4%B9%A0/" >
+                学习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/studyfigma/login/">学习和研究Figma：登录功能</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             在探索Figma登录功能的过程中，我们深入了解了其登录页面的远程加载机制、登录请求的发起、Web授权流程以及最终的登录过程。Figma的登录设计巧妙地利用了Web端的能力，通过授权页面将客户端与第三方登录系统隔离，确保了安全性和灵活性。整个流程涉及多个授权码的设计，以保障用户信息的安全传输。通过这一系列的分析，我们不仅学习了Figma的登录机制，还对Electron框架下的应用唤起和交互有了更深的理解。希望这篇文章能为您在理解和实现类似功能时提供帮助。
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-30</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好。</p>
+<p>今天来学习和研究Figma的登录功能，毕竟这是APP所有功能的基础。</p>
+<p>当作为前端我们研究某个网页的时候，下意识的就是打开chrome devtool，Figma也是保留了这个快捷键，MacOS环境下，<code>command + option + i</code>就可以唤起。</p>
+<h3 id="加载远端登录页">加载远端登录页</h3>
+<p>打开Figma客户端，一阵“白屏”之后，加载出来简单的登录页面。切到Network快捷键<code>command + shift + R</code>强制刷新下页面。Doc加载的是<code>https://www.figma.com/login?locale=en&amp;is_not_gen_0=true</code>的资源，果然加载的远端资源，一生要强的前端er们，时常和白屏做斗争。这里登录页面猜测都在Web项目维护，做了拆包，查看整体Network资源加载，总共3M多。</p>
+<h4 id="白屏">白屏</h4>
+<p>即使只有3M多资源大小，对于现在国内网络环境，如果有插着网线的机器，更是微不足道。但是个人认为，这个页面更新频率不高，可以被划分到本地的渲染进程里，独有的登录页。随安装包分发到本地，通过loadFile加载更为合适。</p>
+<p>也可能出于项目管理上的考虑，这么小的内容不值得单独管理，并再为之引入埋点、数据分析监控。</p>
+<p>再回到Network，看到除了加载js文件，还加载了登录状态对应提示信息的JSON、两种数据分析监控，甚至还连接了两个ws。</p>
+<p><img src="https://s2.loli.net/2024/04/30/2APMHYSunZzb1Iv.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="figma login load res 2024-04-30 11.27.30.png"
+	
+	
+></p>
+<h3 id="发起登录请求">发起登录请求</h3>
+<p>不管点击login还是create account，获取该次登录的hash。</p>
+<pre tabindex="0"><code>https://www.figma.com/api/session/app_auth
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&#34;meta&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;id&#34;</span><span class="p">:</span> <span class="s2">&#34;auth_code_1&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;app_type&#34;</span><span class="p">:</span> <span class="s2">&#34;desktop&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="p">},</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><h3 id="web授权">Web授权</h3>
+<p>这时候会唤起默认浏览器，打开授权页面，如: <code>https://www.figma.com/app_auth/{{ auth_code_1 }}/grant?desktop_protocol=figma&amp;locale=en</code>。</p>
+<p>打开的地址会携带重新唤起APP的协议头<code>desktop_protocol=figma</code>。</p>
+<h4 id="electron唤起默认浏览器打开url">electron唤起默认浏览器打开URL</h4>
+<p>框架默认支持功能。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="p">{</span> <span class="nx">shell</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;electron&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">// 在默认浏览器中打开URL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span><span class="nx">shell</span><span class="p">.</span><span class="nx">openExternal</span><span class="p">(</span><span class="s1">&#39;https://www.example.com&#39;</span><span class="p">).</span><span class="nx">then</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s1">&#39;网页已在浏览器中打开！&#39;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="nx">err</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;打开浏览器失败:&#39;</span><span class="p">,</span> <span class="nx">err</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl"><span class="p">});</span>
+</span></span></code></pre></div><h5 id="跨平台实现">跨平台实现</h5>
+<p>在Windows上，可以使用ShellExecute或ShellExecuteEx函数。MacOS则是NSWorkspace的openURL方法，Linux有xdg-open。印象中几个平台都支持，只是在Linux反向唤起APP的时候，设置比较麻烦。</p>
+<h4 id="授权登录">授权登录</h4>
+<p>到这里完全就托管给web端去实现登录了，不管是未注册、未登录还是直接授权，能都够复用现有的Web能力了。为什么要这么做呢？直接将登录页面嵌入客户端，不更好吗？如果登录与后续绑定倒是挺合适的，但是如果涉及到三方、单点登录这些场景，就不这么好处理了。</p>
+<p>举个例子，假设需要接入第三方内部OA系统的授权登录，出于安全考虑，不允许在非安全客户端环境下登录，这样则需要接入该三方提供的SDK，或者将客户端环境，设置成为可以被校验安全的环境（比如固定的UA字段）。不管是修改环境还是接入SDK，都需要对客户端做出兼容修改。一旦接入的客户量足够多，这种方案根本管理不过来，无法维护。况且，Web端也需要进行相应的兼容。</p>
+<p>这里跳转到浏览器，使用Web的登录状态，不管叫中介、代理还是什么模式都好，就将客户端和三方隔离开了。</p>
+<p>再结合Figma面向团队、组织这类ToB模式的产品，就更好理解客户端为什么选择了这种登录方式了。</p>
+<h4 id="同意授权">同意授权</h4>
+<p>回到Figma登录流程，在web端有登录状态之后，点击授权，发起请求验证登录。</p>
+<pre tabindex="0"><code>https://www.figma.com/api/session/app_auth/{{ auth_code_1 }}/grant
+</code></pre><pre tabindex="0"><code>{
+  &#34;error&#34;: false,
+  &#34;status&#34;: 200,
+  &#34;meta&#34;: {
+    &#34;id&#34;: &#34;auth_code_1&#34;,
+    &#34;app_type&#34;: &#34;desktop&#34;,
+    &#34;g_secret&#34;: &#34;auth_code_2&#34;
+  },
+  &#34;i18n&#34;: null
+}
+</code></pre><h4 id="url-scheme浏览器唤起electron客户端">URL Scheme，浏览器唤起electron客户端</h4>
+<p>获得g_secret信息后，流程就需要重新唤起客户端APP了。不管是桌面端还是移动端，外部唤起APP，都需要再URL Scheme表注册内容，在协议请求的时候，会去校验这个表，如存在对应协议，则会获取协议的启动路径，执行APP的启动文件。</p>
+<p>electron 可以通过<a class="link" href="https://www.electronjs.org/zh/docs/latest/api/protocol"  target="_blank" rel="noopener"
+    >protocol</a>模块设置URL Scheme。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-js" data-lang="js"><span class="line"><span class="cl"><span class="kr">const</span> <span class="p">{</span> <span class="nx">app</span><span class="p">,</span> <span class="nx">protocol</span><span class="p">,</span> <span class="nx">net</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;electron&#39;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">app</span><span class="p">.</span><span class="nx">whenReady</span><span class="p">().</span><span class="nx">then</span><span class="p">(()</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="nx">protocol</span><span class="p">.</span><span class="nx">handle</span><span class="p">(</span><span class="s1">&#39;atom&#39;</span><span class="p">,</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">=&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">net</span><span class="p">.</span><span class="nx">fetch</span><span class="p">(</span><span class="s1">&#39;file://&#39;</span> <span class="o">+</span> <span class="nx">request</span><span class="p">.</span><span class="nx">url</span><span class="p">.</span><span class="nx">slice</span><span class="p">(</span><span class="s1">&#39;atom://&#39;</span><span class="p">.</span><span class="nx">length</span><span class="p">)))</span>
+</span></span><span class="line"><span class="cl"><span class="p">})</span>
+</span></span></code></pre></div><p>或者通过构建工具如<a class="link" href="https://www.electron.build/api/programmatic-usage.html"  target="_blank" rel="noopener"
+    >electron builder</a>配置。不太建议自行管理，需要兼容多平台。<strong>另外需要注意杀毒软件，可能会导致注册失败</strong>.</p>
+<p>接着我们将Network过滤状态调整为过滤刚才请求头的协议<code>figma://</code>。很明显，将二次验证的g_secret在唤起APP的时候传递过去了。</p>
+<pre tabindex="0"><code>figma://app_auth/redeem?g_secret=auth_code_2
+</code></pre><h3 id="登录">登录</h3>
+<p>流程回到客户端，在授权之前把Network网络调成3G，方便我们观察数据。直接的就能看到，客户端使用<code>g_secret</code>请求接口，换取用户id。</p>
+<pre tabindex="0"><code>https://www.figma.com/api/session/app_auth/redeem
+
+{
+  g_secret: &#34;auth_code_2&#34;
+}
+</code></pre><div class="highlight"><pre tabindex="0" class="chroma"><code class="language-json" data-lang="json"><span class="line"><span class="cl"><span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;error&#34;</span><span class="p">:</span> <span class="kc">false</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;status&#34;</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;meta&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&#34;workspace&#34;</span><span class="p">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&#34;userId&#34;</span><span class="p">:</span> <span class="s2">&#34;userId&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">            <span class="nt">&#34;orgId&#34;</span><span class="p">:</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">},</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&#34;i18n&#34;</span><span class="p">:</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></div><p>最终时序图如下
+<img src="https://s2.loli.net/2024/04/30/p3xLJrX2We1nvFj.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="figma login time picture.png"
+	
+	
+></p>
+<p>对着这完整的流程，为什么要设计这么多授权相关的code呢？直接将web端的登录状态保持信息（Cookie）给到客户端不就可以了吗？</p>
+<p>首先在产品形态上，客户端和Web不应该共用Cookie，也不能在URL通过明文传输（前端之间加密可以说是加寂寞），所以设计的<code>g_secret</code>，回看唤起客户端的URL，这个值其实也很不安全，按道理客户端需要保有用来处理<code>g_secret</code>值的信息，并且在获取用户信息的时候同时提供。换言之，第一步的id和g_secret对应不上也是不允许的。这里Figma使用了个临时的回话，Cookie里的figma.session来做这件事情，再进一步释放了客户端的复杂度。这里没做<code>g_secret</code>存活时间、在另外机器使用的验证，原理都有做时效和使用次数的限制的。</p>
+<p>在这整个流程中，目前还没有认识到会是哪种具名的授权方式。大家如果知道，还望告知。</p>
+<h3 id="最后">最后</h3>
+<p>最后总结下，本文主要拆解了Figma客户端的登录整个流程，并且对Electron唤起浏览器、浏览器唤起Electron做了个简单的介绍。</p>
+<p>学习和研究Figma的登录功能，就先到这里了，希望对您有帮助。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/electron/">Electron</a>
+        
+            <a href="/blog/zh/tags/figma/">Figma</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title"></h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/background/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：背景</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

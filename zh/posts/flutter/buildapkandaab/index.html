@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='.apk和.aab 的区别 .apk（Android Package）和.aab（Android App Bundle）是Android应用程序的两种不同的发布格式。
+.apk是一个静态的文件，意味着它包含了应用程序的所有可能变体，不论设备的配置如何，所有用户都会下载和安装相同的APK文件。
+.aab文件是由Google推出，用于更高效地分发应用程序的发布格式。开发者上传一个包含应用程序所有编译代码和资源的捆绑包到Google Play，然后用户只会下载他们需要的代码和资源，这通常会导致更小的应用程序下载大小和更高效的应用程序安装。
+较为明显的区别有：
+apk可以任何渠道分发。aab只能在Google Play分发，国内平台目前好像只有华为有类似的。 apk需要自己管理不同的“变体”，比如Flutter构建的app-armeabi-v7a-release.apk、app-arm64-v8a-release.apk。 aab则是由Google Play自动处理。 打包构建 打包构建apk、aab的过程都能在Flutter找到文档。Build and release an Android app
+打包构建之前需要到 android/app/build.gradle 修改 applicationId。
+创建.jks文件 .jks 是 Java KeyStore 的缩写，它是由 Java 提供的密钥库文件格式，用于存储密钥和证书。它帮助用户保护密钥库中的密钥（私钥）和证书链，以便安全地管理密钥和证书。
+配置Java环境变量 我本地依赖是通过Android studio安装的，没有export到环境变量，所以无法直接终端java --version这种操作；可以通过在build tool &amp;gt; Gradle &amp;gt; Default Gradle JDK的地址中，找到类似/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin/java --version 的调用，查看openjdk。
+还是建议导出java，后续其它情况使用也更方便。
+# vim ~/.zshrc export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home export PATH=&amp;#34;$JAVA_HOME/bin:$PATH&amp;#34; # source ~/.zshrc Android studio 创建.jks 菜单找到 build &amp;gt; Generate Signed Bundle or APK &amp;gt; apk &amp;gt; next 即可。'>
+<title>零基础实战Flutter：打包APK、AAB</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/flutter/buildapkandaab/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='零基础实战Flutter：打包APK、AAB'>
+<meta property='og:description' content='.apk和.aab 的区别 .apk（Android Package）和.aab（Android App Bundle）是Android应用程序的两种不同的发布格式。
+.apk是一个静态的文件，意味着它包含了应用程序的所有可能变体，不论设备的配置如何，所有用户都会下载和安装相同的APK文件。
+.aab文件是由Google推出，用于更高效地分发应用程序的发布格式。开发者上传一个包含应用程序所有编译代码和资源的捆绑包到Google Play，然后用户只会下载他们需要的代码和资源，这通常会导致更小的应用程序下载大小和更高效的应用程序安装。
+较为明显的区别有：
+apk可以任何渠道分发。aab只能在Google Play分发，国内平台目前好像只有华为有类似的。 apk需要自己管理不同的“变体”，比如Flutter构建的app-armeabi-v7a-release.apk、app-arm64-v8a-release.apk。 aab则是由Google Play自动处理。 打包构建 打包构建apk、aab的过程都能在Flutter找到文档。Build and release an Android app
+打包构建之前需要到 android/app/build.gradle 修改 applicationId。
+创建.jks文件 .jks 是 Java KeyStore 的缩写，它是由 Java 提供的密钥库文件格式，用于存储密钥和证书。它帮助用户保护密钥库中的密钥（私钥）和证书链，以便安全地管理密钥和证书。
+配置Java环境变量 我本地依赖是通过Android studio安装的，没有export到环境变量，所以无法直接终端java --version这种操作；可以通过在build tool &amp;gt; Gradle &amp;gt; Default Gradle JDK的地址中，找到类似/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin/java --version 的调用，查看openjdk。
+还是建议导出java，后续其它情况使用也更方便。
+# vim ~/.zshrc export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home export PATH=&amp;#34;$JAVA_HOME/bin:$PATH&amp;#34; # source ~/.zshrc Android studio 创建.jks 菜单找到 build &amp;gt; Generate Signed Bundle or APK &amp;gt; apk &amp;gt; next 即可。'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/flutter/buildapkandaab/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:published_time' content='2024-04-04T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-04-04T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="零基础实战Flutter：打包APK、AAB">
+<meta name="twitter:description" content=".apk和.aab 的区别 .apk（Android Package）和.aab（Android App Bundle）是Android应用程序的两种不同的发布格式。
+.apk是一个静态的文件，意味着它包含了应用程序的所有可能变体，不论设备的配置如何，所有用户都会下载和安装相同的APK文件。
+.aab文件是由Google推出，用于更高效地分发应用程序的发布格式。开发者上传一个包含应用程序所有编译代码和资源的捆绑包到Google Play，然后用户只会下载他们需要的代码和资源，这通常会导致更小的应用程序下载大小和更高效的应用程序安装。
+较为明显的区别有：
+apk可以任何渠道分发。aab只能在Google Play分发，国内平台目前好像只有华为有类似的。 apk需要自己管理不同的“变体”，比如Flutter构建的app-armeabi-v7a-release.apk、app-arm64-v8a-release.apk。 aab则是由Google Play自动处理。 打包构建 打包构建apk、aab的过程都能在Flutter找到文档。Build and release an Android app
+打包构建之前需要到 android/app/build.gradle 修改 applicationId。
+创建.jks文件 .jks 是 Java KeyStore 的缩写，它是由 Java 提供的密钥库文件格式，用于存储密钥和证书。它帮助用户保护密钥库中的密钥（私钥）和证书链，以便安全地管理密钥和证书。
+配置Java环境变量 我本地依赖是通过Android studio安装的，没有export到环境变量，所以无法直接终端java --version这种操作；可以通过在build tool &amp;gt; Gradle &amp;gt; Default Gradle JDK的地址中，找到类似/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin/java --version 的调用，查看openjdk。
+还是建议导出java，后续其它情况使用也更方便。
+# vim ~/.zshrc export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home export PATH=&amp;#34;$JAVA_HOME/bin:$PATH&amp;#34; # source ~/.zshrc Android studio 创建.jks 菜单找到 build &amp;gt; Generate Signed Bundle or APK &amp;gt; apk &amp;gt; next 即可。">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li><a href="#apk和aab-的区别">.apk和.aab 的区别</a></li>
+    <li><a href="#打包构建">打包构建</a>
+      <ul>
+        <li><a href="#创建jks文件">创建.jks文件</a>
+          <ul>
+            <li><a href="#配置java环境变量">配置Java环境变量</a></li>
+            <li><a href="#android-studio-创建jks">Android studio 创建.jks</a></li>
+            <li><a href="#终端创建jks">终端创建.jks</a></li>
+          </ul>
+        </li>
+        <li><a href="#构建apk">构建apk</a>
+          <ul>
+            <li><a href="#创建keystore文件和修改gradle">创建keystore文件和修改gradle</a></li>
+            <li><a href="#打包">打包</a></li>
+          </ul>
+        </li>
+        <li><a href="#构建aab">构建aab</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/flutter/buildapkandaab/">零基础实战Flutter：打包APK、AAB</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-04-04</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="apk和aab-的区别">.apk和.aab 的区别</h2>
+<p>.apk（Android Package）和.aab（Android App Bundle）是Android应用程序的两种不同的发布格式。</p>
+<p>.apk是一个静态的文件，意味着它包含了应用程序的所有可能变体，不论设备的配置如何，所有用户都会下载和安装相同的APK文件。</p>
+<p>.aab文件是由Google推出，用于更高效地分发应用程序的发布格式。开发者上传一个包含应用程序所有编译代码和资源的捆绑包到Google Play，然后用户只会下载他们需要的代码和资源，这通常会导致更小的应用程序下载大小和更高效的应用程序安装。</p>
+<p>较为明显的区别有：</p>
+<ul>
+<li>apk可以任何渠道分发。aab只能在Google Play分发，国内平台目前好像只有华为有类似的。</li>
+<li>apk需要自己管理不同的“变体”，比如Flutter构建的<strong>app-armeabi-v7a-release.apk、app-arm64-v8a-release.apk。</strong> aab则是由Google Play自动处理。</li>
+</ul>
+<h2 id="打包构建">打包构建</h2>
+<p>打包构建apk、aab的过程都能在Flutter找到文档。<a class="link" href="https://docs.flutter.dev/deployment/android"  target="_blank" rel="noopener"
+    >Build and release an Android app</a></p>
+<p>打包构建之前需要到 <code>android/app/build.gradle</code> 修改 <code>applicationId</code>。</p>
+<h3 id="创建jks文件">创建.jks文件</h3>
+<p><code>.jks</code> 是 Java KeyStore 的缩写，它是由 Java 提供的密钥库文件格式，用于存储密钥和证书。它帮助用户保护密钥库中的密钥（私钥）和证书链，以便安全地管理密钥和证书。</p>
+<h4 id="配置java环境变量">配置Java环境变量</h4>
+<p>我本地依赖是通过Android studio安装的，没有export到环境变量，所以无法直接终端<code>java --version</code>这种操作；可以通过在<code>build tool &gt; Gradle &gt; Default Gradle JDK</code>的地址中，找到类似<code>/Applications/Android\ Studio.app/Contents/jbr/Contents/Home/bin/java --version</code> 的调用，查看openjdk。</p>
+<p>还是建议导出java，后续其它情况使用也更方便。</p>
+<pre tabindex="0"><code> # vim ~/.zshrc
+export JAVA_HOME=/Applications/Android\ Studio.app/Contents/jbr/Contents/Home
+export PATH=&#34;$JAVA_HOME/bin:$PATH&#34;
+# source ~/.zshrc
+</code></pre><h4 id="android-studio-创建jks">Android studio 创建.jks</h4>
+<p>菜单找到 <code>build &gt; Generate Signed Bundle or APK &gt; apk &gt; next</code> 即可。</p>
+<p><a class="link" href="https://developer.android.com/studio/publish/app-signing#generate-key"  target="_blank" rel="noopener"
+    >Android studio创建jks</a></p>
+<h4 id="终端创建jks">终端创建.jks</h4>
+<p>macOS\linux</p>
+<pre tabindex="0"><code>keytool -genkey -v -keystore ~/upload-keystore.jks -keyalg RSA \
+        -keysize 2048 -validity 10000 -alias upload
+</code></pre><ul>
+<li><code>keystore</code>: 指定密钥库的存储路径和文件名。</li>
+<li><code>keyalg</code>: 指定密钥算法。在这个例子中，使用的是 rsa 算法。</li>
+<li><code>validity</code>: 指定密钥的有效期，单位是天。在这个例子中，密钥的有效期被设置为 10000 天。</li>
+<li><code>alias</code>: 指定密钥条目的别名。注意这个配置文件会用到。</li>
+</ul>
+<p>Windows</p>
+<pre tabindex="0"><code>keytool -genkey -v -keystore %userprofile%\upload-keystore.jks ^
+        -storetype JKS -keyalg RSA -keysize 2048 -validity 10000 ^
+        -alias upload
+</code></pre><h3 id="构建apk">构建apk</h3>
+<h4 id="创建keystore文件和修改gradle">创建keystore文件和修改gradle</h4>
+<p>创建<code>[project]/android/key.properties</code> 文件，为打包提供加密信息。<strong>注意需要将密码和jks文件私有，尽量不上传公开平台。</strong></p>
+<pre tabindex="0"><code>storePassword=密码
+keyPassword=密码
+keyAlias=别名upload
+storeFile=jks文件路径
+</code></pre><p>给<code>[project]/android/app/build.gradle</code>添加代码</p>
+<pre tabindex="0"><code>// 引入文件
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file(&#39;key.properties&#39;)
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+// 使用文件信息签名
+signingConfigs {
+   release {
+       keyAlias keystoreProperties[&#39;keyAlias&#39;]
+       keyPassword keystoreProperties[&#39;keyPassword&#39;]
+       storeFile keystoreProperties[&#39;storeFile&#39;] ? file(keystoreProperties[&#39;storeFile&#39;]) : null
+       storePassword keystoreProperties[&#39;storePassword&#39;]
+   }
+}
+
+buildTypes {
+    release {
+        // TODO: Add your own signing config for the release build.
+        // Signing with the debug keys for now, so `flutter run --release` works.
+        // signingConfig signingConfigs.debug
+        signingConfig signingConfigs.release // 使用上面release的配置，可以配置debug的
+    }
+}
+</code></pre><h4 id="打包">打包</h4>
+<p><code>flutter build apk --split-per-abi</code>.</p>
+<p>默认使用Release配置，当然有不同环境需要也可以添加不同配置。</p>
+<p>会在<code>[project]/build/app/outputs/apk/release/</code> 下生成<code>app-armeabi-v7a-release</code>、<code>app-arm64-v8a-release</code>、<code>app-x86_64-release</code> 三个apk文件。分别对应arm32（旧版手机，兼容性分发）、arm64（现代正常的手机）、x86三种架构。</p>
+<p>删除<code>--split-per-abi</code> 指令参数会打包兼容三种架构的，可以简单理解为三合一。建议还是分开管理，也回到开头，aab和apk的区别了，apk需要自行管理多种架构。</p>
+<h3 id="构建aab">构建aab</h3>
+<p>打包aab就简单多了，做完前置步骤，直接<code>flutter build appbundle</code> 就能在<code>[project]/build/app/outputs/bundle/release/app.aab</code>路径下看到产出的文件了。可以发现文件大小是拆包apk后的三倍，其实就是三合一，在Google Play下的时候会处理。</p>
+<!-- ----
+[上一篇：项目开发的一些过程](https://juejin.cn/post/7355389990531416116)
+[下一篇：在Github分发APK](https://juejin.cn/post/7355677638880509987) -->
+</section>
+
+
+    <footer class="article-footer">
+    
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

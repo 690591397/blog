@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=' 在探索低成本使用OpenAI API的道路上，我们借助了Deno的强大功能。通过在Deno Playground中部署一个简单的代理服务器，我们能够绕过地理限制，直接与OpenAI的API进行交互。这个过程不仅节省了VPN和OpenAI Plus会员的费用，还提供了更加灵活和自主的控制方式。通过使用自己的API密钥，并结合国内代理商或拼团的方式，我们可以更加经济高效地进行研究和开发。此外，我们还介绍了如何通过curl命令在终端进行验证，确保一切运行正常。这一切的实现，都离不开Deno的强大支持，它让我们能够更加自由地探索和创新。希望这一分钟的分享，能够为您带来启发和帮助。Deno，确实牛逼！'>
+<title>薅Deno 羊毛：一分钟代理OpenAI API</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/other/openaiproxy/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='薅Deno 羊毛：一分钟代理OpenAI API'>
+<meta property='og:description' content=' 在探索低成本使用OpenAI API的道路上，我们借助了Deno的强大功能。通过在Deno Playground中部署一个简单的代理服务器，我们能够绕过地理限制，直接与OpenAI的API进行交互。这个过程不仅节省了VPN和OpenAI Plus会员的费用，还提供了更加灵活和自主的控制方式。通过使用自己的API密钥，并结合国内代理商或拼团的方式，我们可以更加经济高效地进行研究和开发。此外，我们还介绍了如何通过curl命令在终端进行验证，确保一切运行正常。这一切的实现，都离不开Deno的强大支持，它让我们能够更加自由地探索和创新。希望这一分钟的分享，能够为您带来启发和帮助。Deno，确实牛逼！'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/other/openaiproxy/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='deno' /><meta property='article:tag' content='proxy' /><meta property='article:tag' content='openai api' /><meta property='article:tag' content='free' /><meta property='article:published_time' content='2023-12-07T02:09:26&#43;00:00'/><meta property='article:modified_time' content='2023-12-07T02:09:26&#43;00:00'/>
+<meta name="twitter:title" content="薅Deno 羊毛：一分钟代理OpenAI API">
+<meta name="twitter:description" content=" 在探索低成本使用OpenAI API的道路上，我们借助了Deno的强大功能。通过在Deno Playground中部署一个简单的代理服务器，我们能够绕过地理限制，直接与OpenAI的API进行交互。这个过程不仅节省了VPN和OpenAI Plus会员的费用，还提供了更加灵活和自主的控制方式。通过使用自己的API密钥，并结合国内代理商或拼团的方式，我们可以更加经济高效地进行研究和开发。此外，我们还介绍了如何通过curl命令在终端进行验证，确保一切运行正常。这一切的实现，都离不开Deno的强大支持，它让我们能够更加自由地探索和创新。希望这一分钟的分享，能够为您带来启发和帮助。Deno，确实牛逼！">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#第一步">第一步</a></li>
+        <li><a href="#第二步">第二步</a></li>
+        <li><a href="#第三步">第三步</a></li>
+        <li><a href="#第四步">第四步</a>
+          <ul>
+            <li><a href="#客户端">客户端</a></li>
+          </ul>
+        </li>
+        <li><a href="#验证">验证</a></li>
+      </ul>
+    </li>
+    <li><a href="#最后">最后</a></li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/other/" >
+                Other
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/other/openaiproxy/">薅Deno 羊毛：一分钟代理OpenAI API</a>
+        </h2>
+    
+        
+        <h3 class="article-subtitle">
+             在探索低成本使用OpenAI API的道路上，我们借助了Deno的强大功能。通过在Deno Playground中部署一个简单的代理服务器，我们能够绕过地理限制，直接与OpenAI的API进行交互。这个过程不仅节省了VPN和OpenAI Plus会员的费用，还提供了更加灵活和自主的控制方式。通过使用自己的API密钥，并结合国内代理商或拼团的方式，我们可以更加经济高效地进行研究和开发。此外，我们还介绍了如何通过curl命令在终端进行验证，确保一切运行正常。这一切的实现，都离不开Deno的强大支持，它让我们能够更加自由地探索和创新。希望这一分钟的分享，能够为您带来启发和帮助。Deno，确实牛逼！
+        </h3>
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2023-12-07</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好，今天来薅Deno的羊毛。</p>
+<p>对于想使用OpenAI的API，日常使用或者研究的场景来说。专门为此充个VPN，买20刀一个月的plus，成本也略高了点。如果使用API的话，只按照token计数，估计三四个月都用不了20刀。也可以找个国内代理商，或者找人拼团，但是我觉得这种还是自己控制比较好，就研究了怎么低成本的使用API。</p>
+<h3 id="第一步">第一步</h3>
+<p>登录<a class="link" href="https://dash.deno.com/projects"  target="_blank" rel="noopener"
+    >https://dash.deno.com/projects</a>，New Playground</p>
+<h3 id="第二步">第二步</h3>
+<p>复制下面代码</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-JS" data-lang="JS"><span class="line"><span class="cl"><span class="kr">const</span> <span class="nx">targetOrigin</span> <span class="o">=</span> <span class="s2">&#34;https://api.openai.com&#34;</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">Deno</span><span class="p">.</span><span class="nx">serve</span><span class="p">(</span><span class="kr">async</span> <span class="p">(</span><span class="nx">request</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// 获取原始请求的 URL 和方法
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">const</span> <span class="p">{</span> <span class="nx">method</span><span class="p">,</span> <span class="nx">url</span><span class="p">,</span> <span class="nx">headers</span> <span class="p">}</span> <span class="o">=</span> <span class="nx">request</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">  <span class="kr">const</span> <span class="nx">originalUrl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URL</span><span class="p">(</span><span class="nx">url</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="c1">// 记录日志
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="sb">`Incoming request: </span><span class="si">${</span><span class="nx">method</span><span class="si">}</span><span class="sb"> </span><span class="si">${</span><span class="nx">originalUrl</span><span class="p">.</span><span class="nx">pathname</span><span class="si">}${</span><span class="nx">originalUrl</span><span class="p">.</span><span class="nx">search</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="c1">// 构建目标 URL
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="kr">const</span> <span class="nx">targetUrl</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">URL</span><span class="p">(</span><span class="nx">originalUrl</span><span class="p">.</span><span class="nx">pathname</span> <span class="o">+</span> <span class="nx">originalUrl</span><span class="p">.</span><span class="nx">search</span><span class="p">,</span> <span class="nx">targetOrigin</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="k">try</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// 准备转发请求的选项
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">requestOptions</span><span class="o">:</span> <span class="nx">RequestInit</span> <span class="o">=</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">method</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">headers</span><span class="o">:</span> <span class="k">new</span> <span class="nx">Headers</span><span class="p">(</span><span class="nx">headers</span><span class="p">),</span> <span class="c1">// 复制 headers
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="p">};</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 对于 POST、PUT、PATCH 方法，透传请求体
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">if</span> <span class="p">(</span><span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s2">&#34;POST&#34;</span> <span class="o">||</span> <span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s2">&#34;PUT&#34;</span> <span class="o">||</span> <span class="nx">request</span><span class="p">.</span><span class="nx">method</span> <span class="o">===</span> <span class="s2">&#34;PATCH&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="nx">requestOptions</span><span class="p">.</span><span class="nx">body</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">request</span><span class="p">.</span><span class="nx">arrayBuffer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="sb">`targetUrl: </span><span class="si">${</span><span class="nx">targetUrl</span><span class="si">}</span><span class="sb">`</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// console.debug(&#39;requestOptions:&#39;, requestOptions); // 里面会有API KEY，可另外处理。
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// 向目标 API 发起请求
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">response</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">fetch</span><span class="p">(</span><span class="nx">targetUrl</span><span class="p">.</span><span class="nx">toString</span><span class="p">(),</span> <span class="nx">requestOptions</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 检查是否是 SSE
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="kr">const</span> <span class="nx">contentType</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">.</span><span class="nx">get</span><span class="p">(</span><span class="s2">&#34;Content-Type&#34;</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">info</span><span class="p">(</span><span class="sb">`</span><span class="si">${</span><span class="nx">targetUrl</span><span class="si">}</span><span class="sb"> response content type is:`</span><span class="p">,</span> <span class="nx">contentType</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="p">(</span><span class="nx">contentType</span> <span class="o">===</span> <span class="s2">&#34;text/event-stream&#34;</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 返回一个新的 ReadableStream，用于将事件流传递给客户端
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kr">const</span> <span class="nx">stream</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">ReadableStream</span><span class="p">({</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">start</span><span class="p">(</span><span class="nx">controller</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="kr">const</span> <span class="nx">reader</span> <span class="o">=</span> <span class="nx">response</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">getReader</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">          <span class="k">return</span> <span class="p">(</span><span class="kd">function</span> <span class="nx">pump</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="nx">reader</span><span class="p">.</span><span class="nx">read</span><span class="p">().</span><span class="nx">then</span><span class="p">(({</span> <span class="nx">done</span><span class="p">,</span> <span class="nx">value</span> <span class="p">})</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="k">if</span> <span class="p">(</span><span class="nx">done</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">                <span class="nx">controller</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">                <span class="k">return</span><span class="p">;</span>
+</span></span><span class="line"><span class="cl">              <span class="p">}</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">controller</span><span class="p">.</span><span class="nx">enqueue</span><span class="p">(</span><span class="nx">value</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">pump</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">}).</span><span class="k">catch</span><span class="p">(</span><span class="nx">error</span> <span class="p">=&gt;</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="s1">&#39;Error while reading the stream&#39;</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">controller</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">error</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">              <span class="nx">controller</span><span class="p">.</span><span class="nx">close</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">            <span class="p">});</span>
+</span></span><span class="line"><span class="cl">          <span class="p">})();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">cancel</span><span class="p">()</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="nx">reader</span><span class="p">.</span><span class="nx">cancel</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">      <span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 返回 Response 对象，透传 SSE
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="nx">stream</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">headers</span><span class="o">:</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;Content-Type&#34;</span><span class="o">:</span> <span class="s2">&#34;text/event-stream&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;Cache-Control&#34;</span><span class="o">:</span> <span class="s2">&#34;no-cache&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">          <span class="s2">&#34;Connection&#34;</span><span class="o">:</span> <span class="s2">&#34;keep-alive&#34;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="p">},</span>
+</span></span><span class="line"><span class="cl">      <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 其他类型的响应，直接透传
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="kr">const</span> <span class="nx">responseBody</span> <span class="o">=</span> <span class="kr">await</span> <span class="nx">response</span><span class="p">.</span><span class="nx">arrayBuffer</span><span class="p">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="nx">responseBody</span><span class="p">,</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">status</span><span class="o">:</span> <span class="nx">response</span><span class="p">.</span><span class="nx">status</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">        <span class="nx">headers</span><span class="o">:</span> <span class="nx">response</span><span class="p">.</span><span class="nx">headers</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">      <span class="p">});</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span> <span class="k">catch</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="sb">`Error proxying request to </span><span class="si">${</span><span class="nx">targetUrl</span><span class="si">}</span><span class="sb">:`</span><span class="p">,</span> <span class="nx">error</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="k">new</span> <span class="nx">Response</span><span class="p">(</span><span class="sb">`Server error: </span><span class="si">${</span><span class="nx">error</span><span class="p">.</span><span class="nx">message</span><span class="si">}</span><span class="sb">`</span><span class="p">,</span> <span class="p">{</span> <span class="nx">status</span><span class="o">:</span> <span class="mi">500</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">  <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">},</span> <span class="p">{</span> <span class="nx">port</span><span class="o">:</span> <span class="mi">8000</span> <span class="p">});</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="sb">`Proxy server running at http://localhost:8000/`</span><span class="p">);</span>
+</span></span></code></pre></div><h3 id="第三步">第三步</h3>
+<p>Save &amp; Deploy</p>
+<h3 id="第四步">第四步</h3>
+<p><a class="link" href="https://platform.openai.com/api-keys"  target="_blank" rel="noopener"
+    >https://platform.openai.com/api-keys</a> 从里面来个OpenAI 的API key，发请求时候带上。
+没Key的可以 <a class="link" href="https://bewildcard.com/i/HB0O8Q0Y"  target="_blank" rel="noopener"
+    >https://bewildcard.com/i/HB0O8Q0Y</a> 从里面注册，按照教程生成，有提供限时虚拟机的梯子，充值可以直接使用支付宝，省事儿；不过手续费不便宜。</p>
+<h4 id="客户端">客户端</h4>
+<p>可以去下载<a class="link" href="https://chatboxai.app/zh"  target="_blank" rel="noopener"
+    >chatBox</a>，将当前服务的域名设置在API域名既可。</p>
+<h3 id="验证">验证</h3>
+<p>不需要使用chatbox的话直接，终端curl一哈。</p>
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl --location --request POST <span class="s1">&#39;https://{{YOUR_PROJECT}}.deno.dev&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--header <span class="s1">&#39;Content-Type: application/json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--header <span class="s1">&#39;Authorization: Bearer {{YOUR_API_KEY}}&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>--data-raw <span class="s1">&#39;{
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#34;model&#34;: &#34;gpt-3.5-turbo&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">    &#34;messages&#34;: [
+</span></span></span><span class="line"><span class="cl"><span class="s1">      {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;role&#34;: &#34;system&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;content&#34;: &#34;You are a helpful assistant.&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">      },
+</span></span></span><span class="line"><span class="cl"><span class="s1">      {
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;role&#34;: &#34;user&#34;,
+</span></span></span><span class="line"><span class="cl"><span class="s1">        &#34;content&#34;: &#34;Hello!&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s1">      }
+</span></span></span><span class="line"><span class="cl"><span class="s1">    ]
+</span></span></span><span class="line"><span class="cl"><span class="s1">  }&#39;</span>
+</span></span></code></pre></div><h2 id="最后">最后</h2>
+<p>在这只是提供一些思路，仅供参考。Deno牛逼🐶。</p>
+<p>今天这一分钟，希望对您有帮助/doge。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/deno/">Deno</a>
+        
+            <a href="/blog/zh/tags/proxy/">Proxy</a>
+        
+            <a href="/blog/zh/tags/openai-api/">Openai Api</a>
+        
+            <a href="/blog/zh/tags/free/">Free</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>

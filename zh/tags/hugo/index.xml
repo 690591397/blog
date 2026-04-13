@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Hugo on Hawkeye-xb 技术博客</title>
+        <link>https://690591397.github.io/blog/zh/tags/hugo/</link>
+        <description>Recent content in Hugo on Hawkeye-xb 技术博客</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh</language>
+        <lastBuildDate>Fri, 26 Apr 2024 14:47:40 +0800</lastBuildDate><atom:link href="https://690591397.github.io/blog/zh/tags/hugo/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>五分钟搭建个人博客：更多设置</title>
+        <link>https://690591397.github.io/blog/zh/posts/blog/moreusage/</link>
+        <pubDate>Fri, 26 Apr 2024 14:47:40 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/blog/moreusage/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;今天接着研究个人站长探索之博客搭建。&lt;/p&gt;
+&lt;p&gt;上期介绍了些多语言、文章分类、菜单配置等基础的使用方式。下面将介绍更多一些的用法，如果有更多很小的用法或者问题被探索到，也会持续更新在这篇文章里面。有些设置可能仅限于PaperMod主题。&lt;/p&gt;
+&lt;h3 id=&#34;文章系列series设置&#34;&gt;文章系列（series）设置&lt;/h3&gt;
+&lt;p&gt;和tags、categories的用法一样。在&lt;code&gt;/series/&lt;/code&gt; 路由会按照文章头部front matter设置内容分成多个系列。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;taxonomies&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;category&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;categories&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;tag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;tags&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;series&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;series&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;- &lt;span class=&#34;nt&#34;&gt;identifier&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;series&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;系列&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;/series/&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;weight&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;290&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;l&#34;&gt;series = [&amp;#39;零基础实战Flutter&amp;#39;]&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;阅读时长字数统计&#34;&gt;阅读时长、字数统计&lt;/h3&gt;
+&lt;p&gt;参照&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/wiki/Variables&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Variables&lt;/a&gt;。&lt;strong&gt;front matter同时也得添加&lt;/strong&gt;。使用默认给的功能，先不说最终数据对不对，但是能有/doge。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;ShowWordCount&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;ShowReadingTime&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-md&#34; data-lang=&#34;md&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ShowReadingTime = true
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ShowWordCount = true
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;markdown-文章内容可以使用的全局常量&#34;&gt;Markdown 文章内容可以使用的全局常量&lt;/h3&gt;
+&lt;p&gt;为什么有这个需求，在做SaaS下云的时候经常需要将某些文章关键字做修改，还沿用之前的做法就是定义变量、常量，在构建或者运行的时候将内容替换。在写小说还没确定好名字这种场景下，按照变量来预先设置，也是挺好的。&lt;/p&gt;
+&lt;p&gt;所以专门研究了下，对应文章头部的变量替换，后续也会继续研究下，再结合上配置文件环境（prod、pre）的定制化，这套博客框架也可能可以作为产品“帮助中心”的一个方案。&lt;/p&gt;
+&lt;p&gt;废话不多说了，看看怎么使用shotcodes实现的吧。首先使用 .Get 0 获取传递给 Shortcode 的第一个参数，并将其存储在变量 $param 中。然后，我们使用 index 函数来检索 .Site.Params 中对应 $param 的值。with 语句确保了只有在该值存在时才会输出。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;&amp;lt;!-- layouts/shortcodes/param.html --&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ $param := .Get 0 }}
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;{{ with index .Site.Params $param }}{{ . }}{{ end }}
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在配置文件中的 params 定义你想要在 Shortcode 中使用的内容。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;张三&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;phone&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;123-456-7890&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;address&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;某市某街某号&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在Markdown中使用，name、phone就相当于入参。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nn&#34;&gt;---&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;联系信息&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nn&#34;&gt;---&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;姓名：双花括号&amp;lt; param &amp;#34;name&amp;#34; &amp;gt;双花括号&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;电话：双花括号&amp;lt; param &amp;#34;phone&amp;#34; &amp;gt;双花括号&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;l&#34;&gt;住址：双花括号&amp;lt; param &amp;#34;address&amp;#34; &amp;gt;双花括号&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;首页展示内容排序&#34;&gt;首页展示内容排序&lt;/h3&gt;
+&lt;p&gt;设置weight属性就行。&lt;/p&gt;
+&lt;h3 id=&#34;css覆盖&#34;&gt;CSS覆盖&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/discussions/442&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Change width of the content #442&lt;/a&gt;.
+覆盖修改主题的CSS。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h3 id=&#34;添加文章描述&#34;&gt;添加文章描述&lt;/h3&gt;
+&lt;!-- ![seo meta description 2024-05-08 14.23.18.png](https://s2.loli.net/2024/05/08/uA1M62VGxgTWzHS.png) --&gt;
+&lt;p&gt;front-matter 的description对应的是HTML meta的description，如不单独设置，则默认使用文章内容，SEO功能性没这么强。&lt;code&gt;&amp;lt;meta name=&amp;quot;description&amp;quot; content=&amp;quot;...&amp;quot;&amp;gt;&lt;/code&gt;标签的作用是提供一个页面的简短描述。这个描述通常在搜索引擎结果页面（SERPs）上显示为页面的摘要，有助于用户了解页面内容是否与他们的搜索查询相关。&lt;/p&gt;
+&lt;p&gt;对于SEO来说，meta描述标签应该：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;包含相关关键词：这有助于搜索引擎理解页面的内容。&lt;/li&gt;
+&lt;li&gt;是独一无二的：每个页面都应该有一个独特的描述。&lt;/li&gt;
+&lt;li&gt;简洁明了：通常建议长度在150-160个字符之间。&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;title = &amp;#39;五分钟搭建个人博客：零成本搭建&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;description = &amp;#39;五分钟搭建个人博客：零成本搭建。使用Hugo框架和Vercel部署，详细介绍了如何创建、配置和部署个人博客。包括本地环境搭建、新项目创建、部署到Vercel、图床使用、数据分析、自定义域名、评论功能等内容。&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;date = 2024-04-23T10:09:26+08:00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;draft = false
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ShowReadingTime = true
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ShowWordCount = true
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;categories = [&amp;#39;blog&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tags = [&amp;#39;hugo&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;series = [&amp;#39;五分钟搭建个人博客&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;看了PaperMod代码，description信息会展示在文章头部，并没有类似showDescription配置项，所以直接在CSS上覆盖代码，全部在页面上隐藏信息，仅提供给meta使用。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-css&#34; data-lang=&#34;css&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;/* 隐藏文章头部的描述，仅仅当成meta使用即可 */&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;nc&#34;&gt;post-description&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;k&#34;&gt;display&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;kc&#34;&gt;none&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;使用本地图片&#34;&gt;使用本地图片&lt;/h3&gt;
+&lt;p&gt;假如不打算把文章迁移到别的平台，或者是图片质量比较大，图床资源紧张。可以使用&lt;code&gt;/static&lt;/code&gt;目录，在编译的时候会将内容打包到&lt;code&gt;public&lt;/code&gt;，按照对应的路径引用即可。
+比如有&lt;code&gt;/static/imgs/xxx.png&lt;/code&gt;，使用&lt;code&gt;![desc](/imgs/xxx.png)&lt;/code&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;建议不要使用indexmd&#34;&gt;建议：不要使用index.md&lt;/h3&gt;
+&lt;p&gt;猜测的，会构建index.html，所以在路由下不添加具体路径也可以访问，但是整个目录应该会只打包这个文件。&lt;/p&gt;
+&lt;h3 id=&#34;子菜单-目前看是不支持&#34;&gt;子菜单 &lt;del&gt;(目前看是不支持)&lt;/del&gt;&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://690591397.github.io/blog/posts/blog/supportdropdownsubmenu/&#34; &gt;自己动手，丰衣足食&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;最后&#34;&gt;最后&lt;/h3&gt;
+&lt;p&gt;今天这五分钟，希望对您有帮助/doge。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>五分钟搭建个人博客：设置装饰，多语言、分类、搜索等</title>
+        <link>https://690591397.github.io/blog/zh/posts/blog/hugobasicusage/</link>
+        <pubDate>Wed, 24 Apr 2024 06:47:40 +0000</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/blog/hugobasicusage/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;今天接着研究个人站长探索之博客搭建。&lt;/p&gt;
+&lt;p&gt;我们零成本搭建完博客之后，页面就孤零零的只有文章内容，没有合理的分类、排列，没有多语言切换的支持，甚至还没有博客的介绍、欢迎语这些，略显单薄。今天我们就给它加上。&lt;/p&gt;
+&lt;p&gt;首先，当然先找找抄的Demo了，在&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod?tab=readme-ov-file&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PaperMod Github&lt;/a&gt; 有&lt;a class=&#34;link&#34; href=&#34;https://adityatelange.github.io/hugo-PaperMod/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Demo&lt;/a&gt;代码的地址，看看页面合适的内容，直接参照&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/tree/exampleSite&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;项目代码&lt;/a&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;hugo-基础使用&#34;&gt;hugo 基础使用&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/content-management/organization/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;内容组织方式&lt;/a&gt; 是按照来源结构组织的，也就是说，在&lt;code&gt;content&lt;/code&gt;目录下有&lt;code&gt;zh&lt;/code&gt;和&lt;code&gt;en&lt;/code&gt;目录，是通过切换URL来达到切换语言的目的的。&lt;/p&gt;
+&lt;h3 id=&#34;多语言&#34;&gt;多语言&lt;/h3&gt;
+&lt;p&gt;既然都脱离平台了，当然需要支持英文环境。看配置文件直接在language下区分了配置信息，但是缺少了默认语言和语言目录相关信息。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# 默认语言&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;defaultContentLanguage&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;zh&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;defaultContentLanguageInSubdir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# ...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;languages&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;en&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;languageName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;English&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;contentDir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;content/en&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# 指定语言文件目录&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# ...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;zh&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;languageName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;简体中文(chinese)&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;contentDir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;content/zh&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;欢迎语&#34;&gt;欢迎语&lt;/h3&gt;
+&lt;p&gt;再仔细查看demo配置文件，params下的homeInfoParams很明显就是当前的欢迎语，如需支持多语言，都得单独设置在对应语言的配置下。如：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;zh&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;languageName&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;简体中文(chinese)&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;contentDir&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;content/zh&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;homeInfoParams&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;Content&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;span class=&#34;sd&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;sd&#34;&gt;        👋 欢迎来到Hawkeye-xb 的博客!&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;社交icongithub-icon&#34;&gt;社交icon（Github icon）&lt;/h3&gt;
+&lt;p&gt;在欢迎语下面提供直接跳转网址的社交按钮，比如说Github、推特（X）等。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;socialIcons&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;github&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;View Source on Github&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s2&#34;&gt;&amp;#34;https://github.com/adityatelange/hugo-PaperMod&amp;#34;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;配置文件拆分&#34;&gt;配置文件拆分&lt;/h3&gt;
+&lt;p&gt;慢慢的，若是需要支持的语言种类多的话，咱们会面临配置文件会很长很长的问题。&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/getting-started/configuration/#configuration-directory&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;configuration-directory&lt;/a&gt;用来做环境区分的刚好可以将config文件拆开，满足咱的需求。&lt;/p&gt;
+&lt;p&gt;比如给出的多个菜单配置的例子&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;my-project/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;└── config/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    ├── _default/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    │   ├── hugo.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    │   ├── menus.en.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    │   ├── menus.de.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    │   └── params.toml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    └── production/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;        └── params.toml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;目录结构还可以再menus目录下，分别创建en、de的配置文件。&lt;/p&gt;
+&lt;h3 id=&#34;菜单&#34;&gt;菜单&lt;/h3&gt;
+&lt;p&gt;头部的菜单导航，一眼望去，menu关键字就是了。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;menu&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;main&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Archive&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;archives&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;weight&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Search&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;url&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;search/&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;weight&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这里URL对应跳转的页面，和上面说的内容组织结构相对应。weight是对应排序的权重。&lt;/p&gt;
+&lt;h3 id=&#34;搜索归档&#34;&gt;搜索、归档&lt;/h3&gt;
+&lt;p&gt;正好菜单这里分别是归档和搜索的URL，意味着我们需要这两个path，再在demo页面看看效果，我们需要对应功能的页面。问题就来了，需要写输入框代码这些吗？看看demo相关文件：&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/blob/exampleSite/content/search.md?plain=1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;search&lt;/a&gt;、&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/blob/exampleSite/content/archives.md?plain=1&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;archives&lt;/a&gt;。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;title: &amp;#34;Search&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;placeholder: Search demo site with full text fuzzy search ...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;layout: &amp;#34;search&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;简单粗暴~&lt;/p&gt;
+&lt;p&gt;验证发现搜索框输入任何内容都没有展示匹配项。还需要&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod/wiki/Variables&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;paperMod fuseOpts&lt;/a&gt;来实现检索。&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;fuseOpts:
+  isCaseSensitive: false
+  shouldSort: true
+  location: 0
+  distance: 1000
+  threshold: 0.4
+  minMatchCharLength: 0
+  limit: 10 # refer: https://www.fusejs.io/api/methods.html#search
+  keys: [&amp;#34;title&amp;#34;, &amp;#34;permalink&amp;#34;, &amp;#34;summary&amp;#34;, &amp;#34;content&amp;#34;] ##  can be less but not more than shown in list
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;和&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/templates/output-formats/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;hugo 输出设置&lt;/a&gt;，给检索功能提供内容。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;outputs&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;home&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;HTML&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;RSS&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;- &lt;span class=&#34;l&#34;&gt;JSON&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;类别标签&#34;&gt;类别、标签&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/content-management/taxonomies/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;分类taxonomies&lt;/a&gt; 在配置文件开启之后，对应文章定制配置上面，添加上tags和categories就可以。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;taxonomies&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;category&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;categories&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;tag&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;tags&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;series&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;series&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;文章头部&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;categories = [&amp;#39;blog&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;tags = [&amp;#39;hugo&amp;#39;]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;+++
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;最后&#34;&gt;最后&lt;/h3&gt;
+&lt;p&gt;到这里稍微汇总下，我们设置了Hugo博客的&lt;strong&gt;多语言配置&lt;/strong&gt;。 &lt;br&gt;
+在这基础上，设置&lt;strong&gt;欢迎语、社交图标&lt;/strong&gt;和对应的&lt;strong&gt;菜单&lt;/strong&gt;。 &lt;br&gt;
+再往菜单添加了&lt;strong&gt;归档、搜索、类别和标签&lt;/strong&gt;，这么多的内容。&lt;/p&gt;
+&lt;p&gt;今天这五分钟，希望对您有帮助/doge。&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>五分钟搭建个人博客：零成本搭建</title>
+        <link>https://690591397.github.io/blog/zh/posts/blog/buildyourblog/</link>
+        <pubDate>Tue, 23 Apr 2024 10:09:26 +0800</pubDate>
+        
+        <guid>https://690591397.github.io/blog/zh/posts/blog/buildyourblog/</guid>
+        <description>&lt;p&gt;大家好。&lt;/p&gt;
+&lt;p&gt;今天接着研究个人站长探索之博客搭建。&lt;/p&gt;
+&lt;p&gt;大家可能会想，我们国内有各种各样的平台，能够分享心情状态、生活、技术等等，图文并茂。有很好的内容编辑、数据分析、评论和广告接入等工具。为什么还需要自建博客呢？没有流量，没有阅读	，还得辛苦维护。  &lt;br&gt;
+最大的优势就是打造个人品牌的同时还比较“自由”，毕竟在别人的地方就得遵守别人的规则；再有就是不同平台都有自己的特色，自建博客可以当个人输出的归档；虽然没有平台推荐，但是视野可以扩展到全球，总不能分布到每个地区的专有平台，这渠道也太多了。&lt;/p&gt;
+&lt;!-- ## 整体流程 --&gt;
+&lt;p&gt;即使有说的这些优势，搭建麻烦也不见得非得要自建。要是放在以前类似购买维护服务器就这一项都给我劝退了。好在现在博客框架，静态网站托管服务等让这个过程无比简单。就这么说，如果你有Github账号，五分钟就能搭起来，甚至都不用五分钟，授权Vercel后，只需网址上勾选即可。&lt;/p&gt;
+&lt;p&gt;这里我也是使用了Hugo（PaperMod主题），Github管理内容，Vercel部署静态资源，完成带&lt;font color=#000000&gt;自定义域名、GoogleAnalytics、评论、广告&lt;/font&gt;的博客。&lt;/p&gt;
+&lt;!-- ## 搭建过程 --&gt;
+&lt;p&gt;再唠叨下为什么选择这些，Hugo是使用Golang开发的，后续如果访问量多自建服务还能简单些，远没有Wordpress复杂；Vercel则是在国内外都有cdn加速。&lt;/p&gt;
+&lt;h2 id=&#34;vercel-一键搭建&#34;&gt;Vercel 一键搭建&lt;/h2&gt;
+&lt;p&gt;Github授权 &lt;a class=&#34;link&#34; href=&#34;https://vercel.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;vercel&lt;/a&gt;，创建团队，创建项目后，选择clone template，从所有的模板里面搜索Hugo，选中部署项目即可。稍作等待之后就可以通过项目右边Domains中的域名访问博客了，同时也会在Github里面创建Hugo项目，后续根据Hugo文档编写内容即可。&lt;/p&gt;
+&lt;h2 id=&#34;macos-本地环境搭建&#34;&gt;MacOS 本地环境搭建&lt;/h2&gt;
+&lt;p&gt;当然后续咱们在写内容的时候，需要在本地看过效果，才能真正发布出来。下面是在MacOS系统下环境搭建，当然&lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/getting-started/quick-start/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Hugo官方引导&lt;/a&gt;也很清晰。&lt;/p&gt;
+&lt;h3 id=&#34;安装-hugo&#34;&gt;安装 Hugo&lt;/h3&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;brew install hugo
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 或者&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo port install hugo
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;验证安装成功&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;hugo version
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# hugo v0.125.2-4e483f5d4abae136c4312d397a55e9e1d39148df+extended darwin/arm64 BuildDate=2024-04-20T15:29:44Z VendorInfo=brew&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;git操作这里就不多展开了，具体可以在&lt;a class=&#34;link&#34; href=&#34;https://git-scm.com/book/en/v2/Getting-Started-Installing-Git&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;git&lt;/a&gt;安装和学习。&lt;/p&gt;
+&lt;h2 id=&#34;创建新项目&#34;&gt;创建新项目&lt;/h2&gt;
+&lt;p&gt;安装之后我们就可以创建我们第一个博客了。&lt;code&gt;--format yaml&lt;/code&gt; 是配置文件的格式，默认.toml，根据个人喜好选择就可以。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;hugo new site MyFreshWebsite --format yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# replace MyFreshWebsite with name of your website&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;进入到生成的 MyFreshWebsite 目录，初始化主题（这里使用的是&lt;a class=&#34;link&#34; href=&#34;https://github.com/adityatelange/hugo-PaperMod?tab=readme-ov-file&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;PaperMod&lt;/a&gt;），通过git模块的方式使用主题的，也就是说不能也不应该主动修改主题项目的文件，这样才能在需要更新的时候，通过git更新。也是因为这种方式部署的时候遇到了些问题，后续说明。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; MyFreshWebsite
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 下载主题资源&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git init
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git submodule add --depth&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; https://github.com/adityatelange/hugo-PaperMod.git themes/PaperMod
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git submodule update --init --recursive &lt;span class=&#34;c1&#34;&gt;# needed when you reclone your repo (submodules may not get cloned automatically)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 给配置文件添加主题依赖&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;echo&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;theme: [&amp;#39;PaperMod&amp;#39;]&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; hugo.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;在这里基本就准备完毕了，接下来就能启动项目了。&lt;code&gt;-D&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;hugo server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;如果需要本地构建静态文件，直接&lt;code&gt;hugo&lt;/code&gt;就会在public生成资源了。需要稍加注意的是public是构建之后的产物，也就是说不需要单独管理和上传Github的，可以&lt;code&gt;.gitignore&lt;/code&gt;（需要创建）选择将其忽略。&lt;/p&gt;
+&lt;h2 id=&#34;部署到-vercel&#34;&gt;部署到 Vercel&lt;/h2&gt;
+&lt;p&gt;在Vercel创建新的项目，选择从Github导入“Import Git Repository”，框架选择Hugo（不选也没关系，反正都得改），将构建指令Build Command设置为&lt;code&gt;git submodule update --init --recursive &amp;amp;&amp;amp; hugo --gc&lt;/code&gt;。上面说过我们使用的主题是通过git模块的，这就导致一个问题，在Vercel构建的时候可能会下载失败。即使下载失败也是可以构建、部署成功，但是在访问的时候会出现xml错误提示，类似&lt;code&gt;This XML file does not appear to have any style information associated with it. The document tree is shown below.&lt;/code&gt; 。
+&lt;img src=&#34;https://s2.loli.net/2024/04/23/GM6Yor5qvhKbQe8.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;vercel hugo settings2024-04-23 14.48.51.png&#34;
+	
+	
+&gt;
+除此之外，Hugo版本不一致也会导致xml问题，所以建议增加&lt;code&gt;HUGO_VERSION&lt;/code&gt;环境变量设置。完成之后会触发第一次构建部署，可能会遇到以下报错。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Skipping build cache since Node.js version changed from &lt;span class=&#34;s2&#34;&gt;&amp;#34;18.x&amp;#34;&lt;/span&gt; to &lt;span class=&#34;s2&#34;&gt;&amp;#34;20.x&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Running &lt;span class=&#34;s2&#34;&gt;&amp;#34;vercel build&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Vercel CLI 33.7.1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sh: line 1: hugo: &lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt; not found
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Error: Command &lt;span class=&#34;s2&#34;&gt;&amp;#34;hugo --gc&amp;#34;&lt;/span&gt; exited with &lt;span class=&#34;m&#34;&gt;127&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;这里根目录提供个package.json 文件，将版本限制在范围内即可&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-json&#34; data-lang=&#34;json&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;nt&#34;&gt;&amp;#34;engines&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    &lt;span class=&#34;nt&#34;&gt;&amp;#34;node&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt; &lt;span class=&#34;s2&#34;&gt;&amp;#34;18.x&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;重新将代码推到Github，就会触发自动构建。&lt;/p&gt;
+&lt;p&gt;到这里，我们就拥有了自己的博客，自己的网站啦✿✿ヽ(°▽°)ノ✿。&lt;/p&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;图床smms&#34;&gt;图床：smms&lt;/h2&gt;
+&lt;p&gt;有了文本内容，当然少不了需要图片，图文并茂才更好的表达内容。这些资源存储成本不低，有免费的咱也不能掏钱，这类产品有非常多，目前使用的&lt;a class=&#34;link&#34; href=&#34;https://smms.app/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;SM.MS&lt;/a&gt;做图床，有5个G的免费额度。因为可能会直接复制迁移到别的平台，顺便引流当前博客，所以先不使用当前项目的资源地址。但是smms使用过程不是这么丝滑，时长出现上传之后页面挂了的情况，后续如果有合适的直接在这里更新。&lt;/p&gt;
+&lt;h2 id=&#34;数据分析googleanalytics&#34;&gt;数据分析：GoogleAnalytics&lt;/h2&gt;
+&lt;p&gt;如果希望能够收集访问的数据，根据反馈去让自己的输出内容好，写作手法提升，这套主题可以说几乎零修改就能接入GoogleAnalytics。不需要修改主题文件，增加代码片段，也不需要添加全局的layouts文件和主题相冲突。将id设置到配置文件即可。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c&#34;&gt;# ...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;services&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;googleAnalytics&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;id&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;G-xxx&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# ...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h3 id=&#34;接入成功验证&#34;&gt;接入成功验证&lt;/h3&gt;
+&lt;p&gt;在开发阶段和正式博客页面，打开控制台(f12)，network选项下过滤到gtag文件的信息，代表是有相关代码，就是接入成功了。在相关网站也能看到访问数据的报告了。&lt;/p&gt;
+&lt;h2 id=&#34;自定义域名&#34;&gt;自定义域名&lt;/h2&gt;
+&lt;p&gt;虽然通过Vercel托管之后，会给到个随机的xxx.vercel.app域名，显得不是这么的正式，让人容易记住。可以去申请个人相关的域名，比如.xyz或其它后缀的域名，几块十块的一年。到目前为止支付的第一笔钱，让博客显得更正式，自己更开心的成本，不算成本（狗头）。&lt;/p&gt;
+&lt;p&gt;域名注册成功之后需要经过一段时间（48小时内）才能分发到各个DNS解析服务器。这时候在Vercel会设置不上，但是会给出这边DNS的地址，去到相应的域名注册商（购买域名的地方），添加解析到目标服务器，也就是Vercel给出的地址，如下图76.76.21.21。稍微等待一会，就能设置上自定义的域名了，通过喜欢的域名访问自己的博客了。
+&lt;img src=&#34;https://s2.loli.net/2024/04/23/RwspDPGBC1ZJWES.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;invalid domain config 2024-04-23 15.44.56.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;google-search-console验证域名所有权&#34;&gt;Google Search Console验证域名所有权&lt;/h3&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://support.google.com/webmasters/answer/9128668?hl=zh-Hans&amp;amp;ref_topic=9128571&amp;amp;sjid=12333764337225485116-NC&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Search Console 简介&lt;/a&gt;，可以帮助我们改进Google处理我们网站的方式（不验证所有权也有可能会收录）。
+&lt;img src=&#34;https://s2.loli.net/2024/04/26/nxkh635vLwrj2Gi.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;gsc verify ownership 2024-04-26 13.36.53.png&#34;
+	
+	
+&gt;
+具体设置办法和域名自定义的一样。腾讯云注册的域名如下，左上角添加即可。
+&lt;img src=&#34;https://s2.loli.net/2024/04/26/hfDXWQ86delY2w1.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;txcloud DNS set result 2024-04-26 13.31.03.png&#34;
+	
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;评论功能&#34;&gt;评论功能&lt;/h2&gt;
+&lt;p&gt;评论功能就挺仁者见仁智者见智的，有的并不喜欢开放在个人博客，只想安安静静写作。评论模块搭建也有不同的方式，这里给出集成速度快、简单的&lt;a class=&#34;link&#34; href=&#34;https://giscus.app/zh-CN&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;giscus&lt;/a&gt; 方式，利用的是Github Discussion功能，设置简单，永久免费~。其它优势可以参考&lt;a class=&#34;link&#34; href=&#34;https://giscus.app/zh-CN&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;giscus网址&lt;/a&gt;。&lt;/p&gt;
+&lt;h3 id=&#34;giscus使用方式&#34;&gt;giscus使用方式&lt;/h3&gt;
+&lt;ol&gt;
+&lt;li&gt;开通GitHub Discussions，具体就是在项目的settings 中把该项勾选上即可。（&lt;a class=&#34;link&#34; href=&#34;https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/enabling-features-for-your-repository/enabling-or-disabling-github-discussions-for-a-repository&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;github文档&lt;/a&gt;）&lt;/li&gt;
+&lt;li&gt;将项目设置为public，能被别人访问，获取到评论数据。如对项目有协议要求或者其它问题，可以考虑另外的方案。&lt;/li&gt;
+&lt;li&gt;将&lt;a class=&#34;link&#34; href=&#34;https://github.com/apps/giscus&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;giscus 安装&lt;/a&gt;到项目里面。&lt;/li&gt;
+&lt;li&gt;输入&lt;a class=&#34;link&#34; href=&#34;https://giscus.app/zh-CN&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;giscus&lt;/a&gt;网址中生成script信息（标题：启用 giscus）。&lt;/li&gt;
+&lt;li&gt;接入项目，这里PaperMod主题也给出了&lt;a class=&#34;link&#34; href=&#34;https://adityatelange.github.io/hugo-PaperMod/posts/papermod/papermod-features/#comments&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;配置方式&lt;/a&gt;。&lt;/li&gt;
+&lt;li&gt;生成的script代码复制到&lt;code&gt;layouts/partials/comments.html&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;配置文件params增加comments: true, 如下：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;params&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;comments&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;kc&#34;&gt;true&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;本地启动项目就能看到评论区域了。&lt;/p&gt;
+&lt;h2 id=&#34;google-ads&#34;&gt;Google ads&lt;/h2&gt;
+&lt;p&gt;ads接入好像是需要前提条件，先🕊一下。&lt;/p&gt;
+&lt;h2 id=&#34;最后&#34;&gt;最后&lt;/h2&gt;
+&lt;p&gt;最后，麻雀虽小，五脏俱全了。今天这五分钟，希望对您有帮助/doge。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

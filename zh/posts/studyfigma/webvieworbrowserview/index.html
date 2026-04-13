@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="zh" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content='大家好。 今天继续来学习Figma客户端。在看Electron Web Embeds 文档的时候，知道官方因为Webview结构还在发生变化，而不推荐使用。但如果'>
+<title>学习和研究Figma：WebviewTag 还是BrowserView？</title>
+
+<link rel='canonical' href='https://690591397.github.io/blog/zh/posts/studyfigma/webvieworbrowserview/'>
+
+<link rel="stylesheet" href="/blog/scss/style.min.abbd69b2908fdfcd5179898beaafd374514a86538d81639ddd2c58c06ae54e40.css"><meta property='og:title' content='学习和研究Figma：WebviewTag 还是BrowserView？'>
+<meta property='og:description' content='大家好。 今天继续来学习Figma客户端。在看Electron Web Embeds 文档的时候，知道官方因为Webview结构还在发生变化，而不推荐使用。但如果'>
+<meta property='og:url' content='https://690591397.github.io/blog/zh/posts/studyfigma/webvieworbrowserview/'>
+<meta property='og:site_name' content='Hawkeye-xb 技术博客'>
+<meta property='og:type' content='article'><meta property='article:section' content='Posts' /><meta property='article:tag' content='Electron' /><meta property='article:tag' content='Figma' /><meta property='article:published_time' content='2024-07-13T00:00:00&#43;00:00'/><meta property='article:modified_time' content='2024-07-13T00:00:00&#43;00:00'/>
+<meta name="twitter:title" content="学习和研究Figma：WebviewTag 还是BrowserView？">
+<meta name="twitter:description" content="大家好。 今天继续来学习Figma客户端。在看Electron Web Embeds 文档的时候，知道官方因为Webview结构还在发生变化，而不推荐使用。但如果">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "light");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/blog/zh/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/blog/images/avatar_hu45cdae561fb1f6528b0dd3b58ca5450a_623575_300x0_resize_box_3.png" width="300"
+                            height="400" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+                    <span class="emoji">🖤</span>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/blog/zh">Hawkeye-xb 技术博客</a></h1>
+            <h2 class="site-description">技术博客</h2>
+        </div>
+    </header><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/blog/series/' >
+                
+                
+                
+                <span>系列</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/blog/search/' >
+                
+                
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='' >
+                
+                
+                
+                <span>更多</span>
+            </a>
+        </li>
+        
+
+        <div class="menu-bottom-section">
+                <li id="i18n-switch">  
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-language" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M4 5h7" />
+  <path d="M9 3v2c0 4.418 -2.239 8 -5 8" />
+  <path d="M5 9c-.003 2.144 2.952 3.908 6.7 4" />
+  <path d="M12 20l4 -9l4 9" />
+  <path d="M19.1 18h-6.2" />
+</svg>
+
+
+
+                    <select name="language" onchange="window.location.href = this.selectedOptions[0].value">
+                        
+                            <option value="https://690591397.github.io/blog/zh/" selected>简体中文(chinese)</option>
+                        
+                            <option value="https://690591397.github.io/blog/en/" >English</option>
+                        
+                    </select>
+                </li>
+            
+            
+            
+                <li id="dark-mode-toggle">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                    <span></span>
+                </li>
+            
+        </div>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title"></h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ul>
+    <li>
+      <ul>
+        <li><a href="#figma-是如何选择的">Figma 是如何选择的？</a></li>
+        <li><a href="#从实现方式分析">从实现方式分析</a>
+          <ul>
+            <li><a href="#settopbrowserview">setTopBrowserView</a></li>
+            <li><a href="#标签">标签</a></li>
+          </ul>
+        </li>
+        <li><a href="#该如何选择">该如何选择</a></li>
+        <li><a href="#figma如何做bv层级管理的">Figma如何做BV层级管理的</a></li>
+        <li><a href="#最后">最后</a></li>
+      </ul>
+    </li>
+  </ul>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+    <header class="article-category">
+        
+            <a href="/blog/zh/categories/%E5%AD%A6%E4%B9%A0/" >
+                学习
+            </a>
+        
+    </header>
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/blog/zh/posts/studyfigma/webvieworbrowserview/">学习和研究Figma：WebviewTag 还是BrowserView？</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-07-13</time>
+            </div>
+        
+
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-clock" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="12" r="9" />
+  <polyline points="12 7 12 12 15 15" />
+</svg>
+
+
+
+                <time class="article-time--reading">
+                    
+                </time>
+            </div>
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>大家好。</p>
+<p>今天继续来学习Figma客户端。在看<a class="link" href="https://www.electronjs.org/docs/latest/tutorial/web-embeds#webview"  target="_blank" rel="noopener"
+    >Electron Web Embeds</a> 文档的时候，知道官方因为Webview结构还在发生变化，而不推荐使用。但如果锁定Electron版本不再升级，这种不用考虑结构变动的情况下，到底应该使用WebviewTag还是BrowserView呢？</p>
+<h3 id="figma-是如何选择的">Figma 是如何选择的？</h3>
+<p>当然了，BrowserView都是Figma牵头提供的，这里选择很明显，但是为什么需要这个东西呢？<a class="link" href="https://www.Figma.com/blog/introducing-browserview-for-electron/"  target="_blank" rel="noopener"
+    >好些年前（2017）是这么说的</a>：</p>
+<ul>
+<li>在使用<webview>时遇到了比如拖放功能的bug和性能问题。</li>
+<li>BrowserView不再使用DOM层次结构，使用位于操作系统窗口层次结构（类似chrome标签管理）。提升了性能，<strong>消除了与<webview>相关的大量特定bug</strong>。</li>
+<li>新的问题，不能使用常规的HTML和CSS布局和层叠。</li>
+</ul>
+<p>也没有说明具体的性能问题和bug。 <br>
+<a class="link" href="https://stackoverflow.com/questions/66493829/electron-why-does-browserview-has-better-performance-then-webview"  target="_blank" rel="noopener"
+    >Stackoverflow: Electron: Why does BrowserView has better performance then Webview?</a> 在翻了不少内容，也没有找到比较好的答案。</p>
+<h3 id="从实现方式分析">从实现方式分析</h3>
+<h4 id="settopbrowserview">setTopBrowserView</h4>
+<p><a class="link" href="https://www.electronjs.org/zh/docs/latest/api/browser-view"  target="_blank" rel="noopener"
+    >BrowserView文档描述</a>: 它就像一个子窗口，除了它的位置是相对于父窗口。 <br>
+就挺直观的描述了，可以理解为使用chrome打开了多个窗口，都缩放成为对应的大小在屏幕排列。都是同级的窗口，只需要简单的做z轴堆叠（setTopBrowserView）和平面排列即可。</p>
+<h4 id="标签">标签</h4>
+<p>以特有的<webview></webview>标签方式使用，能够通过JS获取Dom元素并且对其进行操作。就意味着需要在依赖加载的HTML中解析到<webview></webview>标签，加载内容后再在标签位置渲染。</p>
+<!-- ，完成之后通过ifrmae使得能在同一个渲染引擎内做渲染。    -->
+<div class="highlight"><pre tabindex="0" class="chroma"><code class="language-cpp" data-lang="cpp"><span class="line"><span class="cl"><span class="c1">// shell/browser/api/electron_api_web_contents.h
+</span></span></span><span class="line"><span class="cl"><span class="c1">// 函数名AttachTolframe表明它的功能是将当前WebContents对象附加到一个iframe元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">  <span class="c1">// Methods for creating &lt;webview&gt;.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>  <span class="na">[[nodiscard]]</span> <span class="kt">bool</span> <span class="n">is_guest</span><span class="p">()</span> <span class="k">const</span> <span class="p">{</span> <span class="k">return</span> <span class="n">type_</span> <span class="o">==</span> <span class="n">Type</span><span class="o">::</span><span class="n">kWebView</span><span class="p">;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">AttachToIframe</span><span class="p">(</span><span class="n">content</span><span class="o">::</span><span class="n">WebContents</span><span class="o">*</span> <span class="n">embedder_web_contents</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">                      <span class="kt">int</span> <span class="n">embedder_frame_id</span><span class="p">);</span>
+</span></span><span class="line"><span class="cl">  <span class="kt">void</span> <span class="nf">DetachFromOuterFrame</span><span class="p">();</span>
+</span></span></code></pre></div><p>Element
+<img src="https://s2.loli.net/2024/07/13/W6jbSVFJtToZvpY.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="2024-07-13 15.52.43.png"
+	
+	
+>
+Layout
+<img src="https://s2.loli.net/2024/07/13/MlikWf24zjpuJdt.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="2024-07-13 15.52.54.png"
+	
+	
+></p>
+<!-- 【再补充layer图 和Element图来佐证】 -->
+<!-- 至此，可以大概的猜测，其实是通过<webview></webview>标签，将当前WebContents对象附加到一个iframe元素，然后通过iframe元素的DOM操作，来实现Webview的功能。 -->
+<p>简单查看<a class="link" href="https://github.com/electron/electron/blob/main/shell/browser/api/electron_api_web_contents.h#L299"  target="_blank" rel="noopener"
+    >Electron代码</a>，再佐以WebviewTag运行时候的Element结构、Layer布局图片。不管是怎么实现的（还没看懂代码）注册Webview标签，渲染进程完成之后给出的什么产物，使得能在同一个引擎内渲染。至少也够证明在同样的引擎内渲染这个事情了。<br>
+假设Webview进程和BrowserView进程中间做的事情一样（假设最后输出Bitmap），Webview依赖的渲染引擎，每次都需要额外计算“合成”最终的渲染效果，在多标签页、页面内容复杂，需要频繁的缩放拖拽的情景下，Webview确实会拥有额外的性能开销。</p>
+<h3 id="该如何选择">该如何选择</h3>
+<p>花这么些功夫，只是想通过逻辑上去证明BrowserView在性能上的优势。即便如此，基于不同的结构实现方式导致的，那不同场景下应该怎么选择呢？
+对性能要求高、tab多的场景，更适合使用BrowserView，如果还有类似浏览器拖拽tab标签，打开独立窗口这种场景，更不能够创建新的窗口，再由<webview></webview>从头加载内容了。<br>
+但是对性要求不这么高的，也就没有必要额外的去管理BrowserView层级、进程生命周期了。</p>
+<h3 id="figma如何做bv层级管理的">Figma如何做BV层级管理的</h3>
+<p>这里Figma选择的，就开卷答题了，肯定就是BrowserView了。Figma有多BrowserView管理的场景，同时也有标题管理栏覆盖内容的场景。多窗口、多BrowserView的管理方式无法验证，后续直接给出我的一些思考和实践。对于BrowserView层级的管理，Figma会将标签管理栏始终设置为Top，点击展开内容的时候把标签管理栏这个View高度设置窗口高度，最直接证明就是hover状态无法穿透当前的BrowserView。   <br>
+未遮挡的hover状态
+<img src="https://s2.loli.net/2024/07/13/dJHoENbciWXQars.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="2024-07-13 17.49.47.png"
+	
+	
+>
+遮挡的hover状态
+<img src="https://s2.loli.net/2024/07/13/ojFZD52zHryA6EG.png"
+	
+	
+	
+	loading="lazy"
+	
+		alt="2024-07-13 17.50.39.png"
+	
+	
+></p>
+<p>印象中也看到过有大佬用debugtron验证这个结论，写文章的时候尝试再使用debugtron去连接Figma的进程，但是没有成功。</p>
+<h3 id="最后">最后</h3>
+<p>BrowserView 改名叫 WebContentsView了。</p>
+<!-- 这里Figma选择的，就开卷答题了，肯定就是BrowserView了。现在官方改名WebContentsView.。 -->
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/blog/zh/tags/electron/">Electron</a>
+        
+            <a href="/blog/zh/tags/figma/">Figma</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title"></h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/login/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：登录功能</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/background/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：背景</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/blog/zh/posts/studyfigma/extractfigmaasar/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">学习和研究Figma：直接看代码(Extract Asar)</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 Hawkeye-xb 技术博客
+    </section>
+    
+    <section class="powerby">
+         <br />
+        
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/blog/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
