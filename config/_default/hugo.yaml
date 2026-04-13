@@ -1,7 +1,7 @@
 baseURL: https://690591397.github.io/blog/
 title: Hawkeye-xb Blog
-# paginate: 5
-theme: ['PaperMod']
+theme: 
+  - hugo-theme-stack
 
 enableInlineShortcodes: true
 enableRobotsTXT: true
@@ -15,24 +15,14 @@ taxonomies:
   tag: tags
   series: series
 
-minify:
-  disableXML: true
-  minifyOutput: true
-
 defaultContentLanguage: zh
 defaultContentLanguageInSubdir: true
 
-services:
-  googleAnalytics:
-    id: G-QE8H9VMTZ6
-
-markup:
-  goldmark:
-    renderer:
-      unsafe: true
-  highlight:
-    noClasses: false
-  tableOfContents:
-    endLevel: 3
-    ordered: false
-    startLevel: 2
+params:
+  mainSections:
+    - posts
+  colorScheme:
+    toggle: true
+    default: light
+  comments:
+    enabled: false
