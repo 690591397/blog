@@ -1,0 +1,6 @@
+*public*
+*dist*
+*node_modules*
+apikeys.json
+# themes/* # 注释掉或删除这一行
+.DS_Store
