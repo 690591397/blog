@@ -1,0 +1,33 @@
+baseurl = "https://690591397.github.io/blog/"
+languageCode = "en-us"
+theme = "hugo-theme-stack"
+title = "Hawkeye-xb Blog"
+canonifyURLs = true
+
+[markup.goldmark.renderer]
+  unsafe = true
+
+[markup.highlight]
+  noClasses = false
+
+[params]
+  mainSections = ["posts"]
+  rssFullContent = true
+
+  [params.footer]
+    since = 2024
+    customText = ""
+
+  [params.sidebar]
+    compact = false
+    avatar = ""
+
+  [params.article]
+    headingAnchor = false
+    math = false
+    toc = true
+    readingTime = true
+
+  [params.colorScheme]
+    toggle = true
+    default = "auto"
