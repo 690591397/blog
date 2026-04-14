@@ -5,7 +5,6 @@ draft: false
 description: '如何使用lightbox2为基于Hugo和PaperMod主题的个人博客添加图片预览功能。'
 ---
 
-{{< param "buildBlogSeriesOpeningRemarks" >}}
 
 前阵子来了趟西北环线旅行，写了几天游记，并附上几张图，但图片大小不一，也不能占太多空间，就想着要是能有那种点击图片放大查看的功能就好了，找了一圈没找到hugo PaperMod有类似的设置。
 
