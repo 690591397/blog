@@ -1,4 +1,4 @@
-baseURL = "https://690591397.github.io/blog/"
+baseURL = "/"
 languageCode = "zh-cn"
 title = "Hawkeye-xb Blog"
 theme = "terminal-hub"
