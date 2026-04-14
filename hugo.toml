@@ -9,7 +9,7 @@ defaultContentLanguageInSubdir = true
 [params]
 author = "hawkeye-xb"
 bio = "Full-stack Developer · Indie Maker"
-avatar = "images/avatar.jpg"
+avatar = "images/avatar.png"
 colorScheme = "green"
 
 [params.social]
