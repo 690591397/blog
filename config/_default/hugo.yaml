@@ -88,12 +88,44 @@ languages:
     title: Hawkeye-xb 技术博客
     params:
       description: 技术博客
+    translation:
+      colorScheme: 主题
+      search: 搜索
+      archives: 归档
+      categories: 分类
+      tags: 标签
+      series: 系列
+      about: 关于
+      friends: 友链
+      home: 首页
+      toc: 目录
+      readingTime: 阅读时间
+      wordCount: 字数
+      darkMode: 深色模式
+      lightMode: 浅色模式
+      autoMode: 自动
   en:
     languageName: English
     weight: 2
     title: Hawkeye-xb Blog
     params:
       description: Tech Blog
+    translation:
+      colorScheme: Theme
+      search: Search
+      archives: Archives
+      categories: Categories
+      tags: Tags
+      series: Series
+      about: About
+      friends: Friends
+      home: Home
+      toc: Table of Contents
+      readingTime: Reading time
+      wordCount: Words
+      darkMode: Dark Mode
+      lightMode: Light Mode
+      autoMode: Auto
 
 markup:
   goldmark:

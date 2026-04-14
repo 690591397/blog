@@ -1,0 +1,25 @@
+baseURL = "https://690591397.github.io/blog/"
+languageCode = "zh-cn"
+title = "Hawkeye-xb Blog"
+theme = "terminal-hub"
+
+defaultContentLanguage = "zh"
+defaultContentLanguageInSubdir = true
+
+[params]
+author = "hawkeye-xb"
+bio = "Full-stack Developer · Indie Maker"
+avatar = "images/avatar.jpg"
+colorScheme = "green"
+
+[params.social]
+github = "https://github.com/hawkeye-xb"
+email = "hello@example.com"
+
+[pagination]
+pagerSize = 20
+
+[taxonomies]
+  category = "categories"
+  tag = "tags"
+  series = "series"
